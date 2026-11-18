@@ -12,14 +12,12 @@ object EquipAttributesForm: TEquipAttributesForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
   DesignSize = (
     434
     170)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -51,10 +49,12 @@ object EquipAttributesForm: TEquipAttributesForm
     TabOrder = 4
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 72
@@ -79,6 +79,9 @@ object EquipAttributesForm: TEquipAttributesForm
     DynProps = <>
     DataField = 'O_ID'
     DataSource = srcAttr
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EditButtons = <>
     KeyField = 'O_ID'
     ListField = 'O_NAME'
@@ -139,7 +142,7 @@ object EquipAttributesForm: TEquipAttributesForm
     Left = 228
     Top = 84
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -169,7 +172,7 @@ object EquipAttributesForm: TEquipAttributesForm
     Left = 178
     Top = 66
   end
-  object dsAttr: TpFIBDataSet
+  object dsAttr: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EQUIPMENT_ATTRIBUTES'
       'SET '

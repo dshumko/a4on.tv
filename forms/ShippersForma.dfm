@@ -236,7 +236,7 @@ inherited ShippersForm: TShippersForm
     Left = 216
     Top = 72
   end
-  object dsShippers: TpFIBDataSet
+  object dsShippers: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 29, :O_Id, :O_Name, :O_Descript' +

@@ -349,7 +349,7 @@ inherited PortListForm: TPortListForm
       OnExecute = actOpenCustomerExecute
     end
   end
-  object dsPort: TpFIBDataSet
+  object dsPort: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (

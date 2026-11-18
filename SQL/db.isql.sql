@@ -394,7 +394,7 @@ CREATE TABLE CUSTOMER (CUSTOMER_ID UID NOT NULL,
         HOUSE_ID UID,
         ACCOUNT_NO D_ACCOUNT_NS NOT NULL,
         DOGOVOR_NO D_VARCHAR50,
-        SURNAME D_VARCHAR100,
+        SURNAME D_VARCHAR255,
         "FIRSTNAME" D_VARCHAR50,
         MIDLENAME D_VARCHAR50,
         INITIALS D_VARCHAR10,
@@ -421,7 +421,7 @@ CREATE TABLE CUSTOMER (CUSTOMER_ID UID NOT NULL,
         MOBILE_PHONE D_VARCHAR50,
         HIS_COLOR D_VARCHAR10,
         INVISIBLE D_IBOOLEAN DEFAULT 0,
-        EMAIL D_VARCHAR50,
+        EMAIL D_VARCHAR100,
         TIME_ON_MINUS D_TIMESTAMP,
         BIRTHDAY D_DATE,
         ADRES_REGISTR D_VARCHAR255,
@@ -27455,6 +27455,12 @@ as
 begin
   execute procedure UpdateCustomerDebt4pay (new.CUSTOMER_ID, new.PAY_SUM);
   execute procedure Bonus_Add_After_Payment(new.CUSTOMER_ID, new.Payment_Id, new.PAY_SUM);
+
+  -- пропишем номер квитанции в заявке
+  if ((new.RQ_ID is not null) and (new.Ext_Pay_Id is not null)) then
+    update request r
+    set r.Receipt = new.Ext_Pay_Id
+    where r.Rq_Id = new.Rq_Id;
 end ^
 
 CREATE TRIGGER PAYMENT_BU0 FOR PAYMENT 
@@ -27493,6 +27499,21 @@ begin
       set C.DEBT_SUM = coalesce(C.DEBT_SUM, 0) - new.PAY_SUM
       where C.CUSTOMER_ID = new.CUSTOMER_ID;
     end
+  end
+
+  -- пропишем номер квитанции в заявке
+  if ((old.Rq_Id is distinct from new.Rq_Id)
+      or
+      (old.EXT_PAY_ID is distinct from new.Ext_Pay_Id)) then begin
+    if ((old.Rq_Id is distinct from new.Rq_Id) and (old.RQ_ID is not null)) then
+      update request r
+      set r.Receipt = null
+      where r.Rq_Id = old.Rq_Id;
+
+    if ((new.RQ_ID is not null) and (old.EXT_PAY_ID is distinct from new.Ext_Pay_Id)) then
+      update request r
+      set r.Receipt = new.Ext_Pay_Id
+      where r.Rq_Id = new.Rq_Id;
   end
 end ^
 

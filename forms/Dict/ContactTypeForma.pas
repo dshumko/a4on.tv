@@ -9,14 +9,14 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
   PrnDbgeh;
 
 type
   TContactTypeForm = class(TGridForm)
-    dsContactType: TpFIBDataSet;
+    dsContactType: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
@@ -24,8 +24,8 @@ type
     lbl4: TLabel;
     cbRegular: TDBComboBoxEh;
     chkUniq: TDBCheckBoxEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

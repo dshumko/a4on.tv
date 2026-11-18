@@ -93,7 +93,7 @@ object frmReqMaterials: TfrmReqMaterials
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object dsReqMaterials: TpFIBDataSet
+  object dsReqMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.M_ID,'

@@ -9,9 +9,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
   Vcl.ActnList,
   Vcl.ExtCtrls, Vcl.Buttons,
-  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery,
-  pFIBQuery,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase, PrjConst, EhLibVCL, DBGridEhGrouping,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, GridsEh, FIBQuery,
+  
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, PrjConst, EhLibVCL, DBGridEhGrouping,
   DynVarsEh;
 
 type
@@ -33,7 +33,7 @@ type
     ppmSelectAll: TMenuItem;
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
-    dsPayDocs: TpFIBDataSet;
+    dsPayDocs: TFIBDataSet;
     srcPayDocs: TDataSource;
     frxDBPayDocs: TfrxDBDataset;
     ToolBar3: TToolBar;
@@ -48,7 +48,7 @@ type
     ToolButton20: TToolButton;
     ToolButton7: TToolButton;
     ToolButton27: TToolButton;
-    dsPaymentSource: TpFIBDataSet;
+    dsPaymentSource: TFIBDataSet;
     srcPaymentSource: TDataSource;
     pmPeriod: TPopupMenu;
     N1: TMenuItem;
@@ -56,7 +56,7 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     ToolButton2: TToolButton;
-    qDetailCount: TpFIBQuery;
+    qDetailCount: TFIBQuery;
     MainMenu1: TMainMenu;
     N5: TMenuItem;
     N6: TMenuItem;
@@ -67,9 +67,10 @@ type
     N11: TMenuItem;
     N12: TMenuItem;
     N15: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     actCopyID: TAction;
+    trReadQ: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);

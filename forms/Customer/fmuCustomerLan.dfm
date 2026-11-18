@@ -215,6 +215,42 @@ object apgCustomerLan: TapgCustomerLan
         Footers = <>
         Title.Caption = #1057#1082#1086#1088#1086#1089#1090#1100' '#1087#1086#1088#1090#1072
         Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADDED_BY'
+        Footers = <>
+        Title.Caption = #1044#1086#1073#1072#1074#1083#1077#1085'|'#1050#1077#1084
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'ADDED_ON'
+        Footers = <>
+        Title.Caption = #1044#1086#1073#1072#1074#1083#1077#1085'|'#1050#1086#1075#1076#1072
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'EDIT_BY'
+        Footers = <>
+        Title.Caption = #1048#1079#1084#1077#1085#1105#1085'|'#1050#1077#1084
+        Title.TitleButton = True
+      end
+      item
+        CellButtons = <>
+        DynProps = <>
+        EditButtons = <>
+        FieldName = 'EDIT_ON'
+        Footers = <>
+        Title.Caption = #1048#1079#1084#1077#1085#1105#1085'|'#1050#1086#1075#1076#1072
+        Title.TitleButton = True
       end>
     object RowDetailData: TRowDetailPanelControlEh
     end
@@ -450,7 +486,6 @@ object apgCustomerLan: TapgCustomerLan
         #1088#1099#1077' '#1087#1086#1076#1087#1080#1089#1072#1085' '#1072#1073#1086#1085#1077#1085#1090
       Align = alTop
       Caption = '.:: '#1059#1089#1083#1091#1075#1080' '#1076#1083#1103' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1072' ::.'
-      ExplicitWidth = 148
     end
     object DBGridEh1: TDBGridEh
       Left = 26
@@ -515,7 +550,7 @@ object apgCustomerLan: TapgCustomerLan
       end
     end
   end
-  object dsLAN: TpFIBDataSet
+  object dsLAN: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -527,35 +562,23 @@ object apgCustomerLan: TapgCustomerLan
       '    ')
     RefreshSQL.Strings = (
       'select'
-      '    f.*'
-      '  , e.name as E_NAME'
-      '  , e.IP as EQ_IP'
-      '  , e.MAC as EQ_MAC'
-      '  , v.name as V_NAME'
-      '  , v.VLAN_NUM'
-      '  , s.Street_Name||'#39' '#39'||s.Street_Short Street_Name'
-      '  , h.House_No'
-      '  , p.Speed'
-      '  , p.Wlabel'
-      '  , w.Name WNAME'
-      '  from tv_lan f'
-      '       left outer join vlans v on (f.vlan_id = v.v_id)'
-      '       left outer join equipment e on (f.eq_id = e.eid)'
-      '       left outer join house h on (h.House_Id = f.House_Id)'
-      '       left outer join street s on (s.Street_Id = h.Street_Id)'
-      
-        '       left outer join port p on (p.Eid = f.Eq_Id and p.Port = f' +
-        '.Port)'
-      '       left outer join wire w on (w.Wid = p.Wid)'
-      'where(  f.CUSTOMER_ID = :CUSTOMER_ID'
-      '     ) and (     F.LAN_ID = :OLD_LAN_ID'
-      '     )'
-      '    '
-      ''
-      '')
-    SelectSQL.Strings = (
-      'select'
-      '    f.*'
+      '    F.Lan_Id'
+      '  , F.Customer_Id'
+      '  , F.Ip'
+      '  , F.Ipv6'
+      '  , F.Mac'
+      '  , F.Ip_Add'
+      '  , F.Port'
+      '  , F.Notice'
+      '  , F.Ip_Bin'
+      '  , F.Ip_Add_Bin'
+      '  , F.Tag'
+      '  , F.Tag_Str'
+      '  , F.Eq_Id'
+      '  , F.Vlan_Id'
+      '  , F.House_Id'
+      '  , F.Place'
+      '  , F.Last_Update'
       '  , e.name as E_NAME'
       '  , e.IP as EQ_IP'
       '  , e.MAC as EQ_MAC'
@@ -567,6 +590,10 @@ object apgCustomerLan: TapgCustomerLan
       '  , p.Wlabel'
       '  , w.Name WNAME'
       '  , coalesce(p.p_state, 1) P_STATE  -- 1 - '#1080#1089#1087#1088#1072#1074#1077#1085
+      '  , coalesce(a.Surname, f.Added_By) Added_By'
+      '  , f.Added_On'
+      '  , coalesce(d.Surname, f.Edit_By) Edit_By'
+      '  , f.Edit_On'
       '  from tv_lan f'
       '       left outer join vlans v on (f.vlan_id = v.v_id)'
       '       left outer join equipment e on (f.eq_id = e.eid)'
@@ -576,7 +603,62 @@ object apgCustomerLan: TapgCustomerLan
         '       left outer join port p on (p.Eid = f.Eq_Id and p.Port = f' +
         '.Port)'
       '       left outer join wire w on (w.Wid = p.Wid)'
-      '  where f.CUSTOMER_ID = :CUSTOMER_ID   ')
+      '       left outer join worker a on (a.Ibname = f.Added_By)'
+      '       left outer join worker d on (d.Ibname = f.Edit_By)'
+      'where'
+      '  f.CUSTOMER_ID = :CUSTOMER_ID'
+      '  and F.LAN_ID = :OLD_LAN_ID'
+      ''
+      ''
+      '')
+    SelectSQL.Strings = (
+      'select'
+      '    F.Lan_Id'
+      '  , F.Customer_Id'
+      '  , F.Ip'
+      '  , F.Ipv6'
+      '  , F.Mac'
+      '  , F.Ip_Add'
+      '  , F.Port'
+      '  , F.Notice'
+      '  , F.Ip_Bin'
+      '  , F.Ip_Add_Bin'
+      '  , F.Tag'
+      '  , F.Tag_Str'
+      '  , F.Eq_Id'
+      '  , F.Vlan_Id'
+      '  , F.House_Id'
+      '  , F.Place'
+      '  , F.Last_Update'
+      '  , e.name as E_NAME'
+      '  , e.IP as EQ_IP'
+      '  , e.MAC as EQ_MAC'
+      '  , v.name as V_NAME'
+      '  , v.VLAN_NUM'
+      '  , s.Street_Name||'#39' '#39'||s.Street_Short Street_Name'
+      '  , h.House_No'
+      '  , p.Speed'
+      '  , p.Wlabel'
+      '  , w.Name WNAME'
+      '  , coalesce(p.p_state, 1) P_STATE  -- 1 - '#1080#1089#1087#1088#1072#1074#1077#1085
+      '  , coalesce(a.Surname, f.Added_By) Added_By'
+      '  , f.Added_On'
+      '  , coalesce(d.Surname, f.Edit_By) Edit_By'
+      '  , f.Edit_On'
+      '  from tv_lan f'
+      '       left outer join vlans v on (f.vlan_id = v.v_id)'
+      '       left outer join equipment e on (f.eq_id = e.eid)'
+      '       left outer join house h on (h.House_Id = f.House_Id)'
+      '       left outer join street s on (s.Street_Id = h.Street_Id)'
+      
+        '       left outer join port p on (p.Eid = f.Eq_Id and p.Port = f' +
+        '.Port)'
+      '       left outer join wire w on (w.Wid = p.Wid)'
+      '       left outer join worker a on (a.Ibname = f.Added_By)'
+      '       left outer join worker d on (d.Ibname = f.Edit_By)'
+      '  where f.CUSTOMER_ID = :CUSTOMER_ID'
+      ''
+      '')
     AutoUpdateOptions.UpdateTableName = 'DISCOUNT_FACTOR'
     AutoUpdateOptions.KeyFields = 'DISCOUNT_ID'
     AutoUpdateOptions.GeneratorName = 'GEN_OPERATIONS_UID'
@@ -655,7 +737,7 @@ object apgCustomerLan: TapgCustomerLan
     Left = 277
     Top = 64
   end
-  object dsIPPacket: TpFIBDataSet
+  object dsIPPacket: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    TV_LAN_PACKETS'
@@ -695,7 +777,7 @@ object apgCustomerLan: TapgCustomerLan
     Left = 427
     Top = 83
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -707,7 +789,7 @@ object apgCustomerLan: TapgCustomerLan
     Left = 380
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -725,5 +807,23 @@ object apgCustomerLan: TapgCustomerLan
     object miEqpmnt: TMenuItem
       Action = actOpenEqpmnt
     end
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 248
+    Top = 168
+  end
+  object qRead: TFIBQuery
+    Transaction = trReadQ
+    Database = dmMain.dbTV
+    Left = 187
+    Top = 169
   end
 end

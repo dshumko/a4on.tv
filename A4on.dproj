@@ -2,7 +2,7 @@
     <PropertyGroup>
         <Base>True</Base>
         <AppType>Application</AppType>
-        <Config Condition="'$(Config)'==''">Release</Config>
+        <Config Condition="'$(Config)'==''">Debug</Config>
         <FrameworkType>VCL</FrameworkType>
         <MainSource>A4on.dpr</MainSource>
         <Platform Condition="'$(Platform)'==''">Win32</Platform>
@@ -81,10 +81,10 @@
         <Manifest_File>$(BDS)\bin\default_app.manifest</Manifest_File>
         <VerInfo_Build>1080</VerInfo_Build>
         <VerInfo_IncludeVerInfo>true</VerInfo_IncludeVerInfo>
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=26.9.0.1080;LegalCopyright=Copyright (C) 2005-2026, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=26.0;OriginalFilename=a4on.exe</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=26.11.0.1080;LegalCopyright=Copyright (C) 2005-2026, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=26.0;OriginalFilename=a4on.exe</VerInfo_Keys>
         <VerInfo_Locale>1049</VerInfo_Locale>
         <VerInfo_MajorVer>26</VerInfo_MajorVer>
-        <VerInfo_MinorVer>9</VerInfo_MinorVer>
+        <VerInfo_MinorVer>11</VerInfo_MinorVer>
         <UWP_DelphiLogo44>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_44.png</UWP_DelphiLogo44>
         <UWP_DelphiLogo150>$(BDS)\bin\Artwork\Windows\UWP\delphi_UwpDefault_150.png</UWP_DelphiLogo150>
         <Custom_Styles>&quot;Aqua Light Slate|VCLSTYLE|$(BDSCOMMONDIR)\Styles\AquaLightSlate.vsf&quot;;Glow|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Glow.vsf;&quot;Iceberg Classico|VCLSTYLE|$(BDSCOMMONDIR)\Styles\IcebergClassico.vsf&quot;;&quot;Lavender Classico|VCLSTYLE|$(BDSCOMMONDIR)\Styles\LavenderClassico.vsf&quot;;Sky|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Sky.vsf;&quot;Slate Classico|VCLSTYLE|$(BDSCOMMONDIR)\Styles\SlateClassico.vsf&quot;;&quot;Tablet Dark|VCLSTYLE|$(BDSCOMMONDIR)\Styles\TabletDark.vsf&quot;;&quot;Tablet Light|VCLSTYLE|$(BDSCOMMONDIR)\Styles\TabletLight.vsf&quot;;Windows10|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10.vsf;&quot;Windows10 Blue|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10Blue.vsf&quot;;&quot;Windows10 Dark|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10Dark.vsf&quot;;&quot;Windows10 Green|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10Green.vsf&quot;;&quot;Windows10 Purple|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10Purple.vsf&quot;;&quot;Windows10 SlateGray|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Windows10SlateGray.vsf&quot;;Amakrits|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Amakrits.vsf;&quot;Amethyst Kamri|VCLSTYLE|$(BDSCOMMONDIR)\Styles\AmethystKamri.vsf&quot;;&quot;Aqua Graphite|VCLSTYLE|$(BDSCOMMONDIR)\Styles\AquaGraphite.vsf&quot;;Auric|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Auric.vsf;Carbon|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Carbon.vsf;&quot;Charcoal Dark Slate|VCLSTYLE|$(BDSCOMMONDIR)\Styles\CharcoalDarkSlate.vsf&quot;;&quot;Cobalt XEMedia|VCLSTYLE|$(BDSCOMMONDIR)\Styles\CobaltXEMedia.vsf&quot;;&quot;Cyan Dusk|VCLSTYLE|$(BDSCOMMONDIR)\Styles\CyanDusk.vsf&quot;;&quot;Cyan Night|VCLSTYLE|$(BDSCOMMONDIR)\Styles\CyanNight.vsf&quot;;&quot;Emerald Light Slate|VCLSTYLE|$(BDSCOMMONDIR)\Styles\EmeraldLightSlate.vsf&quot;;&quot;Golden Graphite|VCLSTYLE|$(BDSCOMMONDIR)\Styles\GoldenGraphite.vsf&quot;;Light|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Light.vsf;Luna|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Luna.vsf;Obsidian|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Obsidian.vsf;&quot;Onyx Blue|VCLSTYLE|$(BDSCOMMONDIR)\Styles\OnyxBlue.vsf&quot;;&quot;Ruby Graphite|VCLSTYLE|$(BDSCOMMONDIR)\Styles\RubyGraphite.vsf&quot;;&quot;Sapphire Kamri|VCLSTYLE|$(BDSCOMMONDIR)\Styles\SapphireKamri.vsf&quot;;Silver|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Silver.vsf;&quot;Smokey Quartz Kamri|VCLSTYLE|$(BDSCOMMONDIR)\Styles\SmokeyQuartzKamri.vsf&quot;;&quot;Turquoise Gray|VCLSTYLE|$(BDSCOMMONDIR)\Styles\TurquoiseGray.vsf&quot;;Glossy|VCLSTYLE|$(BDSCOMMONDIR)\Styles\Glossy.vsf</Custom_Styles>
@@ -115,7 +115,7 @@
         <DCC_SymbolReferenceInfo>0</DCC_SymbolReferenceInfo>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=26.9.0.1101;LegalCopyright=Copyright (C) 2005-2026, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=26.0;OriginalFilename=a4on.exe;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=26.11.0.1123;LegalCopyright=Copyright (C) 2005-2026, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=26.0;OriginalFilename=a4on.exe;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_ImportedDataReferences>false</DCC_ImportedDataReferences>
         <DCC_MapFile>3</DCC_MapFile>
         <DCC_SYMBOL_PLATFORM>false</DCC_SYMBOL_PLATFORM>
@@ -124,7 +124,7 @@
         <Icon_MainIcon>A4on_Icon.ico</Icon_MainIcon>
         <DCC_PEOSVersion>5.1</DCC_PEOSVersion>
         <DCC_PESubSysVersion>5.1</DCC_PESubSysVersion>
-        <VerInfo_Build>1101</VerInfo_Build>
+        <VerInfo_Build>1123</VerInfo_Build>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_1_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -138,7 +138,7 @@
         <DCC_UNIT_PLATFORM>true</DCC_UNIT_PLATFORM>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win32)'!=''">
-        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=26.9.0.1091;LegalCopyright=Copyright (C) 2005-2026, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=26.0;OriginalFilename=a4on.exe;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
+        <VerInfo_Keys>CompanyName=A4on.TV;FileDescription=Billing for TV/Internet operators;FileVersion=26.9.0.1094;LegalCopyright=Copyright (C) 2005-2026, Shumko Dmitry;ProductName=A4on.TV;ProductVersion=26.0;OriginalFilename=a4on.exe;ProgramID=com.embarcadero.$(MSBuildProjectName)</VerInfo_Keys>
         <DCC_AssertionsAtRuntime>true</DCC_AssertionsAtRuntime>
         <DCC_DebugDCUs>true</DCC_DebugDCUs>
         <DCC_DebugInfoInExe>true</DCC_DebugInfoInExe>
@@ -149,7 +149,8 @@
         <VerInfo_Debug>true</VerInfo_Debug>
         <Icon_MainIcon>A4on_Icon.ico</Icon_MainIcon>
         <BT_BuildType>Debug</BT_BuildType>
-        <VerInfo_Build>1091</VerInfo_Build>
+        <VerInfo_Build>1094</VerInfo_Build>
+        <VerInfo_MinorVer>9</VerInfo_MinorVer>
     </PropertyGroup>
     <PropertyGroup Condition="'$(Cfg_2_Win64)'!=''">
         <AppEnableRuntimeThemes>true</AppEnableRuntimeThemes>
@@ -361,7 +362,7 @@
         <DCCReference Include="forms\BarSettingForma.pas">
             <Form>BarSettingForm</Form>
         </DCCReference>
-        <DCCReference Include="units\pFIBExtract.pas"/>
+        <DCCReference Include="units\FIBExtract.pas"/>
         <DCCReference Include="forms\infrastructure\EquipmentComands.pas">
             <Form>EquipmentCommandsForm</Form>
         </DCCReference>
@@ -1137,6 +1138,8 @@
                     <VersionInfoKeys Name="CFBundleExecutable"/>
                 </VersionInfoKeys>
                 <Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\svnide290.bpl">Embarcadero Subversion Integration</Excluded_Packages>
+                    <Excluded_Packages Name="$(BDSBIN)\dcl31w290.bpl">Delphi 1.0 Compatibility Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dcloffice2k290.bpl">Microsoft Office 2000 Sample Automation Server Wrapper Components</Excluded_Packages>
                     <Excluded_Packages Name="$(BDSBIN)\dclofficexp290.bpl">Microsoft Office XP Sample Automation Server Wrapper Components</Excluded_Packages>
                 </Excluded_Packages>

@@ -8,7 +8,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  OkCancel_frame, PrjConst, FIBQuery, pFIBQuery, CnErrorProvider, CnClasses;
+  OkCancel_frame, PrjConst, FIBQuery, CnErrorProvider, CnClasses;
 
 type
   TChangePwdForm = class(TForm)
@@ -68,7 +68,7 @@ end;
 
 procedure TChangePwdForm.ExecSQL(const aSQL: string);
 begin
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -140,7 +140,7 @@ begin
     422:
       lblLANG.Caption := 'UA';
     10437:
-      lblLANG.Caption := 'ქარ';
+      lblLANG.Caption := '???';
     42:
       lblLANG.Caption := 'HY';
   else

@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, OkCancel_frame, FIBDatabase, CnErrorProvider, PrjConst,
   DBGridEh;
 
 type
@@ -17,14 +17,14 @@ type
     dbeName: TDBEditEh;
     Label4: TLabel;
     DBMemo1: TDBMemoEh;
-    trSRead: TpFIBTransaction;
-    trSWrite: TpFIBTransaction;
+    trSRead: TFIBTransaction;
+    trSWrite: TFIBTransaction;
     CnErrors: TCnErrorProvider;
     Label1: TLabel;
     dblArea: TDBLookupComboboxEh;
-    dsSubArea: TpFIBDataSet;
+    dsSubArea: TFIBDataSet;
     srcSubArea: TDataSource;
-    dsAreas: TpFIBDataSet;
+    dsAreas: TFIBDataSet;
     srcAreas: TDataSource;
     procedure FormKeyPress(Sender: TObject; var Key: Char);
     procedure dbeNameChange(Sender: TObject);

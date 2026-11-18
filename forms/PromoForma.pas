@@ -9,14 +9,14 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   DBCtrlsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh,
-  FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh,
+  FIBDatabase, MemTableDataEh, MemTableEh,
   JsonDataObjects, PrnDbgeh, CnClasses;
 
 type
   TPromoForm = class(TGridForm)
-    dsPromo: TpFIBDataSet;
+    dsPromo: TFIBDataSet;
     Label1: TLabel;
     dbeName: TDBEditEh;
     edStart: TDBDateTimeEditEh;
@@ -30,10 +30,10 @@ type
     pnlSrvType: TPanel;
     lbl11: TLabel;
     lcbSrvType: TDBLookupComboboxEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsSrvType: TpFIBDataSet;
-    dsService: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsSrvType: TFIBDataSet;
+    dsService: TFIBDataSet;
     srcSrvType: TDataSource;
     srcService: TDataSource;
     mmoText: TDBMemoEh;

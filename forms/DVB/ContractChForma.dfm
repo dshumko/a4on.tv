@@ -11,13 +11,11 @@ object ContractChForm: TContractChForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   DesignSize = (
     392
     239)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -49,10 +47,10 @@ object ContractChForm: TContractChForm
     TabOrder = 4
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
     end
     inherited bbOk: TBitBtn
       Left = 8
@@ -84,6 +82,9 @@ object ContractChForm: TContractChForm
         Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         Width = 100
       end>
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EditButtons = <>
     KeyField = 'CH_ID'
     ListField = 'CH_NAME'
@@ -192,7 +193,7 @@ object ContractChForm: TContractChForm
     Left = 84
     Top = 98
   end
-  object dsChannel: TpFIBDataSet
+  object dsChannel: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DISTRIB_CONTRACT_CH'
       'SET '
@@ -267,7 +268,7 @@ object ContractChForm: TContractChForm
     Left = 272
     Top = 80
   end
-  object dsChannList: TpFIBDataSet
+  object dsChannList: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT c.Ch_Id, c.Ch_Name, c.Ch_Notice'
       'FROM Channels c'
@@ -287,7 +288,7 @@ object ContractChForm: TContractChForm
     Left = 155
     Top = 128
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -299,7 +300,7 @@ object ContractChForm: TContractChForm
     Left = 240
     Top = 136
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'

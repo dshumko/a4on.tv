@@ -191,7 +191,7 @@ object BillingForm: TBillingForm
     Left = 56
     Top = 96
   end
-  object dsBilling: TpFIBDataSet
+  object dsBilling: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    s.street_short||s.street_name as street,'

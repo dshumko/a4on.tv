@@ -220,7 +220,7 @@ object ReqMaterialReturnStrictForm: TReqMaterialReturnStrictForm
     Left = 137
     Top = 153
   end
-  object dsMaterial: TpFIBDataSet
+  object dsMaterial: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    APPLIANCE'
@@ -354,7 +354,7 @@ object ReqMaterialReturnStrictForm: TReqMaterialReturnStrictForm
     Left = 64
     Top = 157
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    APPLIANCE'

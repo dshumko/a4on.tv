@@ -125,7 +125,7 @@ object ChanSrcForm: TChanSrcForm
     Visible = True
     WantReturns = True
   end
-  object dsSource: TpFIBDataSet
+  object dsSource: TFIBDataSet
     UpdateSQL.Strings = (
       'update Channel_Src'
       'set Name = :Name,'
@@ -158,7 +158,7 @@ object ChanSrcForm: TChanSrcForm
     Left = 56
     Top = 194
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

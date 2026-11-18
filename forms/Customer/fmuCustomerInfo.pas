@@ -13,10 +13,10 @@ uses
   Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.Menus,
   Vcl.ActnList, Vcl.StdActns,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet,
   DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
-  EhLibVCL, EhLibFIB, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  EhLibVCL, EhLibFIB, DBGridEhGrouping, DynVarsEh, FIBDatabase,
   PropFilerEh, PropStorageEh,
 {$IFDEF USE_PIXIE}
   Pixie.HtmlView.Vcl, Pixie.Document,
@@ -27,7 +27,7 @@ uses
 
 type
   TapgCustomerInfo = class(TA4onPage)
-    dsContacts: TpFIBDataSet;
+    dsContacts: TFIBDataSet;
     srcContacts: TDataSource;
     pmRecalc: TPopupMenu;
     N2: TMenuItem;
@@ -43,8 +43,8 @@ type
     dbgrdhContacts: TDBGridEh;
     gbMemo: TGroupBox;
     memCustNotice: TDBMemoEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     actlst1: TActionList;
     actMakeCall: TAction;
     pnlBtns: TPanel;
@@ -61,7 +61,7 @@ type
     actCDel: TAction;
     pmHV: TPopupMenu;
     miCopy: TMenuItem;
-    dsCustomer: TpFIBDataSet;
+    dsCustomer: TFIBDataSet;
     PropStorageEh: TPropStorageEh;
     pnlHTML: TPanel;
     srcCustomer: TDataSource;
@@ -181,7 +181,7 @@ implementation
 
 uses
   System.RegularExpressions, System.TypInfo, Vcl.Clipbrd,
-  A4onTypeUnit, AtrCommon, AtrStrUtils, DM, pFIBQuery, MAIN,
+  A4onTypeUnit, AtrCommon, AtrStrUtils, DM, FIBQuery, MAIN,
   ContactForma, SendMessagesForma;
 
 {$R *.dfm}
@@ -380,7 +380,7 @@ begin
   if s <> memCustNotice.Lines.Text then
   begin
     s := memCustNotice.Lines.Text;
-    with TpFIBQuery.Create(nil) do
+    with TFIBQuery.Create(nil) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -447,7 +447,7 @@ end;
 
 procedure TapgCustomerInfo.RecalcCustomer(const CUSTOMER_ID: Int64);
 begin
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -732,7 +732,7 @@ begin
   t := dsContacts['Cc_Type'];
   v := dsContacts['Cc_Value'];
 
-  with TpFIBQuery.Create(nil) do
+  with TFIBQuery.Create(nil) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -775,7 +775,7 @@ begin
   t := dsContacts['Cc_Type'];
   v := dsContacts['Cc_Value'];
 
-  with TpFIBQuery.Create(nil) do
+  with TFIBQuery.Create(nil) do
   begin
     try
       DataBase := dmMain.dbTV;

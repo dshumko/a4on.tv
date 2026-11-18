@@ -10,7 +10,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
   MemTableDataEh, ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableEh, OkCancel_frame,
   FIBDatabase,
-  pFIBDatabase, FIBDataSet, pFIBDataSet, EhLibVCL, DBGridEhGrouping, DynVarsEh;
+   FIBDataSet, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TDVBGanresForm = class(TForm)
@@ -21,8 +21,8 @@ type
     dsmGanresCODE: TStringField;
     dsmGanresSELECTED: TBooleanField;
     dsmGanresNAME: TStringField;
-    dsGenres: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsGenres: TFIBDataSet;
+    trRead: TFIBTransaction;
   private
     { Private declarations }
     procedure SetGanres(const value: string);

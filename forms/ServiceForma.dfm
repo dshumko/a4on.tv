@@ -13,11 +13,9 @@ object ServiceForm: TServiceForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlSrv: TPanel
     Left = 0
@@ -125,6 +123,9 @@ object ServiceForm: TServiceForm
       DynProps = <>
       DataField = 'BUSINESS_TYPE'
       DataSource = srcService
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EditButtons = <>
       KeyField = 'ID'
       ListField = 'NAME_ID'
@@ -184,7 +185,7 @@ object ServiceForm: TServiceForm
           object Label4: TLabel
             Left = 0
             Top = 0
-            Width = 442
+            Width = 125
             Height = 13
             Align = alTop
             Caption = ' '#1054#1087#1080#1089#1072#1085#1080#1077' '#1076#1083#1103' '#1072#1073#1086#1085#1077#1085#1090#1072
@@ -730,7 +731,7 @@ object ServiceForm: TServiceForm
       TabOrder = 1
     end
   end
-  object dsPaymentType: TpFIBDataSet
+  object dsPaymentType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT o.O_ID, o.O_NAME, o.O_DESCRIPTION'
       'FROM V_PAYMENTTYPE o'
@@ -748,7 +749,7 @@ object ServiceForm: TServiceForm
     Left = 258
     Top = 237
   end
-  object dsService: TpFIBDataSet
+  object dsService: TFIBDataSet
     UpdateSQL.Strings = (
       'execute procedure SERVICES_IU('
       '    :SERVICE_ID,'
@@ -808,7 +809,7 @@ object ServiceForm: TServiceForm
       ')')
     SelectSQL.Strings = (
       'SELECT '
-      ' s.*,  '
+      ' s.*, '
       
         ' CASE (select 1 from SERVICES_LINKS sl where sl.PARENT is null a' +
         'nd sl.CHILD = s.SERVICE_ID)'
@@ -836,7 +837,7 @@ object ServiceForm: TServiceForm
     Left = 208
     Top = 320
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -848,7 +849,7 @@ object ServiceForm: TServiceForm
     Left = 318
     Top = 249
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'

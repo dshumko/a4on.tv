@@ -617,7 +617,7 @@ object DVBStreamForm: TDVBStreamForm
       end
     end
   end
-  object dsESC: TpFIBDataSet
+  object dsESC: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DVB_STREAM_CHANNELS'
       'SET '
@@ -703,7 +703,7 @@ object DVBStreamForm: TDVBStreamForm
     Left = 250
     Top = 309
   end
-  object dsC: TpFIBDataSet
+  object dsC: TFIBDataSet
     SelectSQL.Strings = (
       
         'select c.Ch_Id, c.Ch_Number, c.Ch_Name, c.Definition, c.CH_NOTIC' +
@@ -728,7 +728,7 @@ object DVBStreamForm: TDVBStreamForm
     Left = 474
     Top = 370
   end
-  object dsES: TpFIBDataSet
+  object dsES: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DVB_STREAMS'
       'SET '
@@ -794,7 +794,7 @@ object DVBStreamForm: TDVBStreamForm
     Left = 79
     Top = 346
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -806,7 +806,7 @@ object DVBStreamForm: TDVBStreamForm
     Left = 142
     Top = 259
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

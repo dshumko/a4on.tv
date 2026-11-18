@@ -144,7 +144,7 @@ object fmCardPaySerials: TfmCardPaySerials
     Left = 72
     Top = 56
   end
-  object dsserials: TpFIBDataSet
+  object dsserials: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    CARDS_SERIALS'

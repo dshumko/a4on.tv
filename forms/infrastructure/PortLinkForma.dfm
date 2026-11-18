@@ -13,13 +13,11 @@ object PortLinkForm: TPortLinkForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
@@ -29,13 +27,13 @@ object PortLinkForm: TPortLinkForm
     Align = alBottom
     TabOrder = 0
     TabStop = True
-    ExplicitTop = 326
-    ExplicitWidth = 584
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -44,12 +42,9 @@ object PortLinkForm: TPortLinkForm
       Enabled = False
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 67
-      ExplicitWidth = 428
     end
     inherited bbCancel: TBitBtn
       Left = 501
-      ExplicitLeft = 501
     end
   end
   object pnlSecond: TPanel
@@ -406,7 +401,6 @@ object PortLinkForm: TPortLinkForm
               Height = 13
               Align = alTop
               Caption = '  '#1055#1086#1080#1089#1082' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103' '#1087#1086':'
-              ExplicitWidth = 131
             end
             object edtEqIP: TDBEditEh
               Left = 9
@@ -470,7 +464,6 @@ object PortLinkForm: TPortLinkForm
               Height = 13
               Align = alTop
               Caption = '  '#1055#1086#1080#1089#1082' '#1072#1073#1086#1085#1077#1085#1090#1072' '#1087#1086':'
-              ExplicitWidth = 106
             end
             object edCode: TDBEditEh
               Left = 9
@@ -521,14 +514,9 @@ object PortLinkForm: TPortLinkForm
             ParentShowHint = False
             ShowHint = True
             TabOrder = 1
-            ExplicitTop = 70
-            ExplicitWidth = 327
-            ExplicitHeight = 158
             inherited gbInfo: TGroupBox
               Width = 327
               Height = 158
-              ExplicitWidth = 327
-              ExplicitHeight = 158
             end
           end
         end
@@ -596,6 +584,7 @@ object PortLinkForm: TPortLinkForm
             end>
           DropDownBox.ListSource = srcWire
           DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
           DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
           DropDownBox.SortLocal = True
@@ -637,7 +626,7 @@ object PortLinkForm: TPortLinkForm
       end
     end
   end
-  object dsPort: TpFIBDataSet
+  object dsPort: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PORT'
       'SET '
@@ -784,7 +773,7 @@ object PortLinkForm: TPortLinkForm
     Left = 120
     Top = 134
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -796,7 +785,7 @@ object PortLinkForm: TPortLinkForm
     Left = 179
     Top = 26
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -834,7 +823,7 @@ object PortLinkForm: TPortLinkForm
       OnExecute = actEditWireExecute
     end
   end
-  object dsEndPort: TpFIBDataSet
+  object dsEndPort: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -851,8 +840,8 @@ object PortLinkForm: TPortLinkForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'
@@ -898,8 +887,8 @@ object PortLinkForm: TPortLinkForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'
@@ -953,7 +942,7 @@ object PortLinkForm: TPortLinkForm
     Left = 336
     Top = 192
   end
-  object dsWire: TpFIBDataSet
+  object dsWire: TFIBDataSet
     RefreshSQL.Strings = (
       'select'
       '    T.O_NAME CT_NAME'

@@ -190,7 +190,7 @@ inherited ManForm: TManForm
     Left = 16
     Top = 208
   end
-  object dsMan: TpFIBDataSet
+  object dsMan: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '

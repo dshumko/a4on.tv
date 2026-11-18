@@ -7,18 +7,18 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, DBGridEh, DBCtrlsEh, DBLookupEh;
+  OkCancel_frame, FIBDataSet, FIBDatabase, FIBQuery, DBGridEh, DBCtrlsEh, DBLookupEh;
 
 type
   TMatOutForm = class(TForm)
     frmOK: TOkCancelFrame;
-    trReadQ: TpFIBTransaction;
-    trWriteQ: TpFIBTransaction;
-    dsMO: TpFIBDataSet;
+    trReadQ: TFIBTransaction;
+    trWriteQ: TFIBTransaction;
+    dsMO: TFIBDataSet;
     cbWH: TDBLookupComboboxEh;
     edDate: TDBDateTimeEditEh;
     edQuant: TDBNumberEditEh;
-    dsMW: TpFIBDataSet;
+    dsMW: TFIBDataSet;
     edNumber: TDBEditEh;
     srcMW: TDataSource;
     dbmNotice: TDBMemoEh;

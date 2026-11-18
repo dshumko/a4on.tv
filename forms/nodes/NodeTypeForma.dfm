@@ -211,7 +211,7 @@ inherited NodeTypeForm: TNodeTypeForm
     Left = 352
     Top = 280
   end
-  object dsFileType: TpFIBDataSet
+  object dsFileType: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 38, :O_ID, :O_Name, :O_Descript' +
@@ -256,7 +256,7 @@ inherited NodeTypeForm: TNodeTypeForm
     Left = 64
     Top = 240
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -268,7 +268,7 @@ inherited NodeTypeForm: TNodeTypeForm
     Left = 459
     Top = 394
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

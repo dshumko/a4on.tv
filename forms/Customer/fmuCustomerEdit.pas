@@ -10,11 +10,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.Menus,
   Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBCtrlsEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh,
   DBLookupEh,
-  FIBQuery, pFIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
-  pFIBDatabase, EhLibFIB,
-  PropFilerEh, PropStorageEh, amSplitter, CnClasses;
+  FIBQuery, MemTableDataEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
+  EhLibFIB, PropFilerEh, PropStorageEh, amSplitter, CnClasses;
 
 type
   TapgCustomerEdit = class(TA4onPage)
@@ -25,24 +24,24 @@ type
     ds: TDataSource;
     pnl2: TPanel;
     GroupBox2: TGroupBox;
-    dsOrg: TpFIBDataSet;
+    dsOrg: TFIBDataSet;
     srcOrg: TDataSource;
-    dsVATG: TpFIBDataSet;
+    dsVATG: TFIBDataSet;
     srcVATG: TDataSource;
     srcStreet: TDataSource;
-    dsStreets: TpFIBDataSet;
-    dsHouses: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
+    dsHouses: TFIBDataSet;
     srcHouse: TDataSource;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     srcExecutor: TDataSource;
-    dsExecutor: TpFIBDataSet;
-    dsContacts: TpFIBDataSet;
+    dsExecutor: TFIBDataSet;
+    dsContacts: TFIBDataSet;
     ColorDialog1: TColorDialog;
     CnErrors: TCnErrorProvider;
     dbmmoNOTICE: TDBMemoEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    trReadQ: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    trReadQ: TFIBTransaction;
     scrlbx1: TScrollBox;
     spl1: TSplitter;
     pnlAddress: TPanel;
@@ -134,13 +133,13 @@ type
     lbl5: TLabel;
     btnCEdit: TSpeedButton;
     srcBanks: TDataSource;
-    dsBANKS: TpFIBDataSet;
+    dsBANKS: TFIBDataSet;
     lcbBANK: TDBLookupComboboxEh;
     Label15: TLabel;
     pnlWarningInfo: TPanel;
     mmoWarning: TDBMemoEh;
     btnCloseWarningInfo: TButton;
-    dsDocType: TpFIBDataSet;
+    dsDocType: TFIBDataSet;
     srcDocType: TDataSource;
     lcbDT: TDBLookupComboboxEh;
     lblDT: TLabel;
@@ -1349,7 +1348,7 @@ end;
 
 procedure TapgCustomerEdit.UpdateFloorPorch();
 var
-  qry: TpFIBQuery;
+  qry: TFIBQuery;
 begin
   if (not FAddressRight) and (dmMain.GetSettingsValue('FP_ADDRESS_CHECK') = '1') then
     Exit;
@@ -1359,7 +1358,7 @@ begin
     if (edFLOOR.Text <> FSavedFloor) or (edPORCH.Text <> FSavedPorch) or (eFLAT_NO.Text <> FSavedFlat) or
       (LupHOUSE_ID.Value <> FSavedHouseID) then
     begin
-      qry := TpFIBQuery.Create(Nil);
+      qry := TFIBQuery.Create(Nil);
       with qry do
       begin
         try
@@ -1445,11 +1444,11 @@ end;
 
 procedure TapgCustomerEdit.SaveFlatOwner();
 var
-  oQuery: TpFIBQuery;
+  oQuery: TFIBQuery;
   s: string;
 begin
   s := Trim(eSURNAME.Text + ' ' + eFIRSTNAME.Text + ' ' + eMIDLENAME.Text);
-  oQuery := TpFIBQuery.Create(Nil);
+  oQuery := TFIBQuery.Create(Nil);
   with oQuery do
   begin
     try

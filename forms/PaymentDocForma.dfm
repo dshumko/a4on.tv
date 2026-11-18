@@ -747,6 +747,7 @@ object PaymentDocForm: TPaymentDocForm
               end>
             DropDownBox.ListSource = srcPaymentSource
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
             DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1043#1076#1077' '#1073#1099#1083#1072' '#1086#1087#1083#1072#1090#1072
@@ -865,11 +866,10 @@ object PaymentDocForm: TPaymentDocForm
       object Label14: TLabel
         Left = 0
         Top = 0
-        Width = 514
+        Width = 71
         Height = 13
         Align = alTop
         Caption = '  '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077':'
-        ExplicitWidth = 71
       end
       object mmoNotice: TDBMemoEh
         Left = 0
@@ -902,11 +902,10 @@ object PaymentDocForm: TPaymentDocForm
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 1067
+      Width = 141
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
-      ExplicitWidth = 141
     end
     object dbgErrors: TDBGridEh
       Left = 0
@@ -981,7 +980,7 @@ object PaymentDocForm: TPaymentDocForm
       end
     end
   end
-  object dsPayDocDetail: TpFIBDataSet
+  object dsPayDocDetail: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    PAYMENT'
@@ -1218,7 +1217,7 @@ object PaymentDocForm: TPaymentDocForm
       OnExecute = actCopyIDExecute
     end
   end
-  object dsPayDoc: TpFIBDataSet
+  object dsPayDoc: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PAY_DOC'
       'SET '
@@ -1403,7 +1402,7 @@ object PaymentDocForm: TPaymentDocForm
     Left = 40
     Top = 272
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1415,7 +1414,7 @@ object PaymentDocForm: TPaymentDocForm
     Left = 456
     Top = 236
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1427,7 +1426,7 @@ object PaymentDocForm: TPaymentDocForm
     Left = 412
     Top = 236
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1439,7 +1438,7 @@ object PaymentDocForm: TPaymentDocForm
     Left = 456
     Top = 284
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1451,7 +1450,7 @@ object PaymentDocForm: TPaymentDocForm
     Left = 412
     Top = 284
   end
-  object dsPaymentSource: TpFIBDataSet
+  object dsPaymentSource: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC'
       'FROM PAYSOURCE'
@@ -1494,7 +1493,7 @@ object PaymentDocForm: TPaymentDocForm
     Left = 263
     Top = 526
   end
-  object dsErrors: TpFIBDataSet
+  object dsErrors: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PAY_ERRORS'
       'SET '
@@ -1579,7 +1578,7 @@ object PaymentDocForm: TPaymentDocForm
       OnClick = ppmSaveSelectionClick
     end
   end
-  object trRead1: TpFIBTransaction
+  object trRead1: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

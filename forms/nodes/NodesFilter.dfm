@@ -210,6 +210,9 @@ object NodesFilterForm: TNodesFilterForm
                 Title.Caption = #1056#1072#1081#1086#1085
                 Width = 60
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -241,6 +244,9 @@ object NodesFilterForm: TNodesFilterForm
                 FieldName = 'SUBAREA_NAME'
                 Width = 40
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1044#1086#1084
@@ -262,6 +268,9 @@ object NodesFilterForm: TNodesFilterForm
             DynProps = <>
             DataField = 'AREA_ID'
             DataSource = srcFilter
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
@@ -292,6 +301,9 @@ object NodesFilterForm: TNodesFilterForm
                 FieldName = 'AREA_NAME'
                 Title.Caption = #1056#1072#1081#1086#1085
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -435,6 +447,7 @@ object NodesFilterForm: TNodesFilterForm
           DataSource = srcFilter
           DropDownBox.ListSource = srcAttributes
           DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
           DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           EmptyDataInfo.Text = #1040#1090#1088#1080#1073#1091#1090
@@ -560,7 +573,7 @@ object NodesFilterForm: TNodesFilterForm
     Left = 277
     Top = 312
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -579,7 +592,7 @@ object NodesFilterForm: TNodesFilterForm
     Left = 225
     Top = 366
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    h.HOUSE_ID'
@@ -606,7 +619,7 @@ object NodesFilterForm: TNodesFilterForm
     Left = 230
     Top = 376
   end
-  object dsSubArea: TpFIBDataSet
+  object dsSubArea: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.subarea_id, s.subarea_name, a.area_name'
       'FROM subarea s left outer join area a on (a.area_id = s.area_id)'
@@ -623,7 +636,7 @@ object NodesFilterForm: TNodesFilterForm
     Left = 238
     Top = 384
   end
-  object dsNodeType: TpFIBDataSet
+  object dsNodeType: TFIBDataSet
     SelectSQL.Strings = (
       'select * from '
       '('
@@ -676,7 +689,7 @@ object NodesFilterForm: TNodesFilterForm
       OnExecute = actClearExecute
     end
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'
@@ -694,7 +707,7 @@ object NodesFilterForm: TNodesFilterForm
     Left = 246
     Top = 389
   end
-  object dsEPoint: TpFIBDataSet
+  object dsEPoint: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from ('
@@ -726,7 +739,7 @@ object NodesFilterForm: TNodesFilterForm
     Left = 491
     Top = 297
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION'
       'FROM OBJECTS'

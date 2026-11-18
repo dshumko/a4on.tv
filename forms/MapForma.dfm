@@ -12,7 +12,6 @@ object MapForm: TMapForm
   Font.Style = []
   FormStyle = fsMDIChild
   Menu = mmMap
-  OldCreateOrder = False
   Position = poScreenCenter
   ShowHint = True
   Visible = True
@@ -20,7 +19,6 @@ object MapForm: TMapForm
   OnClose = FormClose
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 14
   object pnlMain: TPanel
     Left = 0
@@ -121,20 +119,20 @@ object MapForm: TMapForm
       end
     end
   end
-  object qWrite: TpFIBQuery
+  object qWrite: TFIBQuery
     Transaction = trWrite
     Database = dmMain.dbTV
     Left = 327
     Top = 416
   end
-  object qRead: TpFIBQuery
+  object qRead: TFIBQuery
     Transaction = trRead
     Database = dmMain.dbTV
     Left = 331
     Top = 360
     qoFreeHandleAfterExecute = True
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -145,7 +143,7 @@ object MapForm: TMapForm
     Left = 444
     Top = 405
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (

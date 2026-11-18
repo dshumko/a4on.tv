@@ -2,15 +2,10 @@ inherited TaskForm: TTaskForm
   Caption = #1047#1072#1076#1072#1095#1080' '#1089#1086#1090#1088#1091#1076#1085#1080#1082#1086#1074
   ClientHeight = 593
   ClientWidth = 1017
-  ExplicitWidth = 1033
-  ExplicitHeight = 632
-  PixelsPerInch = 96
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 193
     Width = 1017
-    ExplicitTop = 193
-    ExplicitWidth = 1017
   end
   inherited dbGrid: TDBGridEh
     Top = 197
@@ -135,10 +130,6 @@ inherited TaskForm: TTaskForm
         Width = 65
       end>
     inherited RowDetailData: TRowDetailPanelControlEh
-      ExplicitLeft = 30
-      ExplicitTop = 76
-      ExplicitWidth = 984
-      ExplicitHeight = 184
       object pgcMSG: TPageControl
         Left = 0
         Top = 0
@@ -513,51 +504,39 @@ inherited TaskForm: TTaskForm
   end
   inherited tlbMain: TToolBar
     Width = 1017
-    ExplicitWidth = 1017
     inherited ToolButton5: TToolButton
       Width = 10
-      ExplicitWidth = 10
     end
     inherited ToolButton6: TToolButton
       Left = 61
       Visible = False
-      ExplicitLeft = 61
     end
     inherited btnDelete: TToolButton
       Left = 65
-      ExplicitLeft = 65
     end
     inherited ToolButton9: TToolButton
       Left = 88
       Width = 10
-      ExplicitLeft = 88
-      ExplicitWidth = 10
     end
     inherited tbOk: TToolButton
       Left = 98
       Visible = False
-      ExplicitLeft = 98
     end
     inherited ToolButton10: TToolButton
       Left = 121
       Visible = False
-      ExplicitLeft = 121
     end
     inherited tbCancel: TToolButton
       Left = 125
       Visible = False
-      ExplicitLeft = 125
     end
     inherited ToolButton20: TToolButton
       Left = 148
       Width = 10
       Visible = False
-      ExplicitLeft = 148
-      ExplicitWidth = 10
     end
     inherited btnQuickFilter: TToolButton
       Left = 158
-      ExplicitLeft = 158
     end
     inherited sep444: TToolButton
       Left = 181
@@ -611,8 +590,6 @@ inherited TaskForm: TTaskForm
     Width = 1017
     Height = 168
     ParentBackground = False
-    ExplicitWidth = 1017
-    ExplicitHeight = 168
     object lbl1: TLabel [0]
       Left = 5
       Top = 9
@@ -654,18 +631,12 @@ inherited TaskForm: TTaskForm
       Top = 140
       Width = 842
       TabOrder = 8
-      ExplicitLeft = 62
-      ExplicitTop = 140
-      ExplicitWidth = 842
     end
     inherited btnCancelLink: TBitBtn
       Left = 912
       Top = 140
       Width = 98
       TabOrder = 9
-      ExplicitLeft = 912
-      ExplicitTop = 140
-      ExplicitWidth = 98
     end
     object edtTITLE: TDBEditEh
       Left = 62
@@ -883,7 +854,7 @@ inherited TaskForm: TTaskForm
     Left = 136
     Top = 480
   end
-  object dsTask: TpFIBDataSet
+  object dsTask: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE TASKLIST'
       'SET '
@@ -1111,7 +1082,7 @@ inherited TaskForm: TTaskForm
     Left = 432
     Top = 480
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -1122,7 +1093,7 @@ inherited TaskForm: TTaskForm
     Left = 352
     Top = 472
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -1133,7 +1104,7 @@ inherited TaskForm: TTaskForm
     Left = 288
     Top = 472
   end
-  object dsMSG: TpFIBDataSet
+  object dsMSG: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE TASKMSG'
       'SET '
@@ -1307,7 +1278,7 @@ inherited TaskForm: TTaskForm
     Left = 594
     Top = 496
   end
-  object dsUsers: TpFIBDataSet
+  object dsUsers: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    Task_Id integer = :Task_Id,'

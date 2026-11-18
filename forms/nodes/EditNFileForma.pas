@@ -7,26 +7,26 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
-  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, pFIBQuery;
+  FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,  CnClasses;
 
 type
   TEditNFileForm = class(TForm)
     srcFiles: TDataSource;
-    dsFiles: TpFIBDataSet;
+    dsFiles: TFIBDataSet;
     dbluFileType: TDBLookupComboboxEh;
     memNotice: TDBMemoEh;
     Label1: TLabel;
     Label2: TLabel;
     edtNAME: TDBEditEh;
     CnErrors: TCnErrorProvider;
-    dsFile: TpFIBDataSet;
+    dsFile: TFIBDataSet;
     srcCustFile: TDataSource;
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
     edtFILE: TDBEditEh;
     lblFileCh: TLabel;
     dlgOpen: TOpenDialog;
-    qUpdate: TpFIBQuery;
+    qUpdate: TFIBQuery;
     procedure btnOkClick(Sender: TObject);
     procedure edtFILEEditButtons0Click(Sender: TObject;
       var Handled: Boolean);

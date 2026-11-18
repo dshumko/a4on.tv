@@ -25,7 +25,7 @@ object UsersForm: TUsersForm
     Top = 0
     Width = 904
     Height = 487
-    ActivePage = tabGroup
+    ActivePage = tabUsers
     Align = alClient
     TabOrder = 0
     OnChange = pcChange
@@ -910,7 +910,7 @@ object UsersForm: TUsersForm
               object lbl2: TLabel
                 Left = 0
                 Top = 0
-                Width = 89
+                Width = 337
                 Height = 13
                 Align = alTop
                 Caption = #1042#1080#1076#1080#1084#1099#1077' '#1091#1095#1072#1089#1090#1082#1080
@@ -1034,7 +1034,7 @@ object UsersForm: TUsersForm
               object lbl1: TLabel
                 Left = 0
                 Top = 0
-                Width = 104
+                Width = 548
                 Height = 13
                 Align = alTop
                 Caption = #1044#1086#1089#1090#1091#1087#1085#1099#1077' '#1091#1095#1072#1089#1090#1082#1080' '
@@ -1177,7 +1177,7 @@ object UsersForm: TUsersForm
       OnExecute = actUserForWorkerExecute
     end
   end
-  object dsGroups: TpFIBDataSet
+  object dsGroups: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SYS$GROUP'
       'SET '
@@ -1255,7 +1255,7 @@ object UsersForm: TUsersForm
     Left = 164
     Top = 96
   end
-  object dsUsers: TpFIBDataSet
+  object dsUsers: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure worker_iud (2, :worker_id, :surname, :firstnam' +
@@ -1321,7 +1321,7 @@ object UsersForm: TUsersForm
     Top = 96
     oFetchAll = True
   end
-  object dsGU: TpFIBDataSet
+  object dsGU: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SYS$USER_GROUPS'
       'SET '
@@ -1381,7 +1381,7 @@ object UsersForm: TUsersForm
     Left = 516
     Top = 357
   end
-  object dsG: TpFIBDataSet
+  object dsG: TFIBDataSet
     SelectSQL.Strings = (
       'select g.id, g.group_name, g.lockedout, g.notice'
       'from sys$group g'
@@ -2104,7 +2104,7 @@ object UsersForm: TUsersForm
     Left = 422
     Top = 411
   end
-  object dsAU: TpFIBDataSet
+  object dsAU: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    u.id, u.user_id, A.wa_id, A.name, A.notice'
@@ -2123,7 +2123,7 @@ object UsersForm: TUsersForm
     dcForceOpen = True
     oFetchAll = True
   end
-  object dsA: TpFIBDataSet
+  object dsA: TFIBDataSet
     SelectSQL.Strings = (
       'select A.wa_id, A.name, A.notice'
       'from WORKAREA A'
@@ -2147,23 +2147,20 @@ object UsersForm: TUsersForm
     Left = 514
     Top = 410
   end
-  object fSecurity: TpFIBSecurityService
+  object fSecurity: TFIBSecurityService
     SecurityAction = ActionAddUser
     UserID = 0
     GroupID = 0
     Left = 94
     Top = 162
   end
-  object qModify: TpFIBQuery
-    Transaction = trWriteQ
+  object qModify: TFIBQuery
     Database = dmMain.dbTV
     GoToFirstRecordOnExecute = False
     Left = 388
     Top = 160
-    qoAutoCommit = True
-    qoStartTransaction = True
   end
-  object dsReports: TpFIBDataSet
+  object dsReports: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    GROUP_ID  integer = :GROUP_ID,'
@@ -2215,7 +2212,7 @@ object UsersForm: TUsersForm
       '  r.id_report,'
       '  p.Full_Name,'
       '  r.report_name,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from reports r'
       
         '  left outer join Get_Fullname_Allreports('#39'\'#39') p on (p.Id_Report' +
@@ -2230,7 +2227,7 @@ object UsersForm: TUsersForm
       '  p.Full_Name,'
       '  r.report_name,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from reports r'
       
         '  left outer join Get_Fullname_Allreports('#39'\'#39') p on (p.Id_Report' +
@@ -2262,7 +2259,7 @@ object UsersForm: TUsersForm
     Left = 520
     Top = 284
   end
-  object dsModules: TpFIBDataSet
+  object dsModules: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    GROUP_ID  integer = :GROUP_ID,'
@@ -2314,7 +2311,7 @@ object UsersForm: TUsersForm
       '  m.Id_Module,'
       '  m.Name,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from modules m'
       
         '  left outer join Sys$Group_Rights gr on (m.Id_Module = gr.Right' +
@@ -2325,7 +2322,7 @@ object UsersForm: TUsersForm
       '  m.Id_Module,'
       '  m.Name,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from modules m'
       
         '  left outer join Sys$Group_Rights gr on (m.Id_Module = gr.Right' +
@@ -2348,7 +2345,7 @@ object UsersForm: TUsersForm
     Left = 520
     Top = 124
   end
-  object dsRights: TpFIBDataSet
+  object dsRights: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    GROUP_ID  integer = :GROUP_ID,'
@@ -2402,7 +2399,7 @@ object UsersForm: TUsersForm
       '  r.Category,'
       '  r.Notice,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from Sys$Rights r'
       
         '  left outer join Sys$Group_Rights gr on (r.Id = gr.Right_Id and' +
@@ -2415,7 +2412,7 @@ object UsersForm: TUsersForm
       '  r.Category,'
       '  r.Notice,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from Sys$Rights r'
       
         '  left outer join Sys$Group_Rights gr on (r.Id = gr.Right_Id and' +
@@ -2434,24 +2431,12 @@ object UsersForm: TUsersForm
     dcForceOpen = True
     oFetchAll = True
   end
-  object trWriteQ: TpFIBTransaction
-    DefaultDatabase = dmMain.dbTV
-    TimeoutAction = TACommit
-    TRParams.Strings = (
-      'write'
-      'nowait'
-      'rec_version'
-      'read_committed')
-    TPBMode = tpbDefault
-    Left = 393
-    Top = 104
-  end
   object srcRequest: TDataSource
     DataSet = dsRequest
     Left = 696
     Top = 220
   end
-  object dsRequest: TpFIBDataSet
+  object dsRequest: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    GROUP_ID  integer = :GROUP_ID,'
@@ -2503,7 +2488,7 @@ object UsersForm: TUsersForm
       '  m.Rt_Id Id_Module,'
       '  m.Rt_Name Name,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from Request_Types m'
       
         '  left outer join Sys$Group_Rights gr on (m.Rt_Id = gr.Right_Id ' +
@@ -2514,7 +2499,7 @@ object UsersForm: TUsersForm
       '  m.Rt_Id Id_Module,'
       '  m.Rt_Name Name,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from Request_Types m'
       
         '  left outer join Sys$Group_Rights gr on (m.Rt_Id = gr.Right_Id ' +
@@ -2537,7 +2522,7 @@ object UsersForm: TUsersForm
     Left = 688
     Top = 356
   end
-  object dsRecourses: TpFIBDataSet
+  object dsRecourses: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    GROUP_ID  integer = :GROUP_ID,'
@@ -2589,7 +2574,7 @@ object UsersForm: TUsersForm
       '  m.Rt_Id Id_Module,'
       '  m.Rt_Name Name,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from Request_Types m'
       
         '  left outer join Sys$Group_Rights gr on (m.Rt_Id = gr.Right_Id ' +
@@ -2600,7 +2585,7 @@ object UsersForm: TUsersForm
       '  o.O_Id Id_Module,'
       '  o.O_Name Name,'
       '  coalesce(gr.Group_Id,:ID) Group_Id ,'
-      '  iif(gr.Id is null,  0, 1) as rAllowed'
+      '  iif(gr.Id is null, 0, 1) as rAllowed'
       'from objects o'
       
         '  left outer join Sys$Group_Rights gr on (o.O_Id = gr.Right_Id a' +

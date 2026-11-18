@@ -371,7 +371,7 @@ object OrdersTPFilterForm: TOrdersTPFilterForm
       OnExecute = actClearExecute
     end
   end
-  object dsOTPTypes: TpFIBDataSet
+  object dsOTPTypes: TFIBDataSet
     SelectSQL.Strings = (
       'select O_Id, O_Name, O_Description'
       'from objects'

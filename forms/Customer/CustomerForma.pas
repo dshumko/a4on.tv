@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ActnList, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus, Vcl.Controls,
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls,
-  PropStorageEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, GridsEh, DBGridEh,
+  PropStorageEh, FIBQuery, FIBDataSet, FIBDatabase, GridsEh, DBGridEh,
   MemTableDataEh,
   MemTableEh, EhLibVCL, DBAxisGridsEh, fmuCustomerBalance, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   PropFilerEh, DBCtrlsEh, DBLookupEh, AtrPages, amSplitter;
@@ -17,16 +17,15 @@ type
   TCustomerForm = class(TForm)
     pnlForms: TPanel;
     pnlDATA: TPanel;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsCustomer: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsCustomer: TFIBDataSet;
     mmCustomer: TMainMenu;
     mmiCustomer: TMenuItem;
     N2: TMenuItem;
     N3: TMenuItem;
     miDelete: TMenuItem;
     srcCustomer: TDataSource;
-    Query: TpFIBQuery;
     spl1: TSplitter;
     Actions: TActionList;
     actPrint: TAction;
@@ -323,7 +322,7 @@ var
 
   procedure AddPrepay(const psum: Extended; cid: Integer);
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         Database := dmMain.dbTV;
@@ -333,8 +332,8 @@ var
         ParamByName('Customer_Id').value := cid; // dsCustomers.FieldByName('customer_id').AsInteger;
         Transaction.StartTransaction;
         ExecQuery;
-        Transaction.Commit;
         Close;
+        Transaction.Commit;
       finally
         Free;
       end;
@@ -391,7 +390,7 @@ begin
 
   pswd := GenPassword(8);
   EditText(pswd, 'Новый пароль', Format('Абоненту %s будет установлен пароль', [dsCustomer['ACCOUNT_NO']]));
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       Database := dmMain.dbTV;
@@ -401,8 +400,8 @@ begin
       ParamByName('CID').AsInteger := dsCustomer['CUSTOMER_ID'];
       Transaction.StartTransaction;
       ExecQuery;
-      Transaction.Commit;
       Close;
+      Transaction.Commit;
     finally
       Free;
     end;
@@ -822,7 +821,7 @@ var
   Client: TMvdApiClient;
   Req: TMvdRequest;
   Resp: TMvdResult;
-  qry: TpFIBQuery;
+  qry: TFIBQuery;
 
   function HasInvalidChar(const s: string): Boolean;
   var
@@ -935,7 +934,7 @@ begin
     end
   end;
 
-  qry := TpFIBQuery.Create(Nil);
+  qry := TFIBQuery.Create(Nil);
   try
     qry.Database := dmMain.dbTV;
     qry.Transaction := dmMain.trWriteQ;
@@ -946,6 +945,7 @@ begin
       qry.ParamByName('CID').value := dsCustomer['CUSTOMER_ID'];
       qry.Transaction.StartTransaction;
       qry.ExecQuery;
+      qry.Close;
       qry.Transaction.Commit;
     end;
 
@@ -958,6 +958,7 @@ begin
     qry.ParamByName('Value_After').value := answer;
     qry.Transaction.StartTransaction;
     qry.ExecQuery;
+    qry.Close;
     qry.Transaction.Commit;
   finally
     qry.Free;

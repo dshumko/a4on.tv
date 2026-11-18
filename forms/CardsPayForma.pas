@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.Menus, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, EhLibFIB, frxDBSet, ToolCtrlsEh, DBGridEhToolCtrls, frxClass,
+  FIBDataSet, GridsEh, DBGridEh, EhLibFIB, frxDBSet, ToolCtrlsEh, DBGridEhToolCtrls, frxClass,
   DBAxisGridsEh,
   PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
@@ -33,7 +33,7 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     srcCardPay: TDataSource;
-    dsCardPay: TpFIBDataSet;
+    dsCardPay: TFIBDataSet;
     actlstactions: TActionList;
     actNew: TAction;
     actDelete: TAction;
@@ -169,13 +169,13 @@ var
   I, J: Integer;
   Grid: TCustomDBGridEh;
   id: Integer;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
 
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSqlWait;
   Grid := TCustomDBGridEh(Sender);
-  FIBDS := TpFIBDataSet(Grid.DataSource.DataSet);
+  FIBDS := TFIBDataSet(Grid.DataSource.DataSet);
   if Sender is TCustomDBGridEh then
   begin
     if not FIBDS.FieldByName('CARD_ID').IsNull then
@@ -323,9 +323,9 @@ procedure TfmCardsPay.actDeleteExecute(Sender: TObject);
 var
   I: Integer;
   AR, FullAccess: Boolean;
-  Ds: TpFIBDataSet;
+  Ds: TFIBDataSet;
 begin
-  Ds := dbgrdhCardPay.DataSource.DataSet as TpFIBDataSet;
+  Ds := dbgrdhCardPay.DataSource.DataSet as TFIBDataSet;
   if Ds.RecordCount = 0 then
     exit;
 

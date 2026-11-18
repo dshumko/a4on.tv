@@ -9,15 +9,14 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ActnList,
   Vcl.Buttons,
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
-  FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, CnClasses;
+  FIBDataSet, FIBDatabase, CnErrorProvider, FIBQuery, DBGridEhGrouping, CnClasses;
 
 type
   TMatInventoryDocForm = class(TForm)
     pnlHead: TPanel;
     pnlMat: TPanel;
-    dsDoc: TpFIBDataSet;
-    dsDocMat: TpFIBDataSet;
+    dsDoc: TFIBDataSet;
+    dsDocMat: TFIBDataSet;
     srcDoc: TDataSource;
     srcDocMat: TDataSource;
     dbgDocMat: TDBGridEh;
@@ -30,7 +29,7 @@ type
     Label1: TLabel;
     lbl2: TLabel;
     Label2: TLabel;
-    dsFindMat: TpFIBDataSet;
+    dsFindMat: TFIBDataSet;
     edtMaterial: TDBEditEh;
     edtQuant: TDBNumberEditEh;
     memNotice: TDBMemoEh;
@@ -40,15 +39,15 @@ type
     lblDem: TLabel;
     btnSave: TButton;
     btnClose: TButton;
-    dsMaterials: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsMaterials: TFIBDataSet;
+    trRead: TFIBTransaction;
     lbl4: TLabel;
     CnErrors: TCnErrorProvider;
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     srcWH: TDataSource;
-    qCloseDoc: TpFIBQuery;
+    qCloseDoc: TFIBQuery;
     btnOpen: TButton;
-    qOpenDoc: TpFIBQuery;
+    qOpenDoc: TFIBQuery;
     pmGrid: TPopupMenu;
     miDelete: TMenuItem;
     actList: TActionList;
@@ -58,7 +57,7 @@ type
     lbl5: TLabel;
     edtBefore: TDBNumberEditEh;
     btnDel: TBitBtn;
-    trWriteQ: TpFIBTransaction;
+    trWriteQ: TFIBTransaction;
     N1: TMenuItem;
     actEditNote: TAction;
     miEditNote: TMenuItem;
@@ -449,6 +448,7 @@ begin
     qOpenDoc.ParamByName('DOC_ID').AsInteger := dsDoc['DOC_ID'];
     qOpenDoc.Transaction.StartTransaction;
     qOpenDoc.ExecQuery;
+    qOpenDoc.Close;
     qOpenDoc.Transaction.Commit;
     dsDoc.Refresh;
     SetReadOnlyMode(false);
@@ -470,7 +470,7 @@ begin
 
   if EditText(s, 'Примечание', 'Примечание для услуги') then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -479,8 +479,8 @@ begin
         ParamByName('ID').value := dsDocMat.FieldByName('ID').AsInteger;
         Transaction.StartTransaction;
         ExecQuery;
-        Transaction.Commit;
         Close;
+        Transaction.Commit;
         dsDocMat.Refresh;
       finally
         free;
@@ -525,6 +525,7 @@ begin
     qCloseDoc.ParamByName('DOC_ID').AsInteger := dsDoc['DOC_ID'];
     qCloseDoc.Transaction.StartTransaction;
     qCloseDoc.ExecQuery;
+    qCloseDoc.Close;
     qCloseDoc.Transaction.Commit;
     dsDoc.Refresh;
     SetReadOnlyMode(true);
@@ -588,3 +589,4 @@ begin
 end;
 
 end.
+

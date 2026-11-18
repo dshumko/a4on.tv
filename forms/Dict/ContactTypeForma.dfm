@@ -245,7 +245,7 @@ inherited ContactTypeForm: TContactTypeForm
     Left = 304
     Top = 408
   end
-  object dsContactType: TpFIBDataSet
+  object dsContactType: TFIBDataSet
     UpdateSQL.Strings = (
       
         'EXECUTE PROCEDURE ATTRIBUTES_IUD(:O_ID, :O_NAME, :O_DESCRIPTION,' +
@@ -298,7 +298,7 @@ inherited ContactTypeForm: TContactTypeForm
     Left = 144
     Top = 136
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -310,7 +310,7 @@ inherited ContactTypeForm: TContactTypeForm
     Left = 200
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

@@ -1885,7 +1885,7 @@ object LoaderProfileNew: TLoaderProfileNew
     Left = 500
     Top = 352
   end
-  object dsFileFormats: TpFIBDataSet
+  object dsFileFormats: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PROFILES'
       'SET '

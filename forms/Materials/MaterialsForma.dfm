@@ -35,7 +35,6 @@ object MaterialsForm: TMaterialsForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
-    ExplicitHeight = 199
     object Splitter2: TSplitter
       Left = 281
       Top = 0
@@ -49,7 +48,6 @@ object MaterialsForm: TMaterialsForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitHeight = 199
       object DBGridEh: TDBGridEh
         Left = 0
         Top = 27
@@ -143,7 +141,6 @@ object MaterialsForm: TMaterialsForm
       Align = alLeft
       BevelOuter = bvNone
       TabOrder = 0
-      ExplicitHeight = 199
       object DBGridGroups: TDBGridEh
         Left = 0
         Top = 27
@@ -290,7 +287,6 @@ object MaterialsForm: TMaterialsForm
     Align = alBottom
     TabOrder = 1
     OnChange = pgcInOutChange
-    ExplicitTop = 202
     object tsIn: TTabSheet
       Caption = #1054#1089#1090#1072#1090#1082#1080
       object DBGridIncome: TDBGridEh
@@ -2134,7 +2130,7 @@ object MaterialsForm: TMaterialsForm
       OnExecute = actRecalcWHExecute
     end
   end
-  object dsRemain: TpFIBDataSet
+  object dsRemain: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.INVENTORY'
@@ -2185,7 +2181,7 @@ object MaterialsForm: TMaterialsForm
     Left = 58
     Top = 334
   end
-  object dsMatGropups: TpFIBDataSet
+  object dsMatGropups: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIALS_GROUP'
       'SET '
@@ -2287,7 +2283,7 @@ object MaterialsForm: TMaterialsForm
     Left = 49
     Top = 156
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     UpdateSQL.Strings = (
       'update MATERIALS'
       'set NAME = :NAME,'
@@ -2419,22 +2415,22 @@ object MaterialsForm: TMaterialsForm
     Top = 78
     oFetchAll = True
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 549
     Top = 87
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 501
     Top = 87
   end
-  object TrTemp: TpFIBTransaction
+  object TrTemp: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 501
     Top = 135
   end
-  object QrTemp: TpFIBQuery
+  object QrTemp: TFIBQuery
     Transaction = TrTemp
     Database = dmMain.dbTV
     Left = 549
@@ -2454,7 +2450,7 @@ object MaterialsForm: TMaterialsForm
     Left = 493
     Top = 37
   end
-  object dsJournal: TpFIBDataSet
+  object dsJournal: TFIBDataSet
     SelectSQL.Strings = (
       'select r.*'
       ', h.house_no'
@@ -2541,7 +2537,7 @@ object MaterialsForm: TMaterialsForm
     Left = 372
     Top = 334
   end
-  object dsIncome: TpFIBDataSet
+  object dsIncome: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    d.Doc_N'
@@ -2629,7 +2625,7 @@ object MaterialsForm: TMaterialsForm
     Left = 500
     Top = 283
   end
-  object drvFIB: TpFIBDataDriverEh
+  object drvFIB: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <
       item
@@ -2652,7 +2648,7 @@ object MaterialsForm: TMaterialsForm
     Left = 500
     Top = 331
   end
-  object dsMove: TpFIBDataSet
+  object dsMove: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    d.Doc_N || '#39' ('#39' || t.O_Name || '#39')'#39' Doc_N'
@@ -2718,7 +2714,7 @@ object MaterialsForm: TMaterialsForm
     Left = 196
     Top = 331
   end
-  object dsInvent: TpFIBDataSet
+  object dsInvent: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    d.Doc_N,'
@@ -2782,7 +2778,7 @@ object MaterialsForm: TMaterialsForm
     Left = 308
     Top = 331
   end
-  object dsOut: TpFIBDataSet
+  object dsOut: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    d.Doc_N'
@@ -2834,15 +2830,15 @@ object MaterialsForm: TMaterialsForm
     WaitEndMasterScroll = True
     dcForceOpen = True
   end
-  object qReqFile: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qReqFile: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select b.Bl_Body from Blob_Tbl b where b.Bl_Id = :Bl_Id')
     Left = 669
     Top = 88
   end
-  object dsSerials: TpFIBDataSet
+  object dsSerials: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIAL_UNIT'
       'SET '
@@ -2952,7 +2948,7 @@ object MaterialsForm: TMaterialsForm
     Left = 436
     Top = 334
   end
-  object trWriteDS: TpFIBTransaction
+  object trWriteDS: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -2961,10 +2957,10 @@ object MaterialsForm: TMaterialsForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 688
-    Top = 320
+    Left = 640
+    Top = 280
   end
-  object trReadDS: TpFIBTransaction
+  object trReadDS: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -2973,7 +2969,7 @@ object MaterialsForm: TMaterialsForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 784
+    Left = 760
     Top = 280
   end
   object pmPivot: TPopupMenu
@@ -2995,8 +2991,8 @@ object MaterialsForm: TMaterialsForm
     Top = 112
   end
   object pmSerial: TPopupMenu
-    Left = 628
-    Top = 326
+    Left = 580
+    Top = 342
     object miChSerial: TMenuItem
       Action = actChangeSerial
     end
@@ -3201,7 +3197,7 @@ object MaterialsForm: TMaterialsForm
       end
     end
   end
-  object dsFiles: TpFIBDataSet
+  object dsFiles: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -3244,42 +3240,42 @@ object MaterialsForm: TMaterialsForm
     UpdateTransaction = dmMain.trWrite
     AutoCommit = True
     DataSource = srcDataSource
-    Left = 762
+    Left = 706
     Top = 286
     WaitEndMasterScroll = True
     dcForceOpen = True
   end
   object srcFiles: TDataSource
     DataSet = dsFiles
-    Left = 764
-    Top = 334
+    Left = 708
+    Top = 350
   end
-  object qryBlobFile: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qryBlobFile: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select b.Bl_Body from Blob_Tbl b where b.Bl_Id = :Bl_Id')
-    Left = 813
+    Left = 821
     Top = 288
   end
   object dlgOpen: TOpenDialog
     DefaultExt = '*.*'
-    Left = 864
-    Top = 288
+    Left = 824
+    Top = 120
   end
-  object qSaveFile: TpFIBQuery
+  object qSaveFile: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'INSERT INTO Blob_Tbl (Bl_Type, Owner_Id, Bl_Name, Bl_Body)'
       'VALUES (:Bl_Type, :Owner_Id, :Bl_Name, :Bl_Body)'
       '')
-    Left = 813
-    Top = 336
+    Left = 765
+    Top = 360
   end
   object dlgSave: TSaveDialog
-    Left = 860
-    Top = 336
+    Left = 820
+    Top = 64
   end
   object mtGroups: TMemTableEh
     Params = <>
@@ -3292,7 +3288,7 @@ object MaterialsForm: TMaterialsForm
     Left = 104
     Top = 112
   end
-  object drvFibGroups: TpFIBDataDriverEh
+  object drvFibGroups: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (
@@ -3485,5 +3481,17 @@ object MaterialsForm: TMaterialsForm
     GetrecCommand.Params = <>
     Left = 84
     Top = 59
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 736
+    Top = 72
   end
 end

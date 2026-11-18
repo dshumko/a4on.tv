@@ -264,7 +264,7 @@ object apgCustomerKoef: TapgCustomerKoef
         7F00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
     end
   end
-  object dsDiscount: TpFIBDataSet
+  object dsDiscount: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DISCOUNT_FACTOR'
       'SET '
@@ -409,7 +409,7 @@ object apgCustomerKoef: TapgCustomerKoef
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -421,7 +421,7 @@ object apgCustomerKoef: TapgCustomerKoef
     Left = 364
     Top = 66
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
   Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
   DBGridEhGrouping, DynVarsEh, Vcl.Menus;
 
 type
   TapgCustomerLetters = class(TA4onPage)
-    dsLetters: TpFIBDataSet;
+    dsLetters: TFIBDataSet;
     srcLetters: TDataSource;
     dbgLetters: TDBGridEh;
     ActListCustomers: TActionList;

@@ -8,7 +8,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls,
-  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, CnErrorProvider,
+  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, FIBQuery, CnErrorProvider,
   PrjConst, CnClasses;
 
 type
@@ -22,7 +22,7 @@ type
     luService: TDBLookupComboboxEh;
     srcService: TDataSource;
     Label3: TLabel;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     pnlONOFF: TPanel;
     Label1: TLabel;
     luOnOffService: TDBLookupComboboxEh;
@@ -44,18 +44,18 @@ type
     pnlVAT: TPanel;
     cbbVATG: TDBLookupComboboxEh;
     lblVAT: TLabel;
-    dsVATG: TpFIBDataSet;
+    dsVATG: TFIBDataSet;
     srcVATG: TDataSource;
-    dsCustomer: TpFIBDataSet;
+    dsCustomer: TFIBDataSet;
     srcSwitchTo: TDataSource;
-    dsSwitchTo: TpFIBDataSet;
-    dsService: TpFIBDataSet;
-    dsOnOffService: TpFIBDataSet;
+    dsSwitchTo: TFIBDataSet;
+    dsService: TFIBDataSet;
+    dsOnOffService: TFIBDataSet;
     CnErrors: TCnErrorProvider;
     pnlWorker: TPanel;
     lblWorker: TLabel;
     lcbWorker: TDBLookupComboboxEh;
-    dsWorker: TpFIBDataSet;
+    dsWorker: TFIBDataSet;
     srcWorker: TDataSource;
     chkFOwner: TDBCheckBoxEh;
     edtDogovor: TDBEditEh;
@@ -205,12 +205,14 @@ begin
               Query.ParamByName('DATE').AsDate := eDate.value;
               Query.Transaction.StartTransaction;
               Query.ExecQuery;
+              Query.Close;
               Query.Transaction.Commit;
               Query.ParamByName('OFF').AsInteger := 0;
               if (eDateTo.value <> null) then
                 Query.ParamByName('DATE').AsDate := eDateTo.value;
               Query.Transaction.StartTransaction;
               Query.ExecQuery;
+              Query.Close;
               Query.Transaction.Commit;
               CustomersForm.dsCustomers.Refresh;
             except
@@ -224,12 +226,14 @@ begin
           Query.ParamByName('DATE').AsDate := eDate.value;
           Query.Transaction.StartTransaction;
           Query.ExecQuery;
+          Query.Close;
           Query.Transaction.Commit;
           Query.ParamByName('OFF').AsInteger := 0;
           if (eDateTo.value <> null) then
             Query.ParamByName('DATE').AsDate := eDateTo.value;
           Query.Transaction.StartTransaction;
           Query.ExecQuery;
+          Query.Close;
           Query.Transaction.Commit;
         end;
         Result := True;
@@ -326,6 +330,7 @@ begin
             try
               Query.Transaction.StartTransaction;
               Query.ExecQuery;
+              Query.Close;
               Query.Transaction.Commit;
               CustomersForm.dsCustomers.Refresh;
             except
@@ -338,6 +343,7 @@ begin
           Query.Transaction.StartTransaction;
           Query.ExecQuery;
           ExecRESULT := Query.FN('RESULT').AsInteger;
+          Query.Close;
           Query.Transaction.Commit;
           case ExecRESULT of
             - 1:
@@ -450,6 +456,7 @@ begin
             try
               Query.Transaction.StartTransaction;
               Query.ExecQuery;
+              Query.Close;
               Query.Transaction.Commit;
               CustomersForm.dsCustomers.Refresh;
             except
@@ -462,6 +469,7 @@ begin
           Query.ParamByName('CUSTOMER_ID').AsInteger := aCustomer_ID;
           Query.Transaction.StartTransaction;
           Query.ExecQuery;
+          Query.Close;
           Query.Transaction.Commit;
         end;
         Result := True;
@@ -581,6 +589,7 @@ begin
             try
               Query.Transaction.StartTransaction;
               Query.ExecQuery;
+              Query.Close;
               Query.Transaction.Commit;
               CustomersForm.dsCustomers.Refresh;
             except
@@ -593,6 +602,7 @@ begin
           Query.ParamByName('ACUSTOMER_ID').AsInteger := aCustomer_ID;
           Query.Transaction.StartTransaction;
           Query.ExecQuery;
+          Query.Close;
           Query.Transaction.Commit;
 
           if aService_TYPE = 0 then
@@ -917,7 +927,7 @@ var
 begin
   i := 0;
   pid := -1;
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       Database := dmMain.dbTV;
@@ -926,7 +936,7 @@ begin
       ParamByName('DS').AsDate := eDate.value;
       ParamByName('SID').AsInteger := luService.value;
 
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       Transaction.StartTransaction;
       ExecQuery;
       while not eof do
@@ -936,8 +946,10 @@ begin
         s := FN('PROMO_NAME').AsString;
         Next;
       end;
+      Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end
   end;
@@ -954,7 +966,7 @@ begin
   if pid <= 0 then
     exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       Database := dmMain.dbTV;
@@ -969,6 +981,7 @@ begin
       Transaction.StartTransaction;
       ExecQuery;
       i := FN('Result').AsInteger;
+      Close;
       Transaction.Commit;
     finally
       free;

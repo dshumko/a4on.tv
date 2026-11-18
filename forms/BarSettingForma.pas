@@ -9,7 +9,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
-  MemTableDataEh, MemTableEh, GridsEh, DBGridEh, FIBQuery, pFIBQuery, OkCancel_frame, ToolCtrlsEh, DBGridEhToolCtrls,
+  MemTableDataEh, MemTableEh, GridsEh, DBGridEh, FIBQuery, OkCancel_frame, ToolCtrlsEh, DBGridEhToolCtrls,
   DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
@@ -99,10 +99,10 @@ begin
   case fCodeType of
     0 : edTest.Text := DMMAIN.GenerateBarCodeFromFormat(format,'1', 100.5, 1, 'ЛЕНИНА','1','1','ШУМКО ДМИТРИЙ ГЕОГРИЕВИЧ');
     1 : begin
-        with TpFIBQuery.Create(Nil) do
+        with TFIBQuery.Create(Nil) do
         try
           DataBase :=dmMain.dbTV;
-          Transaction := dmMain.trReadQ;
+          Transaction := dmMain.GetTransactionForRead;
           SQL.Text:='select first 1 h.house_id, c.flat_no from house h inner join customer c on (c.house_id = h.house_id)';
           Transaction.StartTransaction;
           ExecQuery;
@@ -116,6 +116,7 @@ begin
           Close;
           Transaction.Commit;
         finally
+          if assigned(Transaction) then Transaction.Free;
           Free;
         end;
         edTest.Text := DMMAIN.GenerateDogNumberFromFormat(format,i,s,-1);
@@ -218,7 +219,7 @@ end;
 
 procedure TBarSettingForm.tbSrvDeleteClick(Sender: TObject);
 begin
-  if MessageDlg(rsDeleteParam,  mtConfirmation, [mbYes, mbNo], 0) = mrYes then mdFormat.Delete;
+  if MessageDlg(rsDeleteParam, mtConfirmation, [mbYes, mbNo], 0) = mrYes then mdFormat.Delete;
 end;
 
 procedure TBarSettingForm.tbSrvEditClick(Sender: TObject);

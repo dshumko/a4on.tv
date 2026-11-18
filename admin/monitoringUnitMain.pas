@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Grids, Vcl.DBCtrls, Vcl.ComCtrls, Vcl.Menus,
-  DBGridEh, GridsEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, SynEditHighlighter, SynHighlighterSQL, SynEdit,
+  DBGridEh, GridsEh, FIBDataSet, FIBDatabase, SynEditHighlighter, SynHighlighterSQL, SynEdit,
   SynDBEdit, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
@@ -17,13 +17,13 @@ type
     dsAttachments: TDataSource;
     dsTransactions: TDataSource;
     dsTransactionsStatments: TDataSource;
-    qrAttachments: TpFIBDataSet;
-    trAttachments: TpFIBTransaction;
-    trR: TpFIBTransaction;
-    trR2: TpFIBTransaction;
-    qrTransactions: TpFIBDataSet;
-    qrTransactionsStatments: TpFIBDataSet;
-    trWriteQ: TpFIBTransaction;
+    qrAttachments: TFIBDataSet;
+    trAttachments: TFIBTransaction;
+    trR: TFIBTransaction;
+    trR2: TFIBTransaction;
+    qrTransactions: TFIBDataSet;
+    qrTransactionsStatments: TFIBDataSet;
+    trWriteQ: TFIBTransaction;
     Panel3: TPanel;
     Splitter2: TSplitter;
     DBGridEh2: TDBGridEh;

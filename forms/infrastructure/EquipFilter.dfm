@@ -572,7 +572,7 @@ object EquipFilterForm: TEquipFilterForm
     Left = 221
     Top = 296
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -591,7 +591,7 @@ object EquipFilterForm: TEquipFilterForm
     Left = 369
     Top = 302
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    h.HOUSE_ID'
@@ -618,7 +618,7 @@ object EquipFilterForm: TEquipFilterForm
     Left = 350
     Top = 232
   end
-  object dsSubArea: TpFIBDataSet
+  object dsSubArea: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.subarea_id, s.subarea_name, a.area_name'
       'FROM subarea s left outer join area a on (a.area_id = s.area_id)'
@@ -661,7 +661,7 @@ object EquipFilterForm: TEquipFilterForm
       OnExecute = actClearExecute
     end
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'
@@ -679,7 +679,7 @@ object EquipFilterForm: TEquipFilterForm
     Left = 494
     Top = 245
   end
-  object dsNodes: TpFIBDataSet
+  object dsNodes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    n.Node_Id'

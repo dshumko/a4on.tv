@@ -512,7 +512,7 @@ object ChanForSrcForm: TChanForSrcForm
       Visible = True
     end
   end
-  object dsChForSrc: TpFIBDataSet
+  object dsChForSrc: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Channel_Src_Param_Iu(:Csp_Id, :Cs_Id, :Ch_Id, ' +
@@ -561,7 +561,7 @@ object ChanForSrcForm: TChanForSrcForm
     Left = 216
     Top = 18
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -578,7 +578,7 @@ object ChanForSrcForm: TChanForSrcForm
     Left = 224
     Top = 120
   end
-  object dsSYSTEM: TpFIBDataSet
+  object dsSYSTEM: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       ' o.O_Id'
@@ -597,7 +597,7 @@ object ChanForSrcForm: TChanForSrcForm
     Left = 376
     Top = 200
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -609,7 +609,7 @@ object ChanForSrcForm: TChanForSrcForm
     Left = 246
     Top = 243
   end
-  object dsChan: TpFIBDataSet
+  object dsChan: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.Ch_Id'
@@ -633,7 +633,7 @@ object ChanForSrcForm: TChanForSrcForm
     Left = 376
     Top = 144
   end
-  object dsCODEC: TpFIBDataSet
+  object dsCODEC: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       ' o.O_Id'
@@ -653,7 +653,7 @@ object ChanForSrcForm: TChanForSrcForm
     Left = 376
     Top = 256
   end
-  object dsCrypt: TpFIBDataSet
+  object dsCrypt: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       ' o.O_Id'
@@ -668,7 +668,7 @@ object ChanForSrcForm: TChanForSrcForm
     Left = 311
     Top = 257
   end
-  object dsCard: TpFIBDataSet
+  object dsCard: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'

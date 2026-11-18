@@ -1202,9 +1202,9 @@ procedure TFormTetris.TimerFPSTimer(Sender: TObject);
     ScrBitmap.Canvas.TextOut(x1 + 16, y1 + 8, txt);
 
     ScrBitmap.Canvas.Font.Size := 12;
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 40,  'ESC    - Закрыть игру');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 60,  'ENTER  - Старт/Рестарт игры');
-    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 80,  'DEL    - захват фигуры');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 40, 'ESC    - Закрыть игру');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 60, 'ENTER  - Старт/Рестарт игры');
+    ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 80, 'DEL    - захват фигуры');
     ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 100, 'PAUSE  - Пауза/Продолжить');
     ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 120, 'Вверх  - поворот фигуры');
     ScrBitmap.Canvas.TextOut(x1 + 8, y1 + 140, 'Вниз   - опустить фигуру');

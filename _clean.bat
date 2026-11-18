@@ -36,6 +36,7 @@ del /S %1*.cesettings%2%3%4
 del /S %1*.stat%2%3%4
 del /S %1*.identcache%2%3%4
 del /S %1*.local%2%3%4
+del /S %1*.bak%2%3%4
 
 for /r . %%a in (__history\) do @if exist "%%a" rd /s /q "%%a"
 for /r . %%a in (__recovery\) do @if exist "%%a" rd /s /q "%%a"

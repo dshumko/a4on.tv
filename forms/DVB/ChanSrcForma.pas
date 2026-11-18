@@ -8,15 +8,15 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtDlgs,
-  FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages, CnErrorProvider, DBGridEh, DBLookupEh;
+  FIBDataSet, OkCancel_frame, FIBDatabase, DBCtrlsEh, uDBImages, CnErrorProvider, DBGridEh, DBLookupEh;
 
 type
 
   TChanSrcForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
-    dsSource: TpFIBDataSet;
+    dsSource: TFIBDataSet;
     srcSource: TDataSource;
-    trWrite: TpFIBTransaction;
+    trWrite: TFIBTransaction;
     edtNAME: TDBEditEh;
     Label1: TLabel;
     cnError: TCnErrorProvider;

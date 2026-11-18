@@ -8,14 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
-  GridForma, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  GridForma, GridsEh, DBGridEh, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh, amSplitter, PrnDbgeh, CnClasses;
 
 type
   TRecoursesTPLForm = class(TGridForm)
-    dsType: TpFIBDataSet;
-    dsTPL: TpFIBDataSet;
+    dsType: TFIBDataSet;
+    dsTPL: TFIBDataSet;
     srcTPL: TDataSource;
     actTPLFilter: TAction;
     spl1: TSplitter;
@@ -56,7 +56,7 @@ type
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;
-    dsResult: TpFIBDataSet;
+    dsResult: TFIBDataSet;
     srcResult: TDataSource;
     actAddRes: TAction;
     actEditRes: TAction;

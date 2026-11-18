@@ -8,16 +8,16 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
   Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, MemTableDataEh, DataDriverEh,
-  pFIBDataDriverEh,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, FIBQuery, MemTableDataEh, DataDriverEh,
+  FIBDataDriverEh,
   MemTableEh, Vcl.Grids, Vcl.DBGrids;
 
 type
   TapgNodeMaterials = class(TA4onPage)
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     ActList: TActionList;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
@@ -26,7 +26,7 @@ type
     actDel: TAction;
     btnFind: TSpeedButton;
     actFind: TAction;
-    dsEquipment: TpFIBDataSet;
+    dsEquipment: TFIBDataSet;
     srcEquipment: TDataSource;
     dbgEquip: TDBGridEh;
     procedure actDelExecute(Sender: TObject);

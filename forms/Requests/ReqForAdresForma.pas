@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEhGrouping, DynVarsEh,
+  FIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEhGrouping, DynVarsEh,
   EhLibVCL;
 
 type
   TReqForAdresForm = class(TForm)
     pnlTime: TPanel;
     dbgSame: TDBGridEh;
-    dsSame: TpFIBDataSet;
+    dsSame: TFIBDataSet;
     srcSame: TDataSource;
     Panel1: TPanel;
     rgShowAs: TRadioGroup;

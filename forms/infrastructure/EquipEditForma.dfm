@@ -194,6 +194,9 @@ object EquipEditForm: TEquipEditForm
             FieldName = 'IP_END'
             Title.Caption = 'IP '#1076#1086
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EditButtons = <>
         KeyField = 'V_ID'
@@ -569,6 +572,7 @@ object EquipEditForm: TEquipEditForm
         end>
       DropDownBox.ListSource = srcStreet
       DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1059#1083#1080#1094#1072
@@ -597,6 +601,9 @@ object EquipEditForm: TEquipEditForm
           FieldName = 'Subarea_Name'
           Width = 45
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       DropDownBox.Width = 200
       EmptyDataInfo.Text = #1044#1086#1084
@@ -699,6 +706,9 @@ object EquipEditForm: TEquipEditForm
         item
           FieldName = 'ADRES'
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EditButtons = <>
       KeyField = 'EID'
@@ -742,6 +752,7 @@ object EquipEditForm: TEquipEditForm
         end>
       DropDownBox.ListSource = srcNODE
       DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
@@ -777,6 +788,7 @@ object EquipEditForm: TEquipEditForm
         end>
       DropDownBox.ListSource = srcEQtype
       DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1058#1080#1087' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
@@ -891,6 +903,9 @@ object EquipEditForm: TEquipEditForm
           FieldName = 'O_DESCRIPTION'
           Title.Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1043#1088#1091#1087#1087#1072' '#1086#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1103
       EditButtons = <>
@@ -960,7 +975,7 @@ object EquipEditForm: TEquipEditForm
     Left = 264
     Top = 126
   end
-  object dsVlans: TpFIBDataSet
+  object dsVlans: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -1012,7 +1027,7 @@ object EquipEditForm: TEquipEditForm
     Left = 277
     Top = 133
   end
-  object dsEQGroups: TpFIBDataSet
+  object dsEQGroups: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -1041,7 +1056,7 @@ object EquipEditForm: TEquipEditForm
     Left = 208
     Top = 179
   end
-  object dsEquipment: TpFIBDataSet
+  object dsEquipment: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EQUIPMENT'
       'SET '
@@ -1163,7 +1178,7 @@ object EquipEditForm: TEquipEditForm
     Left = 320
     Top = 170
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.street_id'
@@ -1185,7 +1200,7 @@ object EquipEditForm: TEquipEditForm
     Left = 120
     Top = 119
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    h.HOUSE_ID'
@@ -1214,7 +1229,7 @@ object EquipEditForm: TEquipEditForm
     Left = 157
     Top = 162
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1226,7 +1241,7 @@ object EquipEditForm: TEquipEditForm
     Left = 325
     Top = 221
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -1253,7 +1268,7 @@ object EquipEditForm: TEquipEditForm
       OnExecute = actExitExecute
     end
   end
-  object dsParent: TpFIBDataSet
+  object dsParent: TFIBDataSet
     SelectSQL.Strings = (
       
         'select e.eid, e.name, s.street_name|| '#39' '#39'||s.street_short||'#39' '#39'||' +
@@ -1285,7 +1300,7 @@ object EquipEditForm: TEquipEditForm
     Left = 149
     Top = 274
   end
-  object dsNode: TpFIBDataSet
+  object dsNode: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    N.Node_Id'
@@ -1317,7 +1332,7 @@ object EquipEditForm: TEquipEditForm
     Left = 87
     Top = 273
   end
-  object dsEQtype: TpFIBDataSet
+  object dsEQtype: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    et.O_Id'

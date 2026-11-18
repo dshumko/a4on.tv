@@ -109,7 +109,7 @@ object frmSelectFilter: TfrmSelectFilter
       OnEnter = cbFilterEnter
     end
   end
-  object dsFilter: TpFIBDataSet
+  object dsFilter: TFIBDataSet
     DeleteSQL.Strings = (
       'execute block ('
       '    filter_type_id D_Integer = :filter_type_id,'

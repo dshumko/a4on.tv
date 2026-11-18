@@ -10,7 +10,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.CheckLst, Vcl.ExtCtrls, Vcl.ComCtrls,
   Vcl.Samples.Spin, Vcl.OleCtrls, Vcl.Menus, Vcl.ActnList,
   GMMap, GMLinkedComponents, GMInfoWindow, GMClasses, GMMapVCL, GMConstants, GMMarker, GMMarkerVCL, GMPolyline, GMPolylineVCL,
-  GMGeoCode, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
+  GMGeoCode, FIBDatabase, FIBQuery,
   SHDocVw,
   System.TimeSpan,
   PropFilerEh, PropStorageEh;
@@ -28,10 +28,10 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     miGeoCode: TMenuItem;
-    qWrite: TpFIBQuery;
-    qRead: TpFIBQuery;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    qWrite: TFIBQuery;
+    qRead: TFIBQuery;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     miBid: TMenuItem;
     actlst: TActionList;
     actShowBid: TAction;
@@ -208,24 +208,15 @@ procedure TMapForm.DoMap;
 var
   AppIni: TIniFile;
   s: string;
-  lat, lng: Real;
-  vz: integer;
 begin
-  lat := 52.1;
-  lng := 23.7;
-  vz := 14;
   s := 'mtOSM';
 
   AppIni := TIniFile.Create(A4MainForm.GetIniFileName);
   try
-    lat := AppIni.ReadFloat('MAP', 'LAT', lat);
-    lng := AppIni.ReadFloat('MAP', 'LNG', lng);
-    vz := AppIni.ReadInteger('MAP', 'ZOOM', vz);
     s := AppIni.ReadString('MAP', 'TYPE', 'mtOSM');
   finally
     FreeAndNil(AppIni);
   end;
-
 end;
 
 procedure TMapForm.FormClose(Sender: TObject; var Action: TCloseAction);
@@ -267,7 +258,7 @@ end;
 procedure TMapForm.ShowBids;
 var
   s: string;
-  m: TMarker;
+//  m: TMarker;
 begin
   // покажем заявки
   if qRead.Open then
@@ -318,7 +309,7 @@ end;
 procedure TMapForm.ShowLastPosition;
 var
   s: string;
-  m: TMarker;
+  //m: TMarker;
 begin
   // покажем заявки
   if qRead.Open then

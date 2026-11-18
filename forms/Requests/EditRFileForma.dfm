@@ -102,7 +102,7 @@ object EditRFileForm: TEditRFileForm
     Left = 216
     Top = 56
   end
-  object qryFile: TpFIBQuery
+  object qryFile: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

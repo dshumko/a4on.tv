@@ -130,16 +130,14 @@ object apgCustomerEdit: TapgCustomerEdit
           Action = actMakeCall
           Align = alClient
           Flat = True
-          ExplicitWidth = 258
         end
         object Label14: TLabel
           Left = 102
           Top = 0
           Width = 21
-          Height = 18
+          Height = 13
           Align = alLeft
           Caption = '       '
-          ExplicitHeight = 13
         end
         object btnCAdd: TSpeedButton
           Left = 66
@@ -212,17 +210,14 @@ object apgCustomerEdit: TapgCustomerEdit
             D9FF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF
             00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FFFF00FF}
           OnClick = btnCdelClick
-          ExplicitLeft = 382
-          ExplicitTop = -3
         end
         object Label20: TLabel
           Left = 355
           Top = 0
           Width = 21
-          Height = 18
+          Height = 13
           Align = alRight
           Caption = '       '
-          ExplicitHeight = 13
         end
         object btnCEdit: TSpeedButton
           Left = 84
@@ -496,6 +491,9 @@ object apgCustomerEdit: TapgCustomerEdit
         DynProps = <>
         DataField = 'MANAGER_ID'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         EditButtons = <>
         KeyField = 'WORKER_ID'
         ListField = 'FIO'
@@ -593,6 +591,9 @@ object apgCustomerEdit: TapgCustomerEdit
             FieldName = 'AREA_NAME'
             Title.Caption = #1043#1086#1088#1086#1076
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
@@ -628,6 +629,9 @@ object apgCustomerEdit: TapgCustomerEdit
             FieldName = 'Subarea_Name'
             Width = 40
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 200
         EmptyDataInfo.Text = #1044#1086#1084
@@ -972,6 +976,9 @@ object apgCustomerEdit: TapgCustomerEdit
         DynProps = <>
         DataField = 'DocType'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
         EditButtons = <>
@@ -1012,7 +1019,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1059#1053#1055
-        ExplicitLeft = 259
       end
       object Label17: TLabel
         Tag = 2
@@ -1022,7 +1028,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1041#1091#1093#1075#1072#1083#1090#1077#1088
-        ExplicitLeft = 219
       end
       object lbl4: TLabel
         Tag = 1
@@ -1039,7 +1044,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1043#1088#1091#1087#1087#1072' '#1053#1044#1057
-        ExplicitLeft = 369
       end
       object Label16: TLabel
         Tag = 2
@@ -1073,7 +1077,6 @@ object apgCustomerEdit: TapgCustomerEdit
         Height = 13
         Anchors = [akTop, akRight]
         Caption = #1060#1086#1088#1084#1072
-        ExplicitLeft = 199
       end
       object Label15: TLabel
         Tag = 2
@@ -1155,6 +1158,9 @@ object apgCustomerEdit: TapgCustomerEdit
         DynProps = <>
         DataField = 'VATG_ID'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EditButtons = <>
         KeyField = 'O_ID'
@@ -1243,6 +1249,7 @@ object apgCustomerEdit: TapgCustomerEdit
         DropDownBox.ListSource = srcBanks
         DropDownBox.ListSourceAutoFilter = True
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1073#1072#1085#1082' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1080
@@ -1346,6 +1353,9 @@ object apgCustomerEdit: TapgCustomerEdit
         DynProps = <>
         DataField = 'ORG_ID'
         DataSource = ds
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1054#1073#1089#1083#1091#1097#1080#1074#1072#1102#1097#1072#1103' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103
         EditButtons = <>
@@ -1401,7 +1411,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 515
     Top = 164
   end
-  object dsOrg: TpFIBDataSet
+  object dsOrg: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -1462,7 +1472,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 506
     Top = 275
   end
-  object dsVATG: TpFIBDataSet
+  object dsVATG: TFIBDataSet
     SelectSQL.Strings = (
       'select o.o_name, o.O_id'
       'from objects o'
@@ -1485,7 +1495,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 566
     Top = 348
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -1498,7 +1508,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 678
     Top = 332
   end
-  object dsHouses: TpFIBDataSet
+  object dsHouses: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '    H.HOUSE_ID'
@@ -1525,7 +1535,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 626
     Top = 342
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1551,7 +1561,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 568
     Top = 237
   end
-  object dsExecutor: TpFIBDataSet
+  object dsExecutor: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       
@@ -1568,7 +1578,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 565
     Top = 222
   end
-  object dsContacts: TpFIBDataSet
+  object dsContacts: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Customer_Contacts_Iu(:Customer_Id, :Cc_Value, ' +
@@ -1633,7 +1643,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 360
     Top = 152
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1645,7 +1655,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 700
     Top = 58
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1657,7 +1667,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 744
     Top = 58
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1702,7 +1712,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 656
     Top = 478
   end
-  object dsBANKS: TpFIBDataSet
+  object dsBANKS: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -1719,7 +1729,7 @@ object apgCustomerEdit: TapgCustomerEdit
     Left = 657
     Top = 525
   end
-  object dsDocType: TpFIBDataSet
+  object dsDocType: TFIBDataSet
     SelectSQL.Strings = (
       'select o.o_name, o.O_id, o.O_CHECK'
       'from objects o'

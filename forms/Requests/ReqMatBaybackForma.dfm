@@ -137,7 +137,7 @@ object ReqMatBaybackForm: TReqMatBaybackForm
     Left = 267
     Top = 93
   end
-  object dsReqMaterials: TpFIBDataSet
+  object dsReqMaterials: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     InsertSQL.Strings = (

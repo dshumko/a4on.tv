@@ -8,12 +8,12 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   DBCtrlsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   TNewsForm = class(TGridForm)
-    dsNews: TpFIBDataSet;
+    dsNews: TFIBDataSet;
     Label1: TLabel;
     Label2: TLabel;
     dbeName: TDBEditEh;

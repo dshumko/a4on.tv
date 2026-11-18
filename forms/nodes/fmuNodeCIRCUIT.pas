@@ -7,13 +7,13 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Menus,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, DBCtrlsEh;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, FIBQuery, DBCtrlsEh;
 
 type
   TapgNodeCIRCUIT = class(TA4onPage)
-    dsCircuit: TpFIBDataSet;
+    dsCircuit: TFIBDataSet;
     srcCircuit: TDataSource;
     tbAttributes: TToolBar;
     btnEdit: TToolButton;
@@ -22,8 +22,8 @@ type
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     btnView: TToolButton;
     btn1: TToolButton;
     actView: TAction;

@@ -347,7 +347,7 @@ object ReqWorkForm: TReqWorkForm
     Left = 32
     Top = 286
   end
-  object dsWork: TpFIBDataSet
+  object dsWork: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE WORKS'
       'SET '
@@ -429,7 +429,7 @@ object ReqWorkForm: TReqWorkForm
     Left = 29
     Top = 265
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -441,7 +441,7 @@ object ReqWorkForm: TReqWorkForm
     Left = 364
     Top = 256
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -453,7 +453,7 @@ object ReqWorkForm: TReqWorkForm
     Left = 405
     Top = 260
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -483,7 +483,7 @@ object ReqWorkForm: TReqWorkForm
     Left = 218
     Top = 68
   end
-  object dsService: TpFIBDataSet
+  object dsService: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.SERVICE_ID'
@@ -527,7 +527,7 @@ object ReqWorkForm: TReqWorkForm
     Left = 192
     Top = 266
   end
-  object dsOnOffService: TpFIBDataSet
+  object dsOnOffService: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    s.SERVICE_ID'
@@ -560,7 +560,7 @@ object ReqWorkForm: TReqWorkForm
     Left = 193
     Top = 289
   end
-  object dsServiceON: TpFIBDataSet
+  object dsServiceON: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    S.Service_Id'

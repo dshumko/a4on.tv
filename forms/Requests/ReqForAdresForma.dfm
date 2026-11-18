@@ -219,7 +219,7 @@ object ReqForAdresForm: TReqForAdresForm
       OnClick = rbADRSClick
     end
   end
-  object dsSame: TpFIBDataSet
+  object dsSame: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure request_add_executors (:rq_id, :worker_id,:SEL' +

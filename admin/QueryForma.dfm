@@ -225,7 +225,7 @@ object QueryForm: TQueryForm
     Left = 264
     Top = 144
   end
-  object transaction: TpFIBTransaction
+  object transaction: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     Left = 96
@@ -243,7 +243,7 @@ object QueryForm: TQueryForm
     Left = 168
     Top = 176
   end
-  object FIBScript: TpFIBScripter
+  object FIBScript: TFIBScripter
     Database = dmMain.dbTV
     Transaction = trMetaData
     OnExecuteError = FIBScriptExecuteError
@@ -255,7 +255,7 @@ object QueryForm: TQueryForm
     Left = 368
     Top = 48
   end
-  object DataSet: TpFIBDataSet
+  object DataSet: TFIBDataSet
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     AutoCommit = True
@@ -301,7 +301,7 @@ object QueryForm: TQueryForm
       Action = A4MainForm.EditSelectAll1
     end
   end
-  object trMetaData: TpFIBTransaction
+  object trMetaData: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

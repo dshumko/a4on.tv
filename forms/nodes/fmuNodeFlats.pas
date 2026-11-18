@@ -7,29 +7,30 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, FIBQuery,
   Vcl.Buttons, Vcl.ExtCtrls;
 
 type
   TapgNodeFlats = class(TA4onPage)
-    dsFlats: TpFIBDataSet;
+    dsFlats: TFIBDataSet;
     srcFlats: TDataSource;
     dbgNodeFiles: TDBGridEh;
     ActList: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    qRead: TpFIBQuery;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    qRead: TFIBQuery;
     actView: TAction;
     actCustomers: TAction;
     pnlButtons: TPanel;
     btnAdd1: TSpeedButton;
     btnFind: TSpeedButton;
     actOpenFlat: TAction;
+    trReadQ: TFIBTransaction;
     procedure actEditExecute(Sender: TObject);
     procedure dbgNodeFilesDblClick(Sender: TObject);
     procedure actCustomersExecute(Sender: TObject);
@@ -175,13 +176,13 @@ var
   s: string;
   Grid: TCustomDBGridEh;
   id: String;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   Grid := TCustomDBGridEh(Sender);
-  FIBDS := Grid.DataSource.DataSet as TpFIBDataSet;
+  FIBDS := Grid.DataSource.DataSet as TFIBDataSet;
   id := '';
   if Sender is TCustomDBGridEh then
   begin

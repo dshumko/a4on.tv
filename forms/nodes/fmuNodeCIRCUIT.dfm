@@ -66,7 +66,7 @@ object apgNodeCIRCUIT: TapgNodeCIRCUIT
     TabOrder = 1
     OnDblClick = imgPNGDblClick
   end
-  object dsCircuit: TpFIBDataSet
+  object dsCircuit: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSE_CIRCUIT'
       'SET '
@@ -155,7 +155,7 @@ object apgNodeCIRCUIT: TapgNodeCIRCUIT
       OnExecute = actViewExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -167,7 +167,7 @@ object apgNodeCIRCUIT: TapgNodeCIRCUIT
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

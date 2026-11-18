@@ -150,7 +150,7 @@ object DVBGanresForm: TDVBGanresForm
       end
     end
   end
-  object dsGenres: TpFIBDataSet
+  object dsGenres: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    Genre_Id, Genre||'#39'. '#39'||Subgenre as NAME'
@@ -162,7 +162,7 @@ object DVBGanresForm: TDVBGanresForm
     Left = 105
     Top = 161
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 181
     Top = 161

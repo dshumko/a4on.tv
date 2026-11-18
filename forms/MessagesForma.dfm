@@ -447,6 +447,9 @@ object MessagesForm: TMessagesForm
           Height = 21
           DynProps = <>
           DataField = ''
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           EmptyDataInfo.Text = #1058#1080#1087' '#1089#1086#1086#1073#1097#1077#1085#1080#1103
           EditButtons = <>
           KeyField = 'O_NAME'
@@ -501,7 +504,7 @@ object MessagesForm: TMessagesForm
         object lblSMScount: TLabel
           Left = 0
           Top = 25
-          Width = 825
+          Width = 3
           Height = 13
           Align = alTop
         end
@@ -662,7 +665,7 @@ object MessagesForm: TMessagesForm
       Action = actAnswer
     end
   end
-  object dsMessages: TpFIBDataSet
+  object dsMessages: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MESSAGES'
       'SET '
@@ -871,7 +874,7 @@ object MessagesForm: TMessagesForm
     Left = 378
     Top = 135
   end
-  object drvMessages: TpFIBDataDriverEh
+  object drvMessages: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -965,7 +968,7 @@ object MessagesForm: TMessagesForm
     Left = 168
     Top = 296
   end
-  object dsMessType: TpFIBDataSet
+  object dsMessType: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT O_ID, O_NAME, O_NAME||coalesce('#39' '#39'||O_Description,'#39#39') NAM' +

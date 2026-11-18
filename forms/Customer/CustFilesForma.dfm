@@ -477,7 +477,7 @@ object CustFilesForm: TCustFilesForm
       OnClick = ppmSaveSelectionClick
     end
   end
-  object dsFiles: TpFIBDataSet
+  object dsFiles: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_FILES'
       'SET '
@@ -678,7 +678,7 @@ object CustFilesForm: TCustFilesForm
       OnClick = miAbonentClick
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -689,7 +689,7 @@ object CustFilesForm: TCustFilesForm
     Left = 709
     Top = 147
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -700,7 +700,7 @@ object CustFilesForm: TCustFilesForm
     Left = 763
     Top = 151
   end
-  object dsFileType: TpFIBDataSet
+  object dsFileType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED'
       'FROM OBJECTS'
@@ -720,12 +720,24 @@ object CustFilesForm: TCustFilesForm
     Left = 512
     Top = 400
   end
-  object qRead: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qRead: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Content from Customer_Files where Cf_Id = :Cf_Id')
     Left = 656
+    Top = 360
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 720
     Top = 360
   end
 end

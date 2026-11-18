@@ -166,7 +166,7 @@ object CustomerForm: TCustomerForm
       TabOrder = 0
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -176,7 +176,7 @@ object CustomerForm: TCustomerForm
     Left = 296
     Top = 32
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -187,7 +187,7 @@ object CustomerForm: TCustomerForm
     Left = 381
     Top = 41
   end
-  object dsCustomer: TpFIBDataSet
+  object dsCustomer: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER'
       'SET '
@@ -418,19 +418,6 @@ object CustomerForm: TCustomerForm
     DataSet = dsCustomer
     Left = 196
     Top = 106
-  end
-  object Query: TpFIBQuery
-    Transaction = dmMain.trReadQ
-    Database = dmMain.dbTV
-    SQL.Strings = (
-      'select'
-      'C.Account_No, C.Surname, C.Firstname, C.Midlename, '
-      'c.Cust_Code, c.CUST_STATE_DESCR, c.DEBT_SUM'
-      'FROM CUSTOMER C'
-      '@filter'
-      '')
-    Left = 218
-    Top = 37
   end
   object actions: TActionList
     Images = A4MainForm.ICONS_ACTIVE

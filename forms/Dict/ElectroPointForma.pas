@@ -9,23 +9,23 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider, amSplitter,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
   PrnDbgeh, DBLookupEh, PropFilerEh, PropStorageEh, CnClasses;
 
 type
   TElectroPointForm = class(TGridForm)
-    dsElectroPoint: TpFIBDataSet;
+    dsElectroPoint: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
     dbmmoO_DESCRIPTION: TDBMemoEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     lcbEpoint: TDBLookupComboboxEh;
     lbl21: TLabel;
-    dsERecipient: TpFIBDataSet;
+    dsERecipient: TFIBDataSet;
     srcERecipient: TDataSource;
     pgcInfo: TPageControl;
     tsCoverage: TTabSheet;
@@ -35,9 +35,9 @@ type
     actHEdit: TAction;
     actHDel: TAction;
     srcHistory: TDataSource;
-    dsHistory: TpFIBDataSet;
+    dsHistory: TFIBDataSet;
     srcNodes: TDataSource;
-    dsNodes: TpFIBDataSet;
+    dsNodes: TFIBDataSet;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
@@ -77,14 +77,14 @@ type
     pnlNodePCE: TPanel;
     dbgNPce: TDBGridEh;
     lbl4: TLabel;
-    dsNodePce: TpFIBDataSet;
+    dsNodePce: TFIBDataSet;
     srcNodePce: TDataSource;
     spl2: TSplitter;
     actLockPeriod: TAction;
     miLockPeriod: TMenuItem;
     lbl211: TLabel;
     lcbTarif: TDBLookupComboboxEh;
-    dsTarif: TpFIBDataSet;
+    dsTarif: TFIBDataSet;
     srcTarif: TDataSource;
     tsAttr: TTabSheet;
     Panel2: TPanel;
@@ -98,7 +98,7 @@ type
     actAEdit: TAction;
     actADel: TAction;
     btnADel: TSpeedButton;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

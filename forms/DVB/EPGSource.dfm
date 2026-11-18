@@ -481,7 +481,7 @@ object EPGSourceForm: TEPGSourceForm
       Visible = True
     end
   end
-  object dsChennals: TpFIBDataSet
+  object dsChennals: TFIBDataSet
     SelectSQL.Strings = (
       'select c.ch_id, c.ch_name, c.ch_notice from channels c'
       'order by c.ch_name')
@@ -490,7 +490,7 @@ object EPGSourceForm: TEPGSourceForm
     Left = 109
     Top = 275
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -591,7 +591,7 @@ object EPGSourceForm: TEPGSourceForm
       end
     end
   end
-  object dsSource: TpFIBDataSet
+  object dsSource: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EPG_SOURCES'
       'SET '
@@ -652,7 +652,7 @@ object EPGSourceForm: TEPGSourceForm
     Left = 36
     Top = 269
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -668,7 +668,7 @@ object EPGSourceForm: TEPGSourceForm
     Left = 35
     Top = 325
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trWriteQ
     Database = dmMain.dbTV
     Left = 35
@@ -680,7 +680,7 @@ object EPGSourceForm: TEPGSourceForm
     Left = 98
     Top = 212
   end
-  object dsGenre: TpFIBDataSet
+  object dsGenre: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    Genre_ID,'
@@ -760,7 +760,7 @@ object EPGSourceForm: TEPGSourceForm
       OnClick = miClearClick
     end
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

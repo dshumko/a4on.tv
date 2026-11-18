@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, DBGridEh;
 
 type
   TPayDocSelectForm = class(TForm)
     pnlBTNS: TPanel;
     Panel1: TPanel;
     srcPaymentDocs: TDataSource;
-    dsPaymentDocs: TpFIBDataSet;
+    dsPaymentDocs: TFIBDataSet;
     pnlPayDoc: TPanel;
     dbluPayDoc: TDBLookupComboboxEh;
     bbOk: TBitBtn;

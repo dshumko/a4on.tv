@@ -12,14 +12,12 @@ object ScripEditorForm: TScripEditorForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
   Position = poDefault
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter1: TSplitter
     Left = 0
@@ -80,12 +78,11 @@ object ScripEditorForm: TScripEditorForm
       object lbl1: TLabel
         Left = 0
         Top = 0
-        Width = 139
+        Width = 101
         Height = 13
         Align = alTop
         Caption = #1059#1082#1072#1078#1080#1090#1077' '#1090#1080#1087' '#1092#1072#1081#1083#1072
         Transparent = False
-        ExplicitWidth = 101
       end
       object cbLanguage: TDBComboBoxEh
         Left = 0
@@ -110,7 +107,6 @@ object ScripEditorForm: TScripEditorForm
         TabOrder = 0
         Visible = True
         OnChange = cbLanguageChange
-        ExplicitHeight = 21
       end
     end
     object ToolButton3: TToolButton

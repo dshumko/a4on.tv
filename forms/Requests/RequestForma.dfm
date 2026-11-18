@@ -1459,7 +1459,7 @@ object RequestForm: TRequestForm
           308)
         object btnFileDel: TSpeedButton
           Left = 1
-          Top = 364
+          Top = 404
           Width = 22
           Height = 22
           Action = actFileDel
@@ -1552,7 +1552,7 @@ object RequestForm: TRequestForm
           308)
         object btnDel1: TSpeedButton
           Left = 2
-          Top = 364
+          Top = 404
           Width = 22
           Height = 22
           Action = actMSGDel
@@ -1771,7 +1771,7 @@ object RequestForm: TRequestForm
     Left = 520
     Top = 8
   end
-  object dsExecutor: TpFIBDataSet
+  object dsExecutor: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    re.rq_id'
@@ -1801,7 +1801,7 @@ object RequestForm: TRequestForm
     Left = 590
     Top = 80
   end
-  object dsRequest: TpFIBDataSet
+  object dsRequest: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST'
       'SET '
@@ -1817,7 +1817,7 @@ object RequestForm: TRequestForm
       '    HOUSE_ID = :HOUSE_ID,'
       '    FLAT_NO = :FLAT_NO,'
       '    Porch_N = :Porch_N,'
-      '    Floor_N = :Floor_N,        '
+      '    Floor_N = :Floor_N,       '
       '    PHONE = :PHONE,'
       '    RQ_EXEC_TIME = :RQ_EXEC_TIME,'
       '    REQ_RESULT   = :REQ_RESULT,'
@@ -1978,11 +1978,11 @@ object RequestForm: TRequestForm
     Left = 720
     Top = 8
   end
-  object dsRequestType: TpFIBDataSet
+  object dsRequestType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    W.*'
-      '    , coalesce(w.Rt_Color,  '#39'clWindow'#39') as COLOR'
+      '    , coalesce(w.Rt_Color, '#39'clWindow'#39') as COLOR'
       '  from REQUEST_TYPES W'
       '  where ('
       '    (coalesce(w.RT_DELETED, 0) = 0)'
@@ -2119,7 +2119,7 @@ object RequestForm: TRequestForm
     Left = 661
     Top = 86
   end
-  object dsErrors: TpFIBDataSet
+  object dsErrors: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    rt.RQTL_ID'
@@ -2145,7 +2145,7 @@ object RequestForm: TRequestForm
     Left = 586
     Top = 12
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.street_id, s.street_short,s.street_name, a.area_name'
       'FROM STREET s left outer join area a on (a.area_id = s.area_id)'
@@ -2161,7 +2161,7 @@ object RequestForm: TRequestForm
     Left = 730
     Top = 84
   end
-  object dsHouses: TpFIBDataSet
+  object dsHouses: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '  H.HOUSE_ID'
@@ -2196,7 +2196,7 @@ object RequestForm: TRequestForm
     Left = 730
     Top = 95
   end
-  object dsRequests: TpFIBDataSet
+  object dsRequests: TFIBDataSet
     RefreshSQL.Strings = (
       '')
     SelectSQL.Strings = (
@@ -2286,7 +2286,7 @@ object RequestForm: TRequestForm
     Left = 651
     Top = 12
   end
-  object dsResult: TpFIBDataSet
+  object dsResult: TFIBDataSet
     DeleteSQL.Strings = (
       'update REQUEST_RESULTS'
       'set deleted = 1'
@@ -2335,7 +2335,7 @@ object RequestForm: TRequestForm
     Variables = <>
     Style = <>
   end
-  object dsWorks: TpFIBDataSet
+  object dsWorks: TFIBDataSet
     DeleteSQL.Strings = (
       
         'execute procedure REQUEST_WORKS_IUD(:OLD_RQ_ID, :OLD_ID, null, n' +
@@ -2411,7 +2411,7 @@ object RequestForm: TRequestForm
     Left = 318
     Top = 376
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     DeleteSQL.Strings = (
       'execute block ('
       '    OLD_RM_ID UID = :OLD_RM_ID,'
@@ -2534,7 +2534,7 @@ object RequestForm: TRequestForm
     Left = 228
     Top = 468
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -2545,7 +2545,7 @@ object RequestForm: TRequestForm
     Left = 85
     Top = 403
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -2562,7 +2562,7 @@ object RequestForm: TRequestForm
     Left = 550
     Top = 160
   end
-  object dsPhotos: TpFIBDataSet
+  object dsPhotos: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST_PHOTOS'
       'SET '
@@ -2612,7 +2612,7 @@ object RequestForm: TRequestForm
       OnClick = miDelWorkClick
     end
   end
-  object dsMSG: TpFIBDataSet
+  object dsMSG: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST_MSG'
       'SET '
@@ -2697,7 +2697,7 @@ object RequestForm: TRequestForm
     Left = 674
     Top = 152
   end
-  object dsFlats: TpFIBDataSet
+  object dsFlats: TFIBDataSet
     UpdateSQL.Strings = (
       
         'update or insert into Request_Flats (Rq_Id, House_Id, Flat_No, F' +
@@ -2773,5 +2773,17 @@ object RequestForm: TRequestForm
   object SaveDialog: TSaveDialog
     Left = 592
     Top = 348
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 760
+    Top = 392
   end
 end

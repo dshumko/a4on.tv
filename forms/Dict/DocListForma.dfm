@@ -896,7 +896,7 @@ inherited DocListForm: TDocListForm
     Left = 264
     Top = 224
   end
-  object dsDOCS: TpFIBDataSet
+  object dsDOCS: TFIBDataSet
     UpdateSQL.Strings = (
       'update Doc_List'
       'set Doc_Type = :Doc_Type,'
@@ -967,7 +967,7 @@ inherited DocListForm: TDocListForm
     Left = 583
     Top = 212
   end
-  object dsHistory: TpFIBDataSet
+  object dsHistory: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    T.O_NAME'
@@ -1022,7 +1022,7 @@ inherited DocListForm: TDocListForm
     Left = 344
     Top = 352
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1042,7 +1042,7 @@ inherited DocListForm: TDocListForm
     Left = 130
     Top = 446
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1054,7 +1054,7 @@ inherited DocListForm: TDocListForm
     Left = 212
     Top = 444
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1066,7 +1066,7 @@ inherited DocListForm: TDocListForm
     Left = 302
     Top = 442
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1078,13 +1078,13 @@ inherited DocListForm: TDocListForm
     Left = 374
     Top = 450
   end
-  object qRead: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qRead: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Content from Customer_Files where Cf_Id = :Cf_Id')
-    Left = 456
-    Top = 480
+    Left = 448
+    Top = 448
   end
   object mmDoc: TMainMenu
     Left = 160

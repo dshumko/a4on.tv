@@ -381,7 +381,7 @@
     Left = 639
     Top = 128
   end
-  object dsRequestType: TpFIBDataSet
+  object dsRequestType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       ' W.*'
@@ -400,7 +400,7 @@
     Left = 643
     Top = 4
   end
-  object dsResult: TpFIBDataSet
+  object dsResult: TFIBDataSet
     DeleteSQL.Strings = (
       'update REQUEST_RESULTS'
       'set deleted = 1'

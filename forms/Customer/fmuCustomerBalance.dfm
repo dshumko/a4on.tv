@@ -187,7 +187,7 @@ object apgCustomerBalance: TapgCustomerBalance
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object dsBalance: TpFIBDataSet
+  object dsBalance: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    extract(YEAR FROM B_Month) RYAER'
@@ -214,7 +214,7 @@ object apgCustomerBalance: TapgCustomerBalance
     Left = 258
     Top = 42
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

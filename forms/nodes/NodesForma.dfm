@@ -40,7 +40,6 @@ object NodesForm: TNodesForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 4
-    ExplicitTop = 320
     object spl1: TSplitter
       Left = 128
       Top = 0
@@ -365,7 +364,6 @@ object NodesForm: TNodesForm
         OnEnter = edtSearchEnter
         OnExit = edtSearchExit
         OnKeyUp = edtSearchKeyUp
-        ExplicitHeight = 21
       end
       object chkFldOnly: TCheckBox
         Left = 46
@@ -536,6 +534,9 @@ object NodesForm: TNodesForm
           FieldName = 'AREA_NAME'
           Title.Caption = #1056#1072#1081#1086#1085
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.ShowTitles = True
       DropDownBox.Sizable = True
@@ -558,6 +559,9 @@ object NodesForm: TNodesForm
       Hint = #1044#1086#1084
       DynProps = <>
       DataField = ''
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1044#1086#1084
       EditButtons = <>
       Flat = True
@@ -776,6 +780,9 @@ object NodesForm: TNodesForm
           FieldName = 'O_DIMENSION'
           Width = 20
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1058#1080#1087' '#1091#1079#1083#1072
       EditButtons = <>
@@ -826,6 +833,9 @@ object NodesForm: TNodesForm
           Title.Caption = #1056#1072#1081#1086#1085
           Width = 60
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.ShowTitles = True
       DropDownBox.Sizable = True
@@ -848,6 +858,9 @@ object NodesForm: TNodesForm
       DynProps = <>
       DataField = 'HOUSE_ID'
       DataSource = srcNodes
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1044#1086#1084
@@ -997,6 +1010,9 @@ object NodesForm: TNodesForm
           Title.TitleButton = True
           Width = 40
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh, dlgAutoSortMarkingEh]
       DropDownBox.SortLocal = True
       DropDownBox.AutoDrop = True
@@ -1099,6 +1115,9 @@ object NodesForm: TNodesForm
           FieldName = 'O_DIMENSION'
           Width = 20
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1058#1080#1087' '#1082#1086#1084#1087#1086#1085#1086#1074#1082#1080
       EditButtons = <>
@@ -1110,7 +1129,7 @@ object NodesForm: TNodesForm
       Visible = True
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1122,7 +1141,7 @@ object NodesForm: TNodesForm
     Left = 149
     Top = 355
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -1133,7 +1152,7 @@ object NodesForm: TNodesForm
     Left = 147
     Top = 407
   end
-  object dsNodes: TpFIBDataSet
+  object dsNodes: TFIBDataSet
     UpdateSQL.Strings = (
       'update Nodes'
       'set House_Id = :House_Id,'
@@ -1698,7 +1717,7 @@ object NodesForm: TNodesForm
       end
     end
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       
@@ -1717,7 +1736,7 @@ object NodesForm: TNodesForm
     Left = 396
     Top = 475
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '    H.HOUSE_ID,'
@@ -1750,7 +1769,7 @@ object NodesForm: TNodesForm
     Left = 454
     Top = 472
   end
-  object dsNodeType: TpFIBDataSet
+  object dsNodeType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'
@@ -1766,7 +1785,7 @@ object NodesForm: TNodesForm
     Top = 488
     oFetchAll = True
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1778,7 +1797,7 @@ object NodesForm: TNodesForm
     Left = 557
     Top = 363
   end
-  object qCheck: TpFIBQuery
+  object qCheck: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     Left = 507
@@ -1786,7 +1805,7 @@ object NodesForm: TNodesForm
     qoAutoCommit = True
     qoStartTransaction = True
   end
-  object dsParentNode: TpFIBDataSet
+  object dsParentNode: TFIBDataSet
     RefreshSQL.Strings = (
       'select'
       '  n.*'
@@ -1833,7 +1852,7 @@ object NodesForm: TNodesForm
     oVisibleRecno = True
     oFetchAll = True
   end
-  object trReadParent: TpFIBTransaction
+  object trReadParent: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1871,7 +1890,7 @@ object NodesForm: TNodesForm
     Left = 207
     Top = 412
   end
-  object drvNodes: TpFIBDataDriverEh
+  object drvNodes: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -1883,7 +1902,7 @@ object NodesForm: TNodesForm
     Left = 266
     Top = 410
   end
-  object dsEPoint: TpFIBDataSet
+  object dsEPoint: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'
@@ -1906,7 +1925,7 @@ object NodesForm: TNodesForm
     Left = 590
     Top = 504
   end
-  object dsLayoutType: TpFIBDataSet
+  object dsLayoutType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'

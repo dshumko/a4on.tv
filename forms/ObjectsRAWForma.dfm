@@ -385,7 +385,7 @@ inherited ObjectsRAWForm: TObjectsRAWForm
     Left = 344
     Top = 288
   end
-  object dsObjects: TpFIBDataSet
+  object dsObjects: TFIBDataSet
     UpdateSQL.Strings = (
       'update Objects'
       'set O_Name = :O_Name,'
@@ -469,7 +469,7 @@ inherited ObjectsRAWForm: TObjectsRAWForm
     Left = 48
     Top = 296
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -481,7 +481,7 @@ inherited ObjectsRAWForm: TObjectsRAWForm
     Left = 40
     Top = 310
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -490,7 +490,7 @@ inherited ObjectsRAWForm: TObjectsRAWForm
     Left = 97
     Top = 304
   end
-  object dsObjType: TpFIBDataSet
+  object dsObjType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    Ot_Id'

@@ -13,13 +13,11 @@ object WirePointForm: TWirePointForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
@@ -30,10 +28,12 @@ object WirePointForm: TWirePointForm
     TabOrder = 1
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 64
@@ -101,6 +101,9 @@ object WirePointForm: TWirePointForm
         Anchors = [akLeft, akTop, akRight]
         DynProps = <>
         DataField = ''
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1044#1086#1084
@@ -134,6 +137,9 @@ object WirePointForm: TWirePointForm
             Title.Caption = #1056#1072#1081#1086#1085
             Width = 60
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
@@ -189,6 +195,7 @@ object WirePointForm: TWirePointForm
           end>
         DropDownBox.ListSource = srcNodes
         DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
         DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
         DropDownBox.AutoDrop = True
@@ -239,7 +246,7 @@ object WirePointForm: TWirePointForm
     Left = 360
     Top = 30
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -251,7 +258,7 @@ object WirePointForm: TWirePointForm
     Left = 291
     Top = 90
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -263,7 +270,7 @@ object WirePointForm: TWirePointForm
     Left = 291
     Top = 26
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -281,7 +288,7 @@ object WirePointForm: TWirePointForm
     Left = 149
     Top = 144
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT HOUSE_ID, STREET_ID, HOUSE_NO, Q_FLAT'
       'FROM HOUSE H'
@@ -305,7 +312,7 @@ object WirePointForm: TWirePointForm
     Left = 452
     Top = 142
   end
-  object dsNodes: TpFIBDataSet
+  object dsNodes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    N.Node_Id'

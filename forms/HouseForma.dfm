@@ -646,7 +646,7 @@ object HouseForm: THouseForm
       ExplicitHeight = 28
     end
   end
-  object dsSubAreas: TpFIBDataSet
+  object dsSubAreas: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -703,7 +703,7 @@ object HouseForm: THouseForm
     Left = 299
     Top = 181
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.street_id, s.street_short,s.street_name, a.area_name'
       'FROM STREET s left outer join area a on (a.area_id = s.area_id)'
@@ -719,7 +719,7 @@ object HouseForm: THouseForm
     Left = 285
     Top = 127
   end
-  object dsHouse: TpFIBDataSet
+  object dsHouse: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSE'
       'SET '
@@ -850,7 +850,7 @@ object HouseForm: THouseForm
     Left = 141
     Top = 187
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -862,7 +862,7 @@ object HouseForm: THouseForm
     Left = 229
     Top = 325
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -878,7 +878,7 @@ object HouseForm: THouseForm
     Left = 192
     Top = 155
   end
-  object dsOrg: TpFIBDataSet
+  object dsOrg: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -926,7 +926,7 @@ object HouseForm: THouseForm
     Left = 195
     Top = 106
   end
-  object dsHE: TpFIBDataSet
+  object dsHE: TFIBDataSet
     SelectSQL.Strings = (
       
         'select he.he_id, he.he_name, s.street_name|| '#39' '#39'||s.street_short' +
@@ -946,7 +946,7 @@ object HouseForm: THouseForm
     Left = 181
     Top = 330
   end
-  object dsWORKGROUP: TpFIBDataSet
+  object dsWORKGROUP: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '

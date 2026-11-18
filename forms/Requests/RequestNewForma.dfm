@@ -1065,7 +1065,7 @@ object RequestNewForm: TRequestNewForm
     Left = 607
     Top = 204
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -1083,7 +1083,7 @@ object RequestNewForm: TRequestNewForm
     Left = 159
     Top = 180
   end
-  object dsHouse: TpFIBDataSet
+  object dsHouse: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    H.HOUSE_ID'
@@ -1141,11 +1141,11 @@ object RequestNewForm: TRequestNewForm
     Left = 345
     Top = 164
   end
-  object dsRequestType: TpFIBDataSet
+  object dsRequestType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    W.*'
-      '    , coalesce(w.Rt_Color,  '#39'clWindow'#39') as COLOR'
+      '    , coalesce(w.Rt_Color, '#39'clWindow'#39') as COLOR'
       '  from REQUEST_TYPES W'
       '  where coalesce(w.RT_DELETED, 0) = 0'
       '        and ((coalesce(w.Rt_Hc_Need, 0) = 0)'
@@ -1229,7 +1229,7 @@ object RequestNewForm: TRequestNewForm
       OnExecute = actDateSelectExecute
     end
   end
-  object dsErrors: TpFIBDataSet
+  object dsErrors: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    RT.RQTL_ID'
@@ -1256,7 +1256,7 @@ object RequestNewForm: TRequestNewForm
     Left = 112
     Top = 400
   end
-  object dsDefaultWorks: TpFIBDataSet
+  object dsDefaultWorks: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -1308,7 +1308,7 @@ object RequestNewForm: TRequestNewForm
     Left = 100
     Top = 202
   end
-  object trQuery: TpFIBTransaction
+  object trQuery: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 382
     Top = 80
@@ -1318,7 +1318,7 @@ object RequestNewForm: TRequestNewForm
     Left = 428
     Top = 404
   end
-  object dsSame: TpFIBDataSet
+  object dsSame: TFIBDataSet
     DeleteSQL.Strings = (
       '')
     SelectSQL.Strings = (
@@ -1377,7 +1377,7 @@ object RequestNewForm: TRequestNewForm
     Left = 184
     Top = 96
   end
-  object dsAllWorks: TpFIBDataSet
+  object dsAllWorks: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    w.W_Id'

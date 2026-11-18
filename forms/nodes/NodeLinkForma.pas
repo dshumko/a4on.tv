@@ -7,23 +7,23 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Data.DB,
   Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  FIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
-  FIBDatabase, pFIBDatabase, A4onTypeUnit, CnClasses;
+  FIBDatabase, A4onTypeUnit, CnClasses;
 
 type
 
   TNodeLinkForm = class(TForm)
     OkCancelFrame: TOkCancelFrame;
     srcLink: TDataSource;
-    dsLink: TpFIBDataSet;
+    dsLink: TFIBDataSet;
     CnErrors: TCnErrorProvider;
-    dsType: TpFIBDataSet;
+    dsType: TFIBDataSet;
     srcType: TDataSource;
-    dsNodes: TpFIBDataSet;
+    dsNodes: TFIBDataSet;
     srcNodes: TDataSource;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlMain: TPanel;
     pnlSecond: TPanel;
     mmoNOTICE: TDBMemoEh;
@@ -43,13 +43,13 @@ type
     srcMain: TDataSource;
     lbl5: TLabel;
     ednSTOCK1: TDBNumberEditEh;
-    dsMat: TpFIBDataSet;
+    dsMat: TFIBDataSet;
     srcMat: TDataSource;
     lcbApplMID: TDBLookupComboboxEh;
     lcbLabel: TDBLookupComboboxEh;
     lbl6: TLabel;
     srcLabel: TDataSource;
-    dsLabel: TpFIBDataSet;
+    dsLabel: TFIBDataSet;
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure lcbLinkTypeDropDownBoxGetCellParams(Sender: TObject; Column: TColumnEh; AFont: TFont;
@@ -82,7 +82,7 @@ function LinkNodes(var MainItem, SecondItem: TNodeLinkItem): Boolean;
 implementation
 
 uses
-  DM, pFIBQuery, AtrStrUtils;
+  DM, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -301,11 +301,11 @@ begin
     Exit;
   end;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select count(*) wcnt from wire w where w.Point_S = :ns and w.Point_E = :ne';
       if FMainLink.NODE_ID > 0 then
         ParamByName('ns').AsInteger := FMainLink.NODE_ID
@@ -319,6 +319,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;

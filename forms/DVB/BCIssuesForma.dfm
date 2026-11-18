@@ -277,7 +277,7 @@ inherited BCIssuesForm: TBCIssuesForm
       Caption = '-'
     end
   end
-  object dsIssues: TpFIBDataSet
+  object dsIssues: TFIBDataSet
     DeleteSQL.Strings = (
       'execute block (OLD_BI_ID D_INTEGER = :OLD_BI_ID) as '
       'begin '

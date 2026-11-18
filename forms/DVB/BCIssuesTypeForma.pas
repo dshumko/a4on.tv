@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, EhLibFIB, DBCtrlsEh,
+  GridForma, FIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, EhLibFIB, DBCtrlsEh,
   PrnDbgeh;
 
 type
   TBCIssuesTypeForm = class(TGridForm)
-    dsData: TpFIBDataSet;
+    dsData: TFIBDataSet;
     pmPeriod: TPopupMenu;
     N1: TMenuItem;
     N4: TMenuItem;
@@ -46,7 +46,7 @@ var
 implementation
 
 uses
-  DM, RecourseForma, MAIN, PeriodForma, AtrStrUtils, CF, pFIBProps;
+  DM, RecourseForma, MAIN, PeriodForma, AtrStrUtils, CF, FIBProps;
 
 {$R *.dfm}
 

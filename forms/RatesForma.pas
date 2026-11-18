@@ -9,17 +9,17 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery,
   VclTee.TeeGDIPlus, VclTee.TeEngine, VclTee.Series, VclTee.TeeProcs,
   VclTee.Chart, amSplitter, PrnDbgeh;
 
 type
   TRatesForm = class(TGridForm)
-    dsRates: TpFIBDataSet;
+    dsRates: TFIBDataSet;
     btnGet: TToolButton;
-    qInsert: TpFIBQuery;
+    qInsert: TFIBQuery;
     chtRates: TChart;
     lsUSD: TLineSeries;
     lsEURO: TLineSeries;
@@ -130,6 +130,7 @@ begin
     'where RUR is null or EUR is null or USD is null ';
   qInsert.Transaction.StartTransaction;
   qInsert.ExecQuery;
+  qInsert.Close;
   qInsert.Transaction.Commit;
 end;
 
@@ -182,6 +183,7 @@ var
             qInsert.ParamByName('Cur').AsString := CURR;
             qInsert.Transaction.StartTransaction;
             qInsert.ExecQuery;
+            qInsert.Close;
             qInsert.Transaction.Commit;
           end;
         end;
@@ -192,15 +194,15 @@ var
       qInsert.SQL.Text := 'delete from Rates where ' + v + ' is null';
       qInsert.Transaction.StartTransaction;
       qInsert.ExecQuery;
+      qInsert.Close;
       qInsert.Transaction.Commit;
-
     end;
   end;
 
 begin
   inherited;
   dsd := Date() - 365;
-  qInsert.Transaction := dmMain.trReadQ;
+  qInsert.Transaction := dmMain.GetTransactionForRead;
   qInsert.SQL.Text := 'select max(Rdate) md from rates';
   qInsert.Transaction.StartTransaction;
   qInsert.ExecQuery;
@@ -211,27 +213,11 @@ begin
   end;
   qInsert.Close;
   qInsert.Transaction.Commit;
+  if assigned(qInsert.Transaction) then qInsert.Transaction.Free;
+
   qInsert.Transaction := dmMain.trWriteQ;
 
   DecodeDate(Date(), y, m, d);
-
-  {
-    if dsRates.Active then
-    begin
-    dsRates.DisableControls;
-    bm := dsRates.GetBookmark;
-    dsRates.First;
-    while not dsRates.Eof do
-    begin
-    if (dsRates['CUR'] = CURR) and (dsRates['Rdate'] > sd) then
-    sd := dsRates['Rdate'];
-    dsRates.Next;
-    end;
-    dsRates.GotoBookmark(bm);
-    dsRates.EnableControls;
-    end;
-  }
-
   while dsd < Date() do
   begin
     sd := dsd;
@@ -317,6 +303,7 @@ begin
         qInsert.ParamByName('Cur').AsString := 'RUB';
         qInsert.Transaction.StartTransaction;
         qInsert.ExecQuery;
+        qInsert.Close;
         qInsert.Transaction.Commit;
       end;
     end;
@@ -346,6 +333,7 @@ begin
         qInsert.ParamByName('Cur').AsString := 'RUB';
         qInsert.Transaction.StartTransaction;
         qInsert.ExecQuery;
+        qInsert.Close;
         qInsert.Transaction.Commit;
       end;
     end;
@@ -354,6 +342,7 @@ begin
   qInsert.SQL.Text := 'update Rates set RUR = 1';
   qInsert.Transaction.StartTransaction;
   qInsert.ExecQuery;
+  qInsert.Close;
   qInsert.Transaction.Commit;
 
   dsRates.CloseOpen(True);

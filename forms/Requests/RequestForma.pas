@@ -10,9 +10,8 @@ uses
   Data.DB,
   Vcl.Menus, Vcl.ActnList, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCGrids, Vcl.Grids,
-  FIBDataSet, pFIBDataSet, frxClass, EhLibFIB, frxDBSet, DM, CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls,
-  FIBQuery,
-  pFIBQuery, DBAxisGridsEh, PrjConst, EhLibVCL, DBLookupEh, CnErrorProvider, FIBDatabase, pFIBDatabase, GridsEh,
+  FIBDataSet, frxClass, EhLibFIB, frxDBSet, DM, CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls,
+  FIBQuery, DBAxisGridsEh, PrjConst, EhLibVCL, DBLookupEh, CnErrorProvider, FIBDatabase, GridsEh,
   DBCtrlsEh,
   A4onTypeUnit, PropFilerEh, PropStorageEh, DBGridEhGrouping, DynVarsEh, DBGridEh, amSplitter,
   CnClasses
@@ -22,15 +21,15 @@ uses
 type
   TRequestForm = class(TForm)
     srcExecutor: TDataSource;
-    dsExecutor: TpFIBDataSet;
+    dsExecutor: TFIBDataSet;
     srcRequest: TDataSource;
-    dsRequest: TpFIBDataSet;
+    dsRequest: TFIBDataSet;
     srcRequestType: TDataSource;
-    dsRequestType: TpFIBDataSet;
+    dsRequestType: TFIBDataSet;
     pnlHead: TPanel;
     ActionList1: TActionList;
     srcErrors: TDataSource;
-    dsErrors: TpFIBDataSet;
+    dsErrors: TFIBDataSet;
     PageControl: TPageControl;
     tabRequest: TTabSheet;
     pnlAddNot: TPanel;
@@ -40,9 +39,9 @@ type
     pnlExecTop: TPanel;
     pnlExecTime: TPanel;
     pnlBid: TPanel;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHouses: TpFIBDataSet;
+    dsHouses: TFIBDataSet;
     srcHouse: TDataSource;
     Label10: TLabel;
     deEndExecDateTime: TDBDateTimeEditEh;
@@ -60,7 +59,7 @@ type
     deStartExecDateTime: TDBDateTimeEditEh;
     Label21: TLabel;
     cbResultExec: TDBComboBoxEh;
-    dsRequests: TpFIBDataSet;
+    dsRequests: TFIBDataSet;
     frxDBrequests: TfrxDBDataset;
     actReqForAdres: TAction;
     actWorks: TAction;
@@ -95,7 +94,7 @@ type
     lbl2: TLabel;
     lbl12: TLabel;
     luTemplate: TDBLookupComboboxEh;
-    dsResult: TpFIBDataSet;
+    dsResult: TFIBDataSet;
     srcResult: TDataSource;
     lblRes: TLabel;
     luResult: TDBLookupComboboxEh;
@@ -112,14 +111,14 @@ type
     btnWorks: TButton;
     btnMaterials: TButton;
     btnMatIn: TButton;
-    dsWorks: TpFIBDataSet;
+    dsWorks: TFIBDataSet;
     srcWorks: TDataSource;
     lbl1: TLabel;
     dbgWorks: TDBGridEh;
     dbgMaterials: TDBGridEh;
     splGrids: TSplitter;
     srcMaterials: TDataSource;
-    dsMaterials: TpFIBDataSet;
+    dsMaterials: TFIBDataSet;
     pnlWMbuttons: TPanel;
     pnlGrids: TPanel;
     pnlWM: TPanel;
@@ -129,11 +128,11 @@ type
     actExAddressEdit: TAction;
     N2: TMenuItem;
     cnError: TCnErrorProvider;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     tabFiles: TTabSheet;
     srcPhotos: TDataSource;
-    dsPhotos: TpFIBDataSet;
+    dsPhotos: TFIBDataSet;
     dbgPhotos: TDBGridEh;
     spl1: TSplitter;
     actFileAdd: TAction;
@@ -145,7 +144,7 @@ type
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
-    dsMSG: TpFIBDataSet;
+    dsMSG: TFIBDataSet;
     srcMSG: TDataSource;
     actMSGAdd: TAction;
     actMSGDel: TAction;
@@ -176,7 +175,7 @@ type
     actOpenHouse: TAction;
     miOpenHouse: TMenuItem;
     dbgFlats: TDBGridEh;
-    dsFlats: TpFIBDataSet;
+    dsFlats: TFIBDataSet;
     srcFlats: TDataSource;
     splFlats: TSplitter;
     btnBuyback: TButton;
@@ -209,6 +208,7 @@ type
     btnPrint: TButton;
     LblEdit: TLabel;
     lblAdded: TLabel;
+    trReadQ: TFIBTransaction;
     procedure actExecutorsExecute(Sender: TObject);
     procedure actFindCustomerExecute(Sender: TObject);
     procedure actMaterialsExecute(Sender: TObject);
@@ -422,10 +422,10 @@ begin
   if Value = -2 // поищем абонента
   then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := trReadQ;
         SQL.Text := 'select Rq_Customer, node_id from request where Rq_Id = :RQ_ID';
         ParamByName('RQ_ID').AsInteger := fRequest;
         Transaction.StartTransaction;
@@ -1269,11 +1269,11 @@ var
 begin
   s := '';
   deny := False;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := trReadQ;
       SQL.Text := 'select ban, ban_text from Node_Check_Layout(:NODE_ID, :RQ_ID)';
       ParamByName('RQ_ID').AsInteger := fRequest;
       ParamByName('NODE_ID').AsInteger := fNodeId;
@@ -1295,7 +1295,7 @@ begin
   begin
     // проверим, если установки компоновки не было, то поставим, если была, то запрет сохранения
     deny := False;
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -1419,7 +1419,7 @@ begin
   Contact.CustID := FCustomerInfo.CUSTOMER_ID;
   if EditContact(Contact) then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -1496,7 +1496,7 @@ begin
 
   if (Trim(edFLAT_NO.Text) <> '') and (Trim(EdPorch.Text) <> '') and (Trim(EdFloor.Text) <> '') and NeedSave then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -1630,10 +1630,10 @@ procedure TRequestForm.FindNearFreeDay;
 begin
   if (dsRequest.State = dsInsert) then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := trReadQ;
         SQL.Text := 'select FREE_DAY from GET_REQUEST_FREEDAY(:HOUSE_ID, :REQUEST_TYPE)';
         ParamByName('HOUSE_ID').AsInteger := LupHOUSE.Value;
         ParamByName('REQUEST_TYPE').AsInteger := luType.Value;
@@ -2057,7 +2057,7 @@ end;
 
 procedure TRequestForm.actSMSExecute(Sender: TObject);
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -2241,10 +2241,10 @@ function TRequestForm.CheckReqWorks: Boolean;
   function GetWorkName(const id: Integer): string;
   begin
     Result := '';
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := trReadQ;
         SQL.Text := 'select Name from WORKS where W_Id = :ID';
         ParamByName('ID').AsInteger := id;
         Transaction.StartTransaction;
@@ -2406,11 +2406,11 @@ begin
     else if (not dsRequest.FieldByName('Parent_Rq').IsNull) then
       aRequest := dsRequest.FieldByName('Parent_Rq').AsInteger;
 
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := trReadQ;
         SQL.Text := 'select RQ_EXEC_TIME from request where Rq_Id = :RQ_ID';
         ParamByName('RQ_ID').AsInteger := aRequest;
         Transaction.StartTransaction;
@@ -2469,11 +2469,11 @@ begin
   begin
     // еслі не нашлі по номеру заявкі, поіўем по номеру платежа
     vPayDocID := -1;
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := trReadQ;
         SQL.Text := 'select PAY_DOC_ID from payment where PAYMENT_ID = :PID';
         ParamByName('PID').AsInteger := vPaymentID;
         Transaction.StartTransaction;
@@ -2495,11 +2495,11 @@ begin
   begin
     vPayDocID := -1;
     vPaymentID := -1;
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := trReadQ;
         SQL.Text := 'select first 1 PAY_DOC_ID, PAYMENT_ID from payment where RQ_ID = :PID';
         ParamByName('PID').AsInteger := dsRequest.FieldByName('RQ_ID').AsInteger;
         Transaction.StartTransaction;

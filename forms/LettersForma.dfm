@@ -246,7 +246,7 @@ inherited LettersForm: TLettersForm
     Left = 392
     Top = 240
   end
-  object dsLetters: TpFIBDataSet
+  object dsLetters: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE LETTERTYPE'
       'SET '
@@ -299,7 +299,7 @@ inherited LettersForm: TLettersForm
     Left = 204
     Top = 250
   end
-  object dsReports: TpFIBDataSet
+  object dsReports: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       'r.report_name,'

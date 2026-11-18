@@ -12,7 +12,6 @@ object BillEditForm: TBillEditForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnCloseQuery = FormCloseQuery
@@ -21,7 +20,6 @@ object BillEditForm: TBillEditForm
   DesignSize = (
     389
     251)
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     Left = 9
@@ -218,26 +216,22 @@ object BillEditForm: TBillEditForm
     Align = alBottom
     TabOrder = 7
     TabStop = True
-    ExplicitTop = 216
-    ExplicitWidth = 389
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 75
       Width = 214
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 75
-      ExplicitWidth = 214
     end
     inherited bbCancel: TBitBtn
       Left = 295
       Width = 86
-      ExplicitLeft = 295
-      ExplicitWidth = 86
     end
   end
   object edtACCOUNT: TDBEditEh
@@ -272,7 +266,7 @@ object BillEditForm: TBillEditForm
     ValueChecked = '1'
     ValueUnchecked = '0'
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -284,7 +278,7 @@ object BillEditForm: TBillEditForm
     Left = 257
     Top = 139
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -300,7 +294,7 @@ object BillEditForm: TBillEditForm
     Left = 118
     Top = 131
   end
-  object dsBill: TpFIBDataSet
+  object dsBill: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE BILLING'
       'SET '

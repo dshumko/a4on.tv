@@ -8,19 +8,19 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, DataDriverEh,
-  pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider, EhLibVCL,
+  GridForma, GridsEh, DBGridEh, FIBDatabase, FIBDataSet, MemTableDataEh, DataDriverEh,
+  FIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider, EhLibVCL,
   DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   THeadEndsForm = class(TGridForm)
-    dsHE: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsHE: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     chkTREE: TCheckBox;
     btn1: TToolButton;
     mtHE: TMemTableEh;
-    drvHE: TpFIBDataDriverEh;
+    drvHE: TFIBDataDriverEh;
     procedure actNewExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

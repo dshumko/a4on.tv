@@ -278,7 +278,7 @@ object apgNodeAppl: TapgNodeAppl
         7F00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
     end
   end
-  object dsAppliance: TpFIBDataSet
+  object dsAppliance: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    APPLIANCE'
@@ -341,7 +341,7 @@ object apgNodeAppl: TapgNodeAppl
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -353,7 +353,7 @@ object apgNodeAppl: TapgNodeAppl
     Left = 380
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

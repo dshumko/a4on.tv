@@ -45,7 +45,7 @@
     TabOrder = 2
     OnClick = Button1Click
   end
-  object db: TpFIBDatabase
+  object db: TFIBDatabase
     DBName = 'TV'
     DBParams.Strings = (
       'lc_ctype=WIN1251'
@@ -752,7 +752,7 @@
       FE7FFFFF0010E00FFFFFFFFF0039FC3F00000000000000000000000000000000
       000000000000}
   end
-  object tr: TpFIBTransaction
+  object tr: TFIBTransaction
     DefaultDatabase = db
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -764,7 +764,7 @@
     Left = 60
     Top = 180
   end
-  object tw: TpFIBTransaction
+  object tw: TFIBTransaction
     DefaultDatabase = db
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -776,7 +776,7 @@
     Left = 88
     Top = 180
   end
-  object trq: TpFIBTransaction
+  object trq: TFIBTransaction
     DefaultDatabase = db
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -788,7 +788,7 @@
     Left = 116
     Top = 180
   end
-  object twq: TpFIBTransaction
+  object twq: TFIBTransaction
     DefaultDatabase = db
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -800,7 +800,7 @@
     Left = 144
     Top = 180
   end
-  object FibErrorHandler: TpFibErrorHandler
+  object FibErrorHandler: TFibErrorHandler
     OnFIBErrorEvent = FibErrorHandlerFIBErrorEvent
     Left = 216
     Top = 180

@@ -8,14 +8,14 @@ uses
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, Vcl.Menus,
   System.Actions, Vcl.ActnList, Data.DB, Vcl.StdCtrls, Vcl.Buttons, System.UITypes,
   Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, EhLibVCL, GridsEh, amSplitter,
-  DBAxisGridsEh, DBGridEh, Vcl.Mask, DBCtrlsEh, FIBDatabase, pFIBDatabase,
-  FIBDataSet, pFIBDataSet, CnClasses;
+  DBAxisGridsEh, DBGridEh, Vcl.Mask, DBCtrlsEh, FIBDatabase,
+  FIBDataSet, CnClasses;
 
 type
   TTimeSeriesForm = class(TGridForm)
-    dsSeries: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsSeries: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     lbl2: TLabel;
     edtName: TDBEditEh;
     mmoO_DESCRIPTION: TDBMemoEh;
@@ -23,7 +23,7 @@ type
     spl1: TSplitter;
     pnlVTop: TPanel;
     dbgValues: TDBGridEh;
-    dsValues: TpFIBDataSet;
+    dsValues: TFIBDataSet;
     srcValues: TDataSource;
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;

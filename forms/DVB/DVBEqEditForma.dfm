@@ -89,19 +89,13 @@ object DVBEqEditForm: TDVBEqEditForm
     Align = alBottom
     TabOrder = 6
     TabStop = True
-    ExplicitTop = 203
-    ExplicitWidth = 426
     inherited Label2: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited Label1: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 150
@@ -110,15 +104,10 @@ object DVBEqEditForm: TDVBEqEditForm
       Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
       ModalResult = 0
       OnClick = okcnclfrmbbOkClick
-      ExplicitLeft = 150
-      ExplicitTop = 6
-      ExplicitWidth = 187
     end
     inherited bbCancel: TBitBtn
       Left = 343
       Top = 6
-      ExplicitLeft = 343
-      ExplicitTop = 6
     end
   end
   object edtNumber: TDBEditEh
@@ -192,6 +181,9 @@ object DVBEqEditForm: TDVBEqEditForm
         FieldName = 'O_DESCRIPTION'
         Width = 60
       end>
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.Sizable = True
     EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1087#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1103
     EditButtons = <>
@@ -218,6 +210,9 @@ object DVBEqEditForm: TDVBEqEditForm
         FieldName = 'O_DESCRIPTION'
         Width = 60
       end>
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.Sizable = True
     EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1090#1080#1087
     EditButtons = <>
@@ -252,7 +247,7 @@ object DVBEqEditForm: TDVBEqEditForm
     Left = 248
     Top = 168
   end
-  object dsMan: TpFIBDataSet
+  object dsMan: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME'
       'FROM OBJECTS'
@@ -269,7 +264,7 @@ object DVBEqEditForm: TDVBEqEditForm
     Left = 192
     Top = 168
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED'
       'FROM OBJECTS'

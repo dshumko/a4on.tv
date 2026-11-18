@@ -7,13 +7,13 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
-  DBCtrlsEh, DBLookupEh, OkCancel_frame, FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh;
+  DBCtrlsEh, DBLookupEh, OkCancel_frame, FIBDataSet, FIBDatabase, DBGridEh;
 
 type
   TfmCardSerial = class(TForm)
-    dsCardSerial: TpFIBDataSet;
+    dsCardSerial: TFIBDataSet;
     srcCardSerial: TDataSource;
-    dsPaySource: TpFIBDataSet;
+    dsPaySource: TFIBDataSet;
     srcPaySource: TDataSource;
     okcnclfrm1: TOkCancelFrame;
     LupPaySrc: TDBLookupComboboxEh;

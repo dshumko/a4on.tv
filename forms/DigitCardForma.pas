@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  DBCtrlsEh, CnErrorProvider, PrjConst;
+  DBCtrlsEh, CnErrorProvider, PrjConst, CnClasses;
 
 type
   TDigitCardForm = class(TForm)
@@ -56,7 +56,7 @@ function AddDecoder(const pCUSTOMER_ID: Integer): String;
 implementation
 
 uses
-  DM, pFIBQuery, FIBQuery;
+  DM, FIBQuery;
 
 {$R *.dfm}
 
@@ -69,7 +69,7 @@ begin
       CUSTOMER_ID := pCUSTOMER_ID;
       if ShowModal = mrOk then
       begin
-        with TpFIBQuery.Create(dmMain) do
+        with TFIBQuery.Create(dmMain) do
           try
             Database := dmMain.dbTV;
             Transaction := dmMain.trWriteQ;
@@ -88,6 +88,7 @@ begin
 
             Transaction.StartTransaction;
             ExecQuery;
+            Close;
             Transaction.Commit;
             Result := edtNumber.Text;
           finally
@@ -110,10 +111,10 @@ begin
         edtNumber.ReadOnly := True;
 
       ActiveControl := edtSTB;
-      with TpFIBQuery.Create(dmMain) do
+      with TFIBQuery.Create(dmMain) do
         try
           Database := dmMain.dbTV;
-          Transaction := dmMain.trReadQ;
+          Transaction := dmMain.GetTransactionForRead;
           SQL.Text := 'select CUSTOMER_ID, DECODER_N, STB_N, NOTICE, TV_MODEL, TV_SOFT from ' +
             ' CUSTOMER_DECODERS where dec_id = :DEC_ID';
           ParamByName('DEC_ID').AsInteger := CUST_DEC_ID;
@@ -132,13 +133,15 @@ begin
             edtTVSoft.Text := FieldByName('TV_SOFT').AsString;
           if not FieldByName('NOTICE').IsNull then
             mmoNotice.Lines.Text := FieldByName('NOTICE').AsString;
+          Close;
           Transaction.Commit;
         finally
+          if assigned(Transaction) then Transaction.Free;
           free;
         end;
       if ShowModal = mrOk then
       begin
-        with TpFIBQuery.Create(dmMain) do
+        with TFIBQuery.Create(dmMain) do
           try
             Database := dmMain.dbTV;
             Transaction := dmMain.trWriteQ;
@@ -160,6 +163,7 @@ begin
             ParamByName('NOTICE').AsString := mmoNotice.Lines.Text;
             Transaction.StartTransaction;
             ExecQuery;
+            Close;
             Transaction.Commit;
             Result := True;
           finally
@@ -240,10 +244,10 @@ begin
   else
     CnErrors.Dispose(edtNumber);
 
-  with TpFIBQuery.Create(dmMain) do
+  with TFIBQuery.Create(dmMain) do
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Clear;
       SQL.Add('select ( select count(*) from EQUIPMENT_DVB e where e.EQ_N = :CARD_N                      ');
       SQL.Add('and ((e.Eq_State = 1)                                                                     ');
@@ -276,9 +280,10 @@ begin
       end
       else
         CnErrors.Dispose(edtNumber);
-
+      Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
 end;
@@ -291,10 +296,10 @@ begin
   if edtSTB.Text = '' then
     Exit;
 
-  with TpFIBQuery.Create(dmMain) do
+  with TFIBQuery.Create(dmMain) do
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Clear;
       SQL.Add('select ( select count(*) from EQUIPMENT_DVB where EQ_TYPE <> 0 and EQ_N = :STB_N) as CN_EXISTS,');
       SQL.Add('  (select list(c.Account_No) from Customer_Decoders cd inner join customer c on (c.Customer_Id = cd.Customer_Id)');
@@ -320,8 +325,10 @@ begin
       end
       else
         CnErrors.Dispose(edtSTB);
+      Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   btnOk.Enabled := btnOk.Enabled and Result;

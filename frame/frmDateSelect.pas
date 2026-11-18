@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.Grids, Vcl.ExtCtrls, Vcl.ActnList,
-  FIBDatabase, FIBQuery, pFIBQuery, PrjConst;
+  FIBDatabase, FIBQuery, PrjConst;
 
 type
   TfrmRequestDate = class(TFrame)
@@ -15,10 +15,11 @@ type
     pnlInfo: TPanel;
     btnNextMon: TBitBtn;
     btnPrevMon: TBitBtn;
-    qBusyDays: TpFIBQuery;
+    qBusyDays: TFIBQuery;
     actlst1: TActionList;
     actPrevMon: TAction;
     actNextMon: TAction;
+    trReadQ: TFIBTransaction;
     procedure bbPrevClick(Sender: TObject);
     procedure sgCalendarDrawCell(Sender: TObject; ACol, ARow: Integer; Rect: TRect; State: TGridDrawState);
     procedure sgCalendarSelectCell(Sender: TObject; ACol, ARow: Integer; var CanSelect: Boolean);

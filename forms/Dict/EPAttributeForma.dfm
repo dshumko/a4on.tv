@@ -130,7 +130,7 @@ object EPAttributForm: TEPAttributForm
     Left = 236
     Top = 68
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -163,7 +163,7 @@ object EPAttributForm: TEPAttributForm
     Left = 75
     Top = 80
   end
-  object dsNodeAttribute: TpFIBDataSet
+  object dsNodeAttribute: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE NODES_ATTRIBUTES'
       'SET '

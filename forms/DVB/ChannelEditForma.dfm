@@ -466,7 +466,7 @@ object ChannelEditForm: TChannelEditForm
     TabOrder = 15
     Visible = True
   end
-  object dsChannel: TpFIBDataSet
+  object dsChannel: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CHANNELS'
       'SET '
@@ -556,7 +556,7 @@ object ChannelEditForm: TChannelEditForm
     Top = 54
     oFetchAll = True
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -567,7 +567,7 @@ object ChannelEditForm: TChannelEditForm
     Left = 256
     Top = 108
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -616,7 +616,7 @@ object ChannelEditForm: TChannelEditForm
     Left = 35
     Top = 104
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -627,7 +627,7 @@ object ChannelEditForm: TChannelEditForm
     Left = 256
     Top = 332
   end
-  object dsTheme: TpFIBDataSet
+  object dsTheme: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.O_Name'

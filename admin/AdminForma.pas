@@ -8,21 +8,21 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ImgList,
-  uFBServices, FIBDatabase, pFIBDatabase, RxPlacemnt, pFIBErrorHandler, FIB;
+  uFBServices, FIBDatabase, RxPlacemnt, FIBErrorHandler, FIB;
 
 type
   TAdminForm = class(TForm)
     btnService: TButton;
     btnUsers: TButton;
-    db: TpFIBDatabase;
+    db: TFIBDatabase;
     FormStorage: TFormStorage;
     ICONS_ACTIVE: TImageList;
-    tr: TpFIBTransaction;
-    tw: TpFIBTransaction;
-    trq: TpFIBTransaction;
-    twq: TpFIBTransaction;
+    tr: TFIBTransaction;
+    tw: TFIBTransaction;
+    trq: TFIBTransaction;
+    twq: TFIBTransaction;
     Button1: TButton;
-    FibErrorHandler: TpFibErrorHandler;
+    FibErrorHandler: TFibErrorHandler;
     procedure FormShow(Sender: TObject);
     procedure btnServiceClick(Sender: TObject);
     procedure btnUsersClick(Sender: TObject);

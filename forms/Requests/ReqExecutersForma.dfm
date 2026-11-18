@@ -338,7 +338,7 @@ object ReqExecutorsForm: TReqExecutorsForm
     Left = 271
     Top = 140
   end
-  object dsReqExecutors: TpFIBDataSet
+  object dsReqExecutors: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure request_add_executors (:rq_id, :worker_id,:SEL' +
@@ -387,7 +387,7 @@ object ReqExecutorsForm: TReqExecutorsForm
     Left = 414
     Top = 162
   end
-  object dsSame: TpFIBDataSet
+  object dsSame: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure request_add_executors (:rq_id, :worker_id,:SEL' +
@@ -453,7 +453,7 @@ object ReqExecutorsForm: TReqExecutorsForm
     poEmptyStrToNull = False
     dcForceOpen = True
   end
-  object dsRqst: TpFIBDataSet
+  object dsRqst: TFIBDataSet
     SelectSQL.Strings = (
       
         'select r.rq_id, r.house_id, r.RQ_PLAN_DATE, r.rq_time_from, r.rq' +
@@ -479,7 +479,7 @@ object ReqExecutorsForm: TReqExecutorsForm
     Left = 68
     Top = 149
   end
-  object dsTeams: TpFIBDataSet
+  object dsTeams: TFIBDataSet
     SelectSQL.Strings = (
       
         'select wg.name as TEAM, A.name as area_name, coalesce((select 1 ' +

@@ -441,7 +441,7 @@ object edtNodeFlats: TedtNodeFlats
       OnClick = chkStreetClick
     end
   end
-  object dsOn: TpFIBDataSet
+  object dsOn: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    Node_Id  UID = :Node_Id,'
@@ -532,7 +532,7 @@ object edtNodeFlats: TedtNodeFlats
     Left = 71
     Top = 83
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -544,7 +544,7 @@ object edtNodeFlats: TedtNodeFlats
     Left = 139
     Top = 90
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -561,7 +561,7 @@ object edtNodeFlats: TedtNodeFlats
     Left = 519
     Top = 179
   end
-  object dsOff: TpFIBDataSet
+  object dsOff: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    CUSTOMER_FILES'

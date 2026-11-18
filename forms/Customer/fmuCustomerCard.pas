@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs,
-  AtrPages, frxClass, frxPreview, FIBDataSet, pFIBDataSet, PrjConst, FIBDatabase, pFIBDatabase;
+  AtrPages, frxClass, frxPreview, FIBDataSet, PrjConst, FIBDatabase;
 
 type
   TapgCustomerCard = class(TA4onPage)
     frxReport: TfrxReport;
     frxPreview: TfrxPreview;
-    dsForScroolWait: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsForScroolWait: TFIBDataSet;
+    trRead: TFIBTransaction;
     srcForScroolWait: TDataSource;
     function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
     procedure srcForScroolWaitDataChange(Sender: TObject; Field: TField);

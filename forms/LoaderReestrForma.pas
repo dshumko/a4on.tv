@@ -10,17 +10,17 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Grids, Vcl.DBGrids,
   Vcl.ComCtrls,
   Vcl.ExtDlgs,
-  GridsEh, DBGridEh, DBCtrlsEh, RxToolEdit, RxCurrEdit, DBLookupEh, FIBQuery, pFIBQuery, pFIBScripter, FIBDataSet,
-  pFIBDataSet,
-  FIBDatabase, pFIBDatabase, ToolCtrlsEh, DBGridEhToolCtrls, EhLibMTE, DBAxisGridsEh, MemTableDataEh, MemTableEh,
+  GridsEh, DBGridEh, DBCtrlsEh, RxToolEdit, RxCurrEdit, DBLookupEh, FIBQuery, FIBScripter, FIBDataSet,
+  FIBDatabase, ToolCtrlsEh, DBGridEhToolCtrls, EhLibMTE, DBAxisGridsEh, MemTableDataEh, MemTableEh,
   EhLibVCL,
-  RxPlacemnt, CnErrorProvider, VKDBFDataSet, DBGridEhGrouping, DynVarsEh, amSplitter;
+  RxPlacemnt, CnErrorProvider, VKDBFDataSet, DBGridEhGrouping, DynVarsEh, amSplitter,
+  CnClasses;
 
 type
   TLoaderReestrForm = class(TForm)
     pnl2: TPanel;
     srcReestr: TDataSource;
-    qFindCustomer: TpFIBQuery;
+    qFindCustomer: TFIBQuery;
     srcPaymentSrc: TDataSource;
     pnlTop: TPanel;
     srcErrors: TDataSource;
@@ -63,20 +63,20 @@ type
     cbbDocSrc: TDBLookupComboboxEh;
     edtDocNumber: TDBEditEh;
     SaveTextFileDialog: TSaveTextFileDialog;
-    dsPaymentSource: TpFIBDataSet;
-    Script: TpFIBScripter;
-    SelectQuery: TpFIBQuery;
-    trWriteQ: TpFIBTransaction;
-    trReadQ: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    qFindCustomerForAdres: TpFIBQuery;
+    dsPaymentSource: TFIBDataSet;
+    Script: TFIBScripter;
+    SelectQuery: TFIBQuery;
+    trWriteQ: TFIBTransaction;
+    trReadQ: TFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    qFindCustomerForAdres: TFIBQuery;
     btnLoadIntoDB: TButton;
     mdsReestr: TMemTableEh;
     mdsErrors: TMemTableEh;
     mdsFileFormats: TMemTableEh;
     CnErrors: TCnErrorProvider;
-    qFindByExtID: TpFIBQuery;
+    qFindByExtID: TFIBQuery;
     spl1: TSplitter;
     procedure btn2Click(Sender: TObject);
     procedure btnEditProfileClick(Sender: TObject);
@@ -1110,7 +1110,7 @@ begin
   DatasetToJson(mdsFileFormats, profFile + '.txt');
   // GZCompressFile(profFile + '.txt', profFile + '.gz');
   // Compress(profFile + '.txt', profFile + '.$$$');
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := trWriteQ;
@@ -1198,7 +1198,7 @@ begin
     if FileExists(profFile + '.txt') then
       DeleteFile(profFile + '.txt');
 
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
         Transaction := trReadQ;

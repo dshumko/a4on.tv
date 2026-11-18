@@ -7,7 +7,7 @@ uses
   System.Classes, System.SysUtils, System.Variants,
   Data.DB,
   Vcl.Forms, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls,
-  DBLookupEh, OkCancel_frame, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh;
+  DBLookupEh, OkCancel_frame, DBGridEh, FIBDatabase, FIBDataSet, DBCtrlsEh;
 
 type
   THouseWorkForm = class(TForm)
@@ -19,10 +19,10 @@ type
     lbl2: TLabel;
     lbl3: TLabel;
     srcWork: TDataSource;
-    dsWork: TpFIBDataSet;
-    dsWorker: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsWork: TFIBDataSet;
+    dsWorker: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     srcWorker: TDataSource;
     procedure okcnlbbOkClick(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

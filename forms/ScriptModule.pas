@@ -55,7 +55,7 @@ implementation
 
 uses
   Data.DB, System.NetEncoding, System.Hash, Vcl.Grids, Vcl.Forms,
-  pFIBQuery, FIBQuery,
+   FIBQuery,
   RxStrUtils, mormot.crypt.core,
   AtrStrUtils, atrCmdUtils,
   DM, MAIN;

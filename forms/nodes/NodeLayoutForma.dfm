@@ -51,6 +51,9 @@
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = ''
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1058#1080#1087' '#1091#1089#1083#1091#1075
     EditButtons = <>
     KeyField = 'O_ID'
@@ -208,7 +211,7 @@
     Left = 180
     Top = 228
   end
-  object dsSrvType: TpFIBDataSet
+  object dsSrvType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    *'

@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls,
-  OkCancel_frame, DBGridEh, DBLookupEh, DBCtrlsEh, DBGridEhGrouping, GridsEh, MemTableDataEh, MemTableEh, FIBDataSet, pFIBDataSet;
+  OkCancel_frame, DBGridEh, DBLookupEh, DBCtrlsEh, DBGridEhGrouping, GridsEh, MemTableDataEh, MemTableEh, FIBDataSet;
 
 type
   TRequestManyCloseForm = class(TForm)
@@ -39,9 +39,9 @@ type
     sfWorksNOTICE: TStringField;
     fltfldWorksQUANT: TFloatField;
     srcWorks: TDataSource;
-    dsRequestType: TpFIBDataSet;
+    dsRequestType: TFIBDataSet;
     srcRequestType: TDataSource;
-    dsResult: TpFIBDataSet;
+    dsResult: TFIBDataSet;
     srcResult: TDataSource;
     procedure btnAddWorkClick(Sender: TObject);
     procedure btnDelWorkClick(Sender: TObject);

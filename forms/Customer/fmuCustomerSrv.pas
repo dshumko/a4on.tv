@@ -9,9 +9,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.ExtCtrls,
   Vcl.ActnList, Vcl.Menus,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, amSplitter;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, amSplitter;
 
 type
   TapgCustomerSrv = class(TA4onPage)
@@ -26,9 +26,9 @@ type
     btnPersAdd: TToolButton;
     btnPersEdit: TToolButton;
     btnPersDel: TToolButton;
-    dsServices: TpFIBDataSet;
+    dsServices: TFIBDataSet;
     srcServices: TDataSource;
-    dsPersonelTarif: TpFIBDataSet;
+    dsPersonelTarif: TFIBDataSet;
     srcPersonelTarif: TDataSource;
     ActListCustomers: TActionList;
     actSubscrHistory: TAction;
@@ -57,8 +57,8 @@ type
     ToolButton5: TToolButton;
     ToolBar2: TToolBar;
     ToolButton6: TToolButton;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     actChangeNotice: TAction;
     N7: TMenuItem;
     N8: TMenuItem;
@@ -107,7 +107,7 @@ implementation
 
 uses
   System.DateUtils,
-  DM, OnOffServicesForma, SubscrHistory, pFIBQuery, AtrCommon, MAIN, TextEditForma, PersonalTarifForma;
+  DM, OnOffServicesForma, SubscrHistory, FIBQuery, AtrCommon, MAIN, TextEditForma, PersonalTarifForma;
 
 {$R *.dfm}
 
@@ -247,7 +247,7 @@ begin
 
   if EditText(s, 'Примечание', 'Примечание для услуги') then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -475,7 +475,7 @@ begin
     if MessageBoxW(Handle, PWideChar(WideFormat('Удалить из очереди %s', [dsServices['NAME']])),
       'Очередь переключения услуг', MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
     begin
-      with TpFIBQuery.Create(Self) do
+      with TFIBQuery.Create(Self) do
       begin
         try
           Database := dmMain.dbTV;
@@ -724,7 +724,7 @@ var
 begin
   Save_Cursor := Screen.Cursor;
   Screen.Cursor := crSQLWait;
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;

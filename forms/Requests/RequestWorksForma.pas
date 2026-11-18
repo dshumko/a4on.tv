@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
-  FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
+  FIBDataSet, DBGridEh, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls,
   DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, EhLibVCL, amSplitter;
 
@@ -17,10 +17,10 @@ type
     Panel3: TPanel;
     dbGrid: TDBGridEh;
     srcDataSource: TDataSource;
-    dsWorks: TpFIBDataSet;
+    dsWorks: TFIBDataSet;
     OkCancelFrame1: TOkCancelFrame;
     dbGridGroups: TDBGridEh;
-    dsWorkGrps: TpFIBDataSet;
+    dsWorkGrps: TFIBDataSet;
     srcWorkGrps: TDataSource;
     Splitter1: TSplitter;
     PropStorage: TPropStorageEh;

@@ -223,7 +223,7 @@ object RequestWorksForm: TRequestWorksForm
     Left = 257
     Top = 164
   end
-  object dsWorks: TpFIBDataSet
+  object dsWorks: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure REQUEST_WORKS_IUD(:RQ_ID, :W_ID, :W_QUANT, :W_' +
@@ -275,7 +275,7 @@ object RequestWorksForm: TRequestWorksForm
     Left = 296
     Top = 115
   end
-  object dsWorkGrps: TpFIBDataSet
+  object dsWorkGrps: TFIBDataSet
     SelectSQL.Strings = (
       'select t.rt_id, t.rt_name, t.rt_notice'
       'from request_types t'

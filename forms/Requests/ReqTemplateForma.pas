@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.DBCtrls, Vcl.Menus, Vcl.StdCtrls, Vcl.Controls, Vcl.Mask, Vcl.Dialogs, Vcl.Buttons,
-  OkCancel_frame, CnErrorProvider, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBGridEh,
+  OkCancel_frame, CnErrorProvider, FIBQuery, FIBDatabase, FIBDataSet, DBGridEh,
   GridsEh, amSplitter,
   DBCtrlsEh, DBLookupEh, Vcl.ComCtrls, DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls, DynVarsEh, EhLibVCL, DBAxisGridsEh, Vcl.ExtCtrls,
@@ -54,15 +54,15 @@ type
     btnClear: TButton;
     btnColor: TBitBtn;
     srcRQTL: TDataSource;
-    dsRQTL: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    dsANALYS: TpFIBDataSet;
+    dsRQTL: TFIBDataSet;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
+    dsANALYS: TFIBDataSet;
     srcANALYS: TDataSource;
-    dsAllWorks: TpFIBDataSet;
+    dsAllWorks: TFIBDataSet;
     CnErrors: TCnErrorProvider;
     srcTypes: TDataSource;
-    dsTypes: TpFIBDataSet;
+    dsTypes: TFIBDataSet;
     dlgColor: TColorDialog;
     pmSMS: TPopupMenu;
     miNN1: TMenuItem;

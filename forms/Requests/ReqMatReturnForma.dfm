@@ -267,7 +267,7 @@ object ReqMatReturnForm: TReqMatReturnForm
     Left = 339
     Top = 157
   end
-  object dsReqMaterials: TpFIBDataSet
+  object dsReqMaterials: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure REQUEST_MATERIALS_RETURN_IUD(:ID, :RQ_ID, :M_I' +
@@ -364,7 +364,7 @@ object ReqMatReturnForm: TReqMatReturnForm
     Left = 120
     Top = 128
   end
-  object drvFibGroups: TpFIBDataDriverEh
+  object drvFibGroups: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (
@@ -387,7 +387,7 @@ object ReqMatReturnForm: TReqMatReturnForm
         'where (exists(select m.M_Id from materials m where m.Mg_Id is nu' +
         'll and m.DELETED = 0))'
       'union'
-      'select MG_ID,   3 ORD, MG_NAME, PARENT_ID, MG_NOTICE'
+      'select MG_ID,  3 ORD, MG_NAME, PARENT_ID, MG_NOTICE'
       'from MATERIALS_GROUP '
       'where coalesce(Deleted, 0) = 0'
       'order by 2, 3')

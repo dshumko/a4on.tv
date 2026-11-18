@@ -60,7 +60,7 @@
         Width = 63
       end>
   end
-  object dsReqMaterials: TpFIBDataSet
+  object dsReqMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O.O_ID, o.O_NAME, RM_QUANT, o.O_DIMENSION'
       'FROM OBJECTS o LEFT JOIN '

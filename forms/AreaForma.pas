@@ -8,13 +8,13 @@ uses
   Data.DB, 
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls, Vcl.Menus,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.DBCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
-  CnErrorProvider, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, amSplitter,
+  GridForma, DBGridEh, FIBDataSet, FIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  CnErrorProvider, PrjConst, EhLibVCL, FIBDatabase, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, amSplitter,
   PrnDbgeh;
 
 type
   TAreaForm = class(TGridForm)
-    dsAreas: TpFIBDataSet;
+    dsAreas: TFIBDataSet;
     pnlBottom: TPanel;
     Splitter: TSplitter;
     dbSubArea: TDBGridEh;
@@ -30,7 +30,7 @@ type
     ToolButton17: TToolButton;
     tbCancelSub: TToolButton;
     srcSubAreas: TDataSource;
-    dsSubAreas: TpFIBDataSet;
+    dsSubAreas: TFIBDataSet;
     actSubNew: TAction;
     actSubDelete: TAction;
     actSubEdit: TAction;
@@ -41,8 +41,8 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     N5: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     procedure FormCreate(Sender: TObject);
     procedure srcDataSourceStateChange(Sender: TObject);
     procedure tbCancelClick(Sender: TObject);
@@ -249,10 +249,10 @@ end;
 
 procedure TAreaForm.actSubDeleteExecute(Sender: TObject);
 var
-  Query: TpFIBQuery;
+  Query: TFIBQuery;
 begin
   inherited;
-  Query := TpFIBQuery.Create(self);
+  Query := TFIBQuery.Create(self);
   try
     Query.Database := dmMain.dbTV;
     Query.Transaction := dmMain.trRead;

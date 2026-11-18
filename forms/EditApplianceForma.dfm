@@ -11,7 +11,6 @@ object EditApplianceForm: TEditApplianceForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
@@ -19,7 +18,6 @@ object EditApplianceForm: TEditApplianceForm
   DesignSize = (
     432
     293)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -193,6 +191,7 @@ object EditApplianceForm: TEditApplianceForm
     DropDownBox.ListSource = srcDevType
     DropDownBox.ListSourceAutoFilter = True
     DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1058#1080#1087' '#1091#1089#1090#1088#1086#1081#1089#1090#1074#1072' '#1080#1079' '#1089#1087#1088#1072#1074#1086#1095#1085#1080#1082#1072
     EditButtons = <>
     KeyField = 'O_ID'
@@ -284,7 +283,7 @@ object EditApplianceForm: TEditApplianceForm
     TabOrder = 7
     Visible = True
   end
-  object dsAppl: TpFIBDataSet
+  object dsAppl: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE APPLIANCE'
       'SET '
@@ -369,7 +368,7 @@ object EditApplianceForm: TEditApplianceForm
     Left = 248
     Top = 184
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -381,7 +380,7 @@ object EditApplianceForm: TEditApplianceForm
     Left = 384
     Top = 178
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -393,7 +392,7 @@ object EditApplianceForm: TEditApplianceForm
     Left = 336
     Top = 178
   end
-  object dsDevType: TpFIBDataSet
+  object dsDevType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -417,7 +416,7 @@ object EditApplianceForm: TEditApplianceForm
     Left = 188
     Top = 172
   end
-  object dsMat: TpFIBDataSet
+  object dsMat: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.M_ID'

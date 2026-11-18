@@ -433,7 +433,7 @@ inherited PromoForm: TPromoForm
     Left = 16
     Top = 208
   end
-  object dsPromo: TpFIBDataSet
+  object dsPromo: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '
@@ -516,7 +516,7 @@ inherited PromoForm: TPromoForm
     Left = 160
     Top = 312
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -528,7 +528,7 @@ inherited PromoForm: TPromoForm
     Left = 136
     Top = 382
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -540,7 +540,7 @@ inherited PromoForm: TPromoForm
     Left = 196
     Top = 382
   end
-  object dsSrvType: TpFIBDataSet
+  object dsSrvType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    *'
@@ -563,7 +563,7 @@ inherited PromoForm: TPromoForm
     Left = 472
     Top = 352
   end
-  object dsService: TpFIBDataSet
+  object dsService: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    s.Name || coalesce('#39' / '#39' ||(select'

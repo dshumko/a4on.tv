@@ -129,7 +129,7 @@ object fmCardSerial: TfmCardSerial
     Visible = True
     WantReturns = True
   end
-  object dsCardSerial: TpFIBDataSet
+  object dsCardSerial: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CARDS_SERIALS'
       'SET '
@@ -179,7 +179,7 @@ object fmCardSerial: TfmCardSerial
     Left = 24
     Top = 176
   end
-  object dsPaySource: TpFIBDataSet
+  object dsPaySource: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT Paysource_Id, Paysource_Descr'
       'FROM Paysource'

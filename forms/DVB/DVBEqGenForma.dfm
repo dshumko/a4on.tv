@@ -137,6 +137,9 @@ object DVBEqGenForm: TDVBEqGenForm
         FieldName = 'O_DESCRIPTION'
         Width = 60
       end>
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.Sizable = True
     EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1087#1088#1086#1080#1079#1074#1086#1076#1080#1090#1077#1083#1103
     EditButtons = <>
@@ -177,6 +180,9 @@ object DVBEqGenForm: TDVBEqGenForm
         FieldName = 'O_DESCRIPTION'
         Width = 60
       end>
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.Sizable = True
     EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1090#1080#1087
     EditButtons = <>
@@ -234,7 +240,7 @@ object DVBEqGenForm: TDVBEqGenForm
     Left = 148
     Top = 140
   end
-  object dsMan: TpFIBDataSet
+  object dsMan: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED'
       'FROM OBJECTS'
@@ -256,7 +262,7 @@ object DVBEqGenForm: TDVBEqGenForm
     Left = 322
     Top = 139
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED'
       'FROM OBJECTS'

@@ -112,7 +112,7 @@ object DecoderPacketForm: TDecoderPacketForm
     Left = 67
     Top = 73
   end
-  object dsPacket: TpFIBDataSet
+  object dsPacket: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.service_id, s.name, s.description'
@@ -153,7 +153,7 @@ object DecoderPacketForm: TDecoderPacketForm
     Left = 145
     Top = 71
   end
-  object dsDecPacket: TpFIBDataSet
+  object dsDecPacket: TFIBDataSet
     UpdateSQL.Strings = (
       'update DECODER_PACKETS'
       'set SERVICE_ID = :SERVICE_ID, NOTICE = :NOTICE'

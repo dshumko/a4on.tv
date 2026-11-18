@@ -863,7 +863,7 @@
     Left = 192
     Top = 400
   end
-  object dsFileType: TpFIBDataSet
+  object dsFileType: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 33, :O_ID, :O_Name, :O_Descript' +
@@ -911,7 +911,7 @@
     Left = 189
     Top = 336
   end
-  object dsSrvType: TpFIBDataSet
+  object dsSrvType: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '  o.O_Id, '
@@ -932,7 +932,7 @@
     Left = 248
     Top = 392
   end
-  object dsReqType: TpFIBDataSet
+  object dsReqType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    t.Rt_Id'
@@ -954,7 +954,7 @@
     Left = 432
     Top = 352
   end
-  object dsOnOffSrv: TpFIBDataSet
+  object dsOnOffSrv: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    s.Service_Id'
@@ -984,7 +984,7 @@
     Left = 632
     Top = 440
   end
-  object dsReqTempl: TpFIBDataSet
+  object dsReqTempl: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    rt.Rqtl_Id'
@@ -1020,7 +1020,7 @@
     Left = 568
     Top = 352
   end
-  object dsSingleSrv: TpFIBDataSet
+  object dsSingleSrv: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.Service_Id'
@@ -1036,7 +1036,7 @@
     Left = 528
     Top = 336
   end
-  object dsService: TpFIBDataSet
+  object dsService: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    S.Service_Id'
@@ -1082,7 +1082,7 @@
     Left = 688
     Top = 400
   end
-  object dsAllowFT: TpFIBDataSet
+  object dsAllowFT: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_ID, o.O_NAME'

@@ -1,6 +1,5 @@
 ﻿unit WebBrowserForma;
-
-interface
+interface
 
 uses
   Winapi.Windows, Winapi.Messages,

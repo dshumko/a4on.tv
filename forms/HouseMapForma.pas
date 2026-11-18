@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
-  DBCtrlsEh, FIBDataSet, pFIBDataSet, PrjConst, A4onTypeUnit;
+  DBCtrlsEh, FIBDataSet, PrjConst, A4onTypeUnit;
 type
 
   THouseMapForm = class(TForm)
@@ -15,9 +15,9 @@ type
     btnBuild: TButton;
     edtFC: TDBNumberEditEh;
     lbl1: TLabel;
-    dsHouse: TpFIBDataSet;
-    dsPORCH: TpFIBDataSet;
-    dsCustomers: TpFIBDataSet;
+    dsHouse: TFIBDataSet;
+    dsPORCH: TFIBDataSet;
+    dsCustomers: TFIBDataSet;
     pnlMap: TScrollBox;
     procedure pnlFloorClick(Sender: TObject);
     procedure FormResize(Sender: TObject);
@@ -45,7 +45,7 @@ var
 implementation
 
 uses
-  DM, AtrStrUtils, TextEditForma, pFIBQuery;
+  DM, AtrStrUtils, TextEditForma, FIBQuery;
 
 {$R *.dfm}
 
@@ -207,7 +207,7 @@ procedure THouseMapForm.FormClose(Sender: TObject; var Action: TCloseAction);
 begin
   if fHouseId <> -1 then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;

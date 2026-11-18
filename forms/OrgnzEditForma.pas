@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, DBGridEh, CnErrorProvider;
+  OkCancel_frame, FIBDataSet, DBCtrlsEh, DBLookupEh, DBGridEh, CnErrorProvider;
 
 type
   TOrgnzEditForm = class(TForm)
     frmOk: TOkCancelFrame;
-    dsOrgan: TpFIBDataSet;
+    dsOrgan: TFIBDataSet;
     srcDataSource: TDataSource;
     lbl1: TLabel;
     lbl2: TLabel;
@@ -30,7 +30,7 @@ type
     lbl14: TLabel;
     lbl15: TLabel;
     lbl16: TLabel;
-    dsVATG: TpFIBDataSet;
+    dsVATG: TFIBDataSet;
     srcVATG: TDataSource;
     cbbVATG: TDBLookupComboboxEh;
     edContr: TDBEditEh;
@@ -49,7 +49,7 @@ type
     edEmail: TDBEditEh;
     edBcode: TDBEditEh;
     dbmNotice: TDBMemoEh;
-    dsBANKS: TpFIBDataSet;
+    dsBANKS: TFIBDataSet;
     srcBanks: TDataSource;
     CnErrors: TCnErrorProvider;
     procedure FormShow(Sender: TObject);

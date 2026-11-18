@@ -643,7 +643,7 @@ inherited RequestTypeForm: TRequestTypeForm
     Left = 16
     Top = 224
   end
-  object dsRequestType: TpFIBDataSet
+  object dsRequestType: TFIBDataSet
     DeleteSQL.Strings = (
       'UPDATE'
       '    REQUEST_TYPES'
@@ -668,7 +668,7 @@ inherited RequestTypeForm: TRequestTypeForm
     Left = 344
     Top = 176
   end
-  object dsTemplates: TpFIBDataSet
+  object dsTemplates: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -804,7 +804,7 @@ inherited RequestTypeForm: TRequestTypeForm
       OnExecute = actQuickResExecute
     end
   end
-  object dsWorks: TpFIBDataSet
+  object dsWorks: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -909,7 +909,7 @@ inherited RequestTypeForm: TRequestTypeForm
     Left = 456
     Top = 224
   end
-  object dsResult: TpFIBDataSet
+  object dsResult: TFIBDataSet
     DeleteSQL.Strings = (
       'update REQUEST_RESULTS'
       'set deleted = 1'

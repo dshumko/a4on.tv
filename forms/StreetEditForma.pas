@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, OkCancel_frame, FIBDatabase, CnErrorProvider, PrjConst,
   DBGridEh;
 
 type
@@ -15,21 +15,21 @@ type
     Label2: TLabel;
     Label3: TLabel;
     srcAreas: TDataSource;
-    dsAreas: TpFIBDataSet;
+    dsAreas: TFIBDataSet;
     dblShort: TDBLookupComboboxEh;
     Label9: TLabel;
     OkCancelFrame: TOkCancelFrame;
     dbEditCode: TDBEditEh;
     dbEditStreetName: TDBEditEh;
     srcStreeType: TDataSource;
-    dsStreeType: TpFIBDataSet;
+    dsStreeType: TFIBDataSet;
     dblArea: TDBLookupComboboxEh;
     Label1: TLabel;
     DBMemo1: TDBMemoEh;
     srcStreet: TDataSource;
-    dsEditStreet: TpFIBDataSet;
-    trSRead: TpFIBTransaction;
-    trSWrite: TpFIBTransaction;
+    dsEditStreet: TFIBDataSet;
+    trSRead: TFIBTransaction;
+    trSWrite: TFIBTransaction;
     CnErrors: TCnErrorProvider;
     ednTAG: TDBNumberEditEh;
     edtTAGSTR: TDBEditEh;

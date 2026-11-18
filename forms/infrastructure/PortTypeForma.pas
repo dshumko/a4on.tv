@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  VclTee.TeCanvas, GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  CnErrorProvider, DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, amSplitter,
+  VclTee.TeCanvas, GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  CnErrorProvider, DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, amSplitter,
   PrnDbgeh;
 
 type
   TPortTypeForm = class(TGridForm)
-    dsType: TpFIBDataSet;
+    dsType: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
@@ -22,8 +22,8 @@ type
     actAddL: TAction;
     actEditL: TAction;
     actDelL: TAction;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     spl1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);

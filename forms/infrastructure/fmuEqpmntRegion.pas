@@ -7,19 +7,19 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin,
-  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, EhLibVCL,
+  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, GridsEh, DBGridEh, FIBDataSet, EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh;
 
 type
   TapgEqpmntRegion = class(TA4onPage)
-    dsData: TpFIBDataSet;
+    dsData: TFIBDataSet;
     srcData: TDataSource;
     ActListCustomers: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlButtons: TPanel;
     btnDel: TSpeedButton;
     btnAdd: TSpeedButton;

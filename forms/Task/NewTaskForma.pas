@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.Buttons,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, DM,
+  OkCancel_frame, FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, DM,
   CnErrorProvider, PrjConst, A4onTypeUnit, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh,
   MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, PropFilerEh, PropStorageEh, Main, CnClasses;
 
@@ -199,11 +199,11 @@ procedure TNewTaskForm.GetUsers;
 begin
   mtbUsers.Open;
   mtbUsers.DisableControls;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select w.Surname || coalesce('' ''||w.Firstname, '''') FIO , w.Ibname from worker w ' +
         'where not (w.Ibname is null) and (w.Working = 1) and w.Surname <> '''' order by 1';
       Transaction.StartTransaction;
@@ -220,6 +220,8 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) 
+      then Transaction.Free;
       Free;
     end;
   end;
@@ -289,17 +291,17 @@ begin
   if not allOk then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
       SQL.Add('execute block (                                                                     ');
-      SQL.Add('    TITLE     D_VARCHAR100 = :TITLE,                                                ');
-      SQL.Add('    NOTICE    D_VARCHAR500 = :NOTICE,                                               ');
-      SQL.Add('    PLAN_DATE D_DATETIME = :PLAN_DATE,                                              ');
-      SQL.Add('    USERS     D_VARCHAR500 = :USERS,                                                ');
-      SQL.Add('    OBJ_TYPE  D_VARCHAR5 = :OBJ_TYPE,                                               ');
-      SQL.Add('    OBJ_ID    D_VARCHAR100 = :OBJ_ID,                                               ');
+      SQL.Add('    TITLE     D_VARCHAR100 = :TITLE,                                              ');
+      SQL.Add('    NOTICE    D_VARCHAR500 = :NOTICE,                                             ');
+      SQL.Add('    PLAN_DATE D_DATETIME = :PLAN_DATE,                                            ');
+      SQL.Add('    USERS     D_VARCHAR500 = :USERS,                                              ');
+      SQL.Add('    OBJ_TYPE  D_VARCHAR5 = :OBJ_TYPE,                                             ');
+      SQL.Add('    OBJ_ID    D_VARCHAR100 = :OBJ_ID,                                             ');
       SQL.Add('    WHO_CLOSE D_INTEGER = :WHO_CLOSE)                                               ');
       SQL.Add('RETURNS( TASK_ID d_integer )                                                        ');
       SQL.Add('as                                                                                  ');
@@ -342,8 +344,8 @@ begin
       Transaction.StartTransaction;
       ExecQuery;
       FTaskId := FN('TASK_ID').AsInteger;
-      Transaction.Commit;
       Close;
+      Transaction.Commit;
       allOk := true;
     finally
       Free;
@@ -354,7 +356,7 @@ begin
     if (FType = 'С') or (FType = 'AС') then
     begin
       // отметім номер заявкі в обращеніі
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
         try
           Database := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
@@ -367,8 +369,8 @@ begin
           ParamByName('TASK_ID').AsInteger := FTaskId;
           Transaction.StartTransaction;
           ExecQuery;
-          Transaction.Commit;
           Close;
+          Transaction.Commit;
         finally
           Free;
         end;

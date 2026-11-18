@@ -8,16 +8,16 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtDlgs, Vcl.Imaging.jpeg,
   Vcl.Imaging.pngimage, Vcl.Buttons, Vcl.Menus,
-  FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages, EhLibVCL, DBGridEh, CnErrorProvider, PrjConst,
+  FIBDataSet, FIBDatabase, DBCtrlsEh, uDBImages, EhLibVCL, DBGridEh, CnErrorProvider, PrjConst,
   DBLookupEh;
 
 type
   TDBImage = class(TpDBImage);
 
   TChannelEditForm = class(TForm)
-    dsChannel: TpFIBDataSet;
-    trSRead: TpFIBTransaction;
-    trSWrite: TpFIBTransaction;
+    dsChannel: TFIBDataSet;
+    trSRead: TFIBTransaction;
+    trSWrite: TFIBTransaction;
     Label1: TLabel;
     srcChannel: TDataSource;
     Label2: TLabel;
@@ -60,8 +60,8 @@ type
     lbl6: TLabel;
     CnErrors: TCnErrorProvider;
     lcbCH_THEME: TDBLookupComboboxEh;
-    trReadQ: TpFIBTransaction;
-    dsTheme: TpFIBDataSet;
+    trReadQ: TFIBTransaction;
+    dsTheme: TFIBDataSet;
     srcTheme: TDataSource;
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);

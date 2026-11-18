@@ -680,7 +680,7 @@ object LoaderForm: TLoaderForm
     Left = 328
     Top = 52
   end
-  object dsFileFormats: TpFIBDataSet
+  object dsFileFormats: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '    *'
@@ -874,7 +874,7 @@ object LoaderForm: TLoaderForm
     Left = 280
     Top = 256
   end
-  object dsPaymentSource: TpFIBDataSet
+  object dsPaymentSource: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC'
       'FROM PAYSOURCE'
@@ -886,7 +886,7 @@ object LoaderForm: TLoaderForm
     Top = 256
     oFetchAll = True
   end
-  object qFindCustomer: TpFIBQuery
+  object qFindCustomer: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -907,7 +907,7 @@ object LoaderForm: TLoaderForm
     Left = 445
     Top = 255
   end
-  object qFindCustomerForAdres: TpFIBQuery
+  object qFindCustomerForAdres: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -929,7 +929,7 @@ object LoaderForm: TLoaderForm
     Left = 544
     Top = 255
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -941,7 +941,7 @@ object LoaderForm: TLoaderForm
     Left = 660
     Top = 292
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -953,7 +953,7 @@ object LoaderForm: TLoaderForm
     Left = 704
     Top = 292
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -965,7 +965,7 @@ object LoaderForm: TLoaderForm
     Left = 660
     Top = 244
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -981,7 +981,7 @@ object LoaderForm: TLoaderForm
     Left = 444
     Top = 156
   end
-  object SelectQuery: TpFIBQuery
+  object SelectQuery: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     Left = 440
@@ -989,13 +989,13 @@ object LoaderForm: TLoaderForm
     qoAutoCommit = True
     qoStartTransaction = True
   end
-  object Script: TpFIBScripter
+  object Script: TFIBScripter
     Database = dmMain.dbTV
     Transaction = trWriteQ
     Left = 360
     Top = 304
   end
-  object qFindServices: TpFIBQuery
+  object qFindServices: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1020,7 +1020,7 @@ object LoaderForm: TLoaderForm
     Left = 256
     Top = 592
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT SERVICE_ID, NAME'
       'FROM SERVICES'

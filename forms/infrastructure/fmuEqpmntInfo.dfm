@@ -10,10 +10,8 @@ object apgEqpmntInfo: TapgEqpmntInfo
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 13
   object splMemo: TSplitter
     Left = 665
@@ -475,7 +473,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     object lbl2: TLabel
       Left = 0
       Top = 0
-      Width = 241
+      Width = 64
       Height = 13
       Align = alTop
       Caption = ' '#1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -840,7 +838,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
       OnExecute = actLanHttpUserLoginIPExecute
     end
   end
-  object dsData: TpFIBDataSet
+  object dsData: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EQUIPMENT SET NOTICE = :NOTICE WHERE EID = :OLD_EID')
     DeleteSQL.Strings = (
@@ -921,7 +919,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     Left = 335
     Top = 187
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -933,7 +931,7 @@ object apgEqpmntInfo: TapgEqpmntInfo
     Left = 251
     Top = 106
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

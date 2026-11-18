@@ -11,9 +11,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ComCtrls,
   Vcl.Mask,
   Vcl.Buttons,
-  SynEditHighlighter, FIBQuery, pFIBQuery, DBCtrlsEh, DBGridEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst,
+  SynEditHighlighter, FIBQuery, DBCtrlsEh, DBGridEh, DBLookupEh, FIBDataSet, PrjConst,
   ToolCtrlsEh,
-  DBGridEhToolCtrls, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, pFIBDatabase, frxClass, SendEmail, DBGridEhGrouping,
+  DBGridEhToolCtrls, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, frxClass, SendEmail, DBGridEhGrouping,
   DynVarsEh, frxExportBaseDialog, frxExportPDF, PropFilerEh, PropStorageEh, amSplitter;
 
 type
@@ -21,9 +21,9 @@ type
     pmMemo: TPopupMenu;
     actlst1: TActionList;
     actSend: TAction;
-    qrySaveMessages: TpFIBQuery;
+    qrySaveMessages: TFIBQuery;
     srcMessType: TDataSource;
-    dsMessType: TpFIBDataSet;
+    dsMessType: TFIBDataSet;
     pnl2: TPanel;
     pnlHead: TPanel;
     lbl2: TLabel;
@@ -41,23 +41,23 @@ type
     actInsertTmplate: TAction;
     actSaveTemplate: TAction;
     mmoLog: TDBMemoEh;
-    dsTemplate: TpFIBDataSet;
+    dsTemplate: TFIBDataSet;
     srcTemplate: TDataSource;
     actDeleteTemplate: TAction;
     btnDeleteTemplate: TSpeedButton;
     mmoMessage: TDBMemoEh;
-    trWriteQ: TpFIBTransaction;
+    trWriteQ: TFIBTransaction;
     pnlReport: TPanel;
     edtHEAD: TDBEditEh;
-    dsLetterTypes: TpFIBDataSet;
+    dsLetterTypes: TFIBDataSet;
     srcLetterTypes: TDataSource;
     lcbReportAsPDF: TDBLookupComboboxEh;
     lbl4: TLabel;
     pnlOkCancel: TPanel;
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
-    qryRead: TpFIBQuery;
-    trReadQ: TpFIBTransaction;
+    qryRead: TFIBQuery;
+    trReadQ: TFIBTransaction;
     lvFiles: TListView;
     btnDeleteFile: TSpeedButton;
     btnAddFile: TSpeedButton;

@@ -7,18 +7,17 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
-  FIBDatabase,
-  pFIBDatabase, CnClasses;
+  OkCancel_frame, FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
+  FIBDatabase, CnClasses;
 
 type
   TNodeMaterialForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
     CnErrors: TCnErrorProvider;
-    dsMaterials: TpFIBDataSet;
+    dsMaterials: TFIBDataSet;
     srcMaterials: TDataSource;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     lblAttribute: TLabel;
     dbluMat: TDBLookupComboboxEh;
     memNotice: TDBMemoEh;
@@ -36,8 +35,7 @@ function AddMaterial(const NODE_ID: Integer): Boolean;
 implementation
 
 uses
-  System.RegularExpressions,
-  DM, NodesForma, pFIBQuery;
+  System.RegularExpressions, DM, NodesForma;
 
 {$R *.dfm}
 
@@ -98,14 +96,14 @@ end;
 
 function TNodeMaterialForm.SaveInDb(const NODE_ID: Integer): Boolean;
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   // result := false;
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := trWrite;
-    fq.sql.Text := 'insert into Appliance (OWN_ID, OWN_Type, M_Id, Serial, Property,  Notice)';
+    fq.sql.Text := 'insert into Appliance (OWN_ID, OWN_Type, M_Id, Serial, Property, Notice)';
     fq.sql.add('values (:Owner, :Owner_Type, :M_Id, :Serial, :ownership, :Notice)');
     fq.ParamByName('Owner').AsInteger := NODE_ID;
     fq.ParamByName('Owner_Type').AsInteger := 2; // 2=Узел

@@ -186,7 +186,7 @@ inherited PortTypeForm: TPortTypeForm
     Left = 352
     Top = 280
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 57, :O_ID, :O_Name, :O_Descript' +
@@ -228,7 +228,7 @@ inherited PortTypeForm: TPortTypeForm
     Left = 136
     Top = 352
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -240,7 +240,7 @@ inherited PortTypeForm: TPortTypeForm
     Left = 459
     Top = 394
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

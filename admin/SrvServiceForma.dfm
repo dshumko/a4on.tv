@@ -11,14 +11,12 @@ object SrvServiceForm: TSrvServiceForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
   Position = poDefault
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel4: TPanel
     Left = 0
@@ -223,7 +221,7 @@ object SrvServiceForm: TSrvServiceForm
     TabOrder = 1
     WordWrap = False
   end
-  object DBforExtract: TpFIBDatabase
+  object DBforExtract: TFIBDatabase
     DBParams.Strings = (
       'lc_ctype=UNICODE_FSS')
     DefaultTransaction = trForExtract
@@ -233,7 +231,7 @@ object SrvServiceForm: TSrvServiceForm
     Left = 52
     Top = 242
   end
-  object trForExtract: TpFIBTransaction
+  object trForExtract: TFIBTransaction
     DefaultDatabase = DBforExtract
     TRParams.Strings = (
       'read'

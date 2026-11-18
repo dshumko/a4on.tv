@@ -121,6 +121,9 @@ object MatMoveDocForm: TMatMoveDocForm
       DynProps = <>
       DataField = 'WH_ID'
       DataSource = srcDoc
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1055#1088#1080#1093#1086#1076' '#1085#1072' '#1089#1082#1083#1072#1076
       EditButtons = <>
       KeyField = 'O_ID'
@@ -159,6 +162,9 @@ object MatMoveDocForm: TMatMoveDocForm
       DynProps = <>
       DataField = 'FROM_WH'
       DataSource = srcDoc
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1055#1088#1080#1093#1086#1076' '#1089#1086' '#1089#1082#1083#1072#1076#1072
       EditButtons = <>
       KeyField = 'O_ID'
@@ -458,7 +464,7 @@ object MatMoveDocForm: TMatMoveDocForm
       end
     end
   end
-  object dsDoc: TpFIBDataSet
+  object dsDoc: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIAL_DOCS'
       'SET '
@@ -526,7 +532,7 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 24
     Top = 288
   end
-  object dsDocMat: TpFIBDataSet
+  object dsDocMat: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIALS_IN_DOC'
       'SET '
@@ -714,14 +720,14 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 168
     Top = 288
   end
-  object dsFindMat: TpFIBDataSet
+  object dsFindMat: TFIBDataSet
     Transaction = trReadDS
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     Left = 256
     Top = 289
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.M_Id'
@@ -754,7 +760,7 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 312
     Top = 368
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -771,7 +777,7 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 312
     Top = 289
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
@@ -802,7 +808,7 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 376
     Top = 233
   end
-  object qCloseDoc: TpFIBQuery
+  object qCloseDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -817,7 +823,7 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 320
     Top = 225
   end
-  object qOpenDoc: TpFIBQuery
+  object qOpenDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -825,7 +831,7 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 576
     Top = 324
   end
-  object qCheckCount: TpFIBQuery
+  object qCheckCount: TFIBQuery
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -881,7 +887,7 @@ object MatMoveDocForm: TMatMoveDocForm
       Action = actDelRecord
     end
   end
-  object trReadDS: TpFIBTransaction
+  object trReadDS: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -893,7 +899,7 @@ object MatMoveDocForm: TMatMoveDocForm
     Left = 72
     Top = 398
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

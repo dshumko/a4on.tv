@@ -7,13 +7,13 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
-  FIBDataSet, pFIBDataSet, DBGridEh, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping,
+  FIBDataSet, DBGridEh, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping,
   DynVarsEh;
 
 type
   TfrmReqWorks = class(TFrame)
     dbGrid: TDBGridEh;
-    dsReqWorks: TpFIBDataSet;
+    dsReqWorks: TFIBDataSet;
     srcDataSource: TDataSource;
   private
     { Private declarations }

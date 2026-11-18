@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus,
   Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
   Data.DB,
-  FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, FIBDatabase,
+  FIBDataSet, FIBQuery, FIBDatabase,
   GridsEh, DBGridEh, DBCtrlsEh, DBLookupEh, PropFilerEh, PropStorageEh,
   CnErrorProvider, amSplitter,
   PrjConst, A4onTypeUnit, CnClasses;
@@ -33,24 +33,24 @@ type
 
   TEditCFileForm = class(TForm)
     srcFileTypes: TDataSource;
-    dsFileTypes: TpFIBDataSet;
+    dsFileTypes: TFIBDataSet;
     CnErrors: TCnErrorProvider;
-    dsCustFile: TpFIBDataSet;
+    dsCustFile: TFIBDataSet;
     srcCustFile: TDataSource;
     dlgOpen: TOpenDialog;
-    trWrite: TpFIBTransaction;
+    trWrite: TFIBTransaction;
     PropStorageEh: TPropStorageEh;
     pnlTop: TPanel;
     dbluFileType: TDBLookupComboboxEh;
     lblFile: TLabel;
-    dsService: TpFIBDataSet;
+    dsService: TFIBDataSet;
     srcService: TDataSource;
-    dsOnOffService: TpFIBDataSet;
+    dsOnOffService: TFIBDataSet;
     srcOnOffService: TDataSource;
     pnlBtm: TPanel;
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     pnlClient: TPanel;
     pnlNotice: TPanel;
     mmoDesc: TDBMemoEh;
@@ -107,11 +107,11 @@ type
     pnlName: TPanel;
     lbl1: TLabel;
     edtNAME: TDBEditEh;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
-    dsFLAT: TpFIBDataSet;
+    dsFLAT: TFIBDataSet;
     srcFLAT: TDataSource;
     lcbStreets: TDBLookupComboboxEh;
     lcbHOUSE: TDBLookupComboboxEh;
@@ -129,25 +129,25 @@ type
     edDateEnd: TDBDateTimeEditEh;
     pmFile: TPopupMenu;
     miFileClear: TMenuItem;
-    trWriteQ: TpFIBTransaction;
-    trReadQ: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    trWriteQ: TFIBTransaction;
+    trReadQ: TFIBTransaction;
+    trRead: TFIBTransaction;
     lblText1: TLabel;
     edtText1: TDBEditEh;
     pnlPayment: TPanel;
     lblBP2: TLabel;
     lcbPayment: TDBLookupComboboxEh;
-    dsPayment: TpFIBDataSet;
+    dsPayment: TFIBDataSet;
     srcPayment: TDataSource;
     lcbServiceFrom: TDBLookupComboboxEh;
-    dsServiceFrom: TpFIBDataSet;
+    dsServiceFrom: TFIBDataSet;
     srcServiceFrom: TDataSource;
     mmoNotice: TDBMemoEh;
     splMemo: TSplitter;
     pnlMaterials: TPanel;
     lblMat: TLabel;
     lcbMaterial: TDBLookupComboboxEh;
-    dsMaterials: TpFIBDataSet;
+    dsMaterials: TFIBDataSet;
     srcMaterials: TDataSource;
     lblText2: TLabel;
     edtText2: TDBEditEh;
@@ -311,7 +311,7 @@ type
     function ExecSQLforFileType(const aCustomerID: Integer; const aFileID: Integer): TFileTypeAddendumResult;
     function ExecCheckSaveSQL(): TFileTypeAddendumResult;
     function GetProcParams(proc: string; var rSQL: string): TStringDynArray;
-    procedure SetProcParamsValue(const aCustomerID: Integer; const aFileID: Integer; qry: TpFIBQuery;
+    procedure SetProcParamsValue(const aCustomerID: Integer; const aFileID: Integer; qry: TFIBQuery;
       FList: TStringDynArray);
     procedure MakeDebugLog(Module, SQL: string);
     procedure SetCustomerInfo(value: TCustomerInfo);
@@ -1504,7 +1504,7 @@ end;
 
 procedure TEditCFileForm.GetDefValues;
 var
-  Q: TpFIBQuery;
+  Q: TFIBQuery;
   s: string;
 begin
   if not FIsLTV then
@@ -1524,7 +1524,7 @@ begin
 
     if not s.IsEmpty then
     begin
-      Q := TpFIBQuery.Create(Self);
+      Q := TFIBQuery.Create(Self);
       try
         Q.DataBase := dmMain.dbTV;
         Q.Transaction := trReadQ;
@@ -1539,8 +1539,9 @@ begin
             edtText1.Text := Q.FN('JN').AsString
           else if edtText2.EmptyDataInfo.Text.ToUpper.Contains('ПРЕТЕНЗ') then
             edtText2.Text := Q.FN('JN').AsString;
-          Q.Transaction.Commit;
         end;
+        Q.Close;
+        Q.Transaction.Commit;
       finally
         Q.Free;
       end;
@@ -1709,9 +1710,7 @@ procedure TEditCFileForm.ShowControlsJson(const json: String);
 var
   JO: TJsonObject;
   ShowPnl: Boolean;
-  s: string;
   w: Integer;
-  sa: TStringDynArray;
 
 begin
   JO := TJsonObject.Parse(json) as TJsonObject;
@@ -2415,7 +2414,7 @@ begin
   begin
     // удалим файл если ошибка
     //
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -2424,6 +2423,7 @@ begin
         ParamByName('FileID').AsInteger := FileID;
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -2596,8 +2596,8 @@ begin
     s := s + Query.FN('O_Description').AsString;
   if not(Query.FN('O_Charfield').IsNull) then
     s := s + #13#10 + Query.FN('O_Charfield').AsString;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 
   Result := s.IsEmpty;
 
@@ -2636,8 +2636,8 @@ begin
 
   if Query.Open then
   begin
-    Query.Transaction.Rollback;
     Query.Close;
+    Query.Transaction.Rollback;
   end;
 
   QueryClear;
@@ -2654,7 +2654,7 @@ begin
     if FIsLTV then
     begin
       Query.SQL.Add
-        (' , iif(position(''СОБ.'',  coalesce((select first 1 upper(c.Name) from Customer_Files c where c.Customer_Id = :CID ');
+        (' , iif(position(''СОБ.'', coalesce((select first 1 upper(c.Name) from Customer_Files c where c.Customer_Id = :CID ');
       Query.SQL.Add(' and c.Cf_Type in (47675/*фото*/,50378/*прописка*/,47999/*собств*/) ');
       Query.SQL.Add(' and c.Name like ''%''||:PN||''%'' order by c.Added_On desc), '''')) > 0 , 1, 0) OWN_DOC_LTV ');
     end;
@@ -2671,7 +2671,7 @@ begin
   if FIsLTV then
   begin
     Query.SQL.Add
-      (' , iif(position(''СОБ.'',  coalesce((select first 1 upper(c.Name) from Customer_Files c where c.Customer_Id = :CID ');
+      (' , iif(position(''СОБ.'', coalesce((select first 1 upper(c.Name) from Customer_Files c where c.Customer_Id = :CID ');
     Query.SQL.Add(' and c.Cf_Type in (47675/*фото*/,50378/*прописка*/,47999/*собств*/) ');
     Query.SQL.Add(' and c.Name like ''%''||:PN||''%'' order by c.Added_On desc), '''')) > 0 , 1, 0) OWN_DOC_LTV ');
   end;
@@ -2735,9 +2735,8 @@ begin
     if not(Query.FN('Doc_Date').IsNull) then
       edtDOCDATE.value := Query.FN('Doc_Date').AsDate;
   end;
-
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 
   chkFOwner.OnClick := nil;
   chkFOwner.Checked := (FOwnerOldState = 1);
@@ -2899,8 +2898,8 @@ begin
 
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 end;
 
 procedure TEditCFileForm.SavePhone;
@@ -2957,8 +2956,8 @@ begin
 
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 
   if chkWA.Checked then
   begin
@@ -2980,8 +2979,8 @@ begin
     Query.ParamByName('Cc_Notify').AsInteger := 1;
     Query.Transaction.StartTransaction;
     Query.ExecQuery;
-    Query.Transaction.Commit;
     Query.Close;
+    Query.Transaction.Commit;
   end;
 
   if (not edtEMAIL.IsEmpty) then
@@ -2994,8 +2993,8 @@ begin
     Query.ParamByName('Cc_Notify').AsInteger := 1;
     Query.Transaction.StartTransaction;
     Query.ExecQuery;
-    Query.Transaction.Commit;
     Query.Close;
+    Query.Transaction.Commit;
   end;
 end;
 
@@ -3055,8 +3054,8 @@ begin
 
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 end;
 
 function TEditCFileForm.HasErrorInPhone: Boolean;
@@ -3266,6 +3265,7 @@ begin
 
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
+    Query.Close;
   Query.Transaction.Commit;
 end;
 
@@ -3283,7 +3283,7 @@ begin
 
     if FNeedSrv then
     begin
-      with TpFIBQuery.Create(Self) do
+      with TFIBQuery.Create(Self) do
       begin
         try
           DataBase := dmMain.dbTV;
@@ -3523,6 +3523,7 @@ begin
 
           Transaction.StartTransaction;
           ExecQuery;
+          Close;
           Transaction.Commit;
         finally
           Free;
@@ -3554,7 +3555,7 @@ begin
       Result := oldC.CUSTOMER_ID;
       if Result > 0 then
       begin
-        with TpFIBQuery.Create(Self) do
+        with TFIBQuery.Create(Self) do
         begin
           try
             DataBase := dmMain.dbTV;
@@ -3743,6 +3744,7 @@ begin
 
             Transaction.StartTransaction;
             ExecQuery;
+            Close;
             Transaction.Commit;
           finally
             Free;
@@ -3774,7 +3776,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -3806,6 +3808,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -3833,7 +3836,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -3938,6 +3941,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -3955,7 +3959,7 @@ begin
   if lcbHOUSE.Text.IsEmpty or lcbFLAT.Text.IsEmpty then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -3995,7 +3999,7 @@ end;
 
 procedure TEditCFileForm.SetPasswordIfEmpty();
 begin
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -4009,6 +4013,7 @@ begin
 
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -4029,7 +4034,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4054,6 +4059,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -4091,8 +4097,8 @@ begin
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   alert := Query.FN('CNT').AsInteger > 0;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 
   if (alert) then
     ShowMessage(rsPromoWarning);
@@ -4114,8 +4120,8 @@ begin
   Query.Transaction := trWrite;
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 end;
 
 function TEditCFileForm.CheckEnoughMoney: Boolean;
@@ -4138,7 +4144,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4155,6 +4161,7 @@ begin
         Transaction.StartTransaction;
         ExecQuery;
         Result := (FN('enough').AsInteger = 1);
+        Close;
         Transaction.Rollback;
       finally
         Free;
@@ -4211,8 +4218,8 @@ begin
   Query.Transaction := trWrite;
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 end;
 
 procedure TEditCFileForm.SetInfoFromRequest;
@@ -4260,8 +4267,8 @@ begin
       end;
     end;
   end;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 
   if HasError then
   begin
@@ -4308,8 +4315,8 @@ begin
   Query.ExecQuery;
   if (not Query.FieldByName('FIO').IsNull) then
     FWorker := Query.FieldByName('FIO').AsString;
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 end;
 
 function TEditCFileForm.IsDecoderText(edt: TDBEditEh): Boolean;
@@ -4358,7 +4365,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4388,6 +4395,7 @@ begin
           CID := FN('customer_id').AsInteger;
           a := FN('account_no').AsString;
         end;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -4443,7 +4451,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4457,6 +4465,7 @@ begin
         Transaction.StartTransaction;
         ExecQuery;
         Result := (FN('enough').AsString);
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -4487,7 +4496,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4505,6 +4514,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -4541,7 +4551,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4556,6 +4566,7 @@ begin
           SrvName := FN('srvName').AsString;
         if not FN('OffSrvName').IsNull then
           OffSrvName := FN('OffSrvName').AsString;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -4575,7 +4586,7 @@ begin
   end;
 
   Result := 0;
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -4586,6 +4597,7 @@ begin
       ExecQuery;
       if not FN('M_Tarif').IsNull then
         Result := FN('M_Tarif').AsFloat;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -4608,7 +4620,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4622,6 +4634,7 @@ begin
         ExecQuery;
         FLstSrv := (FN('lst').AsString);
         Result := FLstSrv;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -4652,7 +4665,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -4671,6 +4684,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -4732,8 +4746,8 @@ begin
   Query.ExecQuery;
   if not Query.FN('cnt').IsNull then
     Result := (Query.FN('cnt').AsInteger > 0);
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 end;
 
 procedure TEditCFileForm.SetImageFromImageList();
@@ -4775,8 +4789,8 @@ begin
   Query.ExecQuery;
   if not Query.FN('cnt').IsNull then
     ShowWarning := (Query.FN('cnt').AsInteger > 0);
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 
   if ShowWarning then
     Result := dbluFileType.Text + ' такой тип сегодня уже добавляли абоненту';
@@ -4808,8 +4822,8 @@ begin
       if VarToDateTime(edDateSrv.value) < Query.FN('State_Date').AsDate then
         Result := 'Дата не может быть раньше чем ' + FormatDateTime('dd.mm.yyyy', Query.FN('State_Date').AsDate);
     end;
-    Query.Transaction.Commit;
     Query.Close;
+    Query.Transaction.Commit;
   end;
 end;
 
@@ -5221,7 +5235,7 @@ begin
     ) then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -5345,6 +5359,7 @@ begin
 
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -5382,7 +5397,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5399,6 +5414,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5429,7 +5445,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5446,6 +5462,7 @@ begin
           SrvName := FN('srvName').AsString;
         if not FN('OffSrvName').IsNull then
           OffSrvName := FN('OffSrvName').AsString;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5460,8 +5477,8 @@ procedure TEditCFileForm.QueryClear;
 begin
   if Query.Open then
   begin
-    Query.Transaction.Rollback;
     Query.Close;
+    Query.Transaction.Rollback;
   end;
   Query.SQL.Clear;
 end;
@@ -5561,7 +5578,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5582,6 +5599,7 @@ begin
           // edDateEnd.Value := FN('Date_to').AsDate;
           edDateSrv.value := FN('Date_to').AsDate;
         end;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5611,7 +5629,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5639,7 +5657,7 @@ begin
           edDateBegin.value := Date() + 1;
         if not FN('Date_E').IsNull then
           edDateEnd.value := FN('Date_E').AsDate;
-
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5657,7 +5675,7 @@ begin
   if (FFileTypeName.Trim <> 'КОРРЕКТИРОВКА ПЛАТЕЖА.') then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -5684,8 +5702,8 @@ begin
 
       Transaction.StartTransaction;
       ExecQuery;
-      Transaction.Commit;
       Close;
+      Transaction.Commit;
       Result := true;
     finally
       Free;
@@ -5703,7 +5721,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5732,6 +5750,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5753,7 +5772,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5770,6 +5789,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5798,7 +5818,7 @@ begin
     or (AnsiUpperCase(edtText3.Text) = 'ДА')) then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -5812,6 +5832,7 @@ begin
 
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -5853,7 +5874,7 @@ begin
   if CheckFT <> -1 then
   begin
     // if not FIsLTV then Exit;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5871,6 +5892,7 @@ begin
           // запрет на выбор типа файла
           Result.Message := Format(rsNeedFileType, [FN('O_NAME').AsString]);
         end;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5884,7 +5906,7 @@ begin
   begin
     // процедура вида
     // select Prohibit, Prohibit_text from FT_CHECK_PERMISSIONS(CUSTOMER_ID, FileType_ID)
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5903,6 +5925,7 @@ begin
         end;
         if (not FN('Prohibit_text').IsNull) then
           Result.Message := FN('Prohibit_text').AsString;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -5926,7 +5949,7 @@ begin
   id := -1;
   if FIsLTV then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5937,6 +5960,7 @@ begin
         ExecQuery;
         if not FN('BLNG_ID').IsNull then
           id := FN('BLNG_ID').AsInteger;
+        Close;
         Transaction.Commit;
 
         // удалім другіе запісі, еслі оні есть
@@ -5948,6 +5972,7 @@ begin
           ParamByName('ID').AsInteger := id;
           Transaction.StartTransaction;
           ExecQuery;
+          Close;
           Transaction.Commit;
         end;
       finally
@@ -5961,7 +5986,7 @@ begin
 
   if id <> -1 then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -5970,6 +5995,7 @@ begin
         ParamByName('BLNG_ID').AsInteger := CustomerInfo.CUSTOMER_ID;
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -6012,7 +6038,7 @@ begin
   if st.IsEmpty then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -6036,6 +6062,7 @@ begin
         if (not FN('Serial').IsNull) then
           edtText1.Text := FN('Serial').AsString;
       end;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -6062,8 +6089,8 @@ begin
   Query.ExecQuery;
   if not Query.FN('cnt').IsNull then
     Result := (Query.FN('cnt').AsInteger > 0);
-  Query.Transaction.Commit;
   Query.Close;
+  Query.Transaction.Commit;
 end;
 
 function TEditCFileForm.GetProcParams(proc: string; var rSQL: string): TStringDynArray;
@@ -6071,7 +6098,7 @@ var
   c: Integer;
 begin
   rSQL := 'select * from ' + proc + '(';
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -6095,6 +6122,7 @@ begin
         Next;
       end;
       SetLength(Result, c);
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -6103,7 +6131,7 @@ begin
   rSQL := rSQL.TrimRight([',']) + ')';
 end;
 
-procedure TEditCFileForm.SetProcParamsValue(const aCustomerID: Integer; const aFileID: Integer; qry: TpFIBQuery;
+procedure TEditCFileForm.SetProcParamsValue(const aCustomerID: Integer; const aFileID: Integer; qry: TFIBQuery;
   FList: TStringDynArray);
 var
   fi: Integer;
@@ -6233,7 +6261,7 @@ end;
 function TEditCFileForm.ExecCheckSaveSQL(): TFileTypeAddendumResult;
 var
   FieldList: TStringDynArray;
-  Q: TpFIBQuery;
+  Q: TFIBQuery;
   vSql: string;
 begin
   Result.RemoveFile := False;
@@ -6248,7 +6276,7 @@ begin
     Exit;
 
   FieldList := GetProcParams(FCheckSaveProc, vSql);
-  Q := TpFIBQuery.Create(Self);
+  Q := TFIBQuery.Create(Self);
   try
     Q.DataBase := dmMain.dbTV;
     Q.Transaction := trWriteQ;
@@ -6260,6 +6288,7 @@ begin
       Result.Message := Q.FN('PROHIBIT_TEXT').AsString;
     if (Q.FieldIndex['PROHIBIT'] >= 0) and (not Q.FN('PROHIBIT').IsNull) then
       Result.RemoveFile := (Q.FN('PROHIBIT').AsInteger = 1);
+    Q.Close;
     Q.Transaction.Commit;
   finally
     Q.Free;
@@ -6274,7 +6303,7 @@ function TEditCFileForm.ExecSQLforFileType(const aCustomerID: Integer; const aFi
 var
   ProcList, FieldList: TStringDynArray;
   i: Integer;
-  Q: TpFIBQuery;
+  Q: TFIBQuery;
   vSql: string;
 begin
   Result.RemoveFile := False;
@@ -6295,7 +6324,7 @@ begin
   while ((i < length(ProcList)) and (not Result.Processed)) do
   begin
     FieldList := GetProcParams(ProcList[i], vSql);
-    Q := TpFIBQuery.Create(Self);
+    Q := TFIBQuery.Create(Self);
     try
       Q.DataBase := dmMain.dbTV;
       Q.Transaction := trWriteQ;
@@ -6318,6 +6347,7 @@ begin
         Result.FROM_CID := Q.FN('FROM_CID').AsInteger;
       if (Q.FieldIndex['FROM_RQ_ID'] >= 0) and (not Q.FN('FROM_RQ_ID').IsNull) then
         Result.FROM_RQ_ID := Q.FN('FROM_RQ_ID').AsInteger;
+      Q.Close;
       Q.Transaction.Commit;
     finally
       Q.Free;
@@ -6515,7 +6545,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -6538,6 +6568,7 @@ begin
             SetFiledVal(FieldByName('FLD').AsString, FieldByName('VAL').AsString);
           Next;
         end;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -6552,7 +6583,6 @@ end;
 procedure TEditCFileForm.SetEditTextFileds(edt: TDBEditEh; Hint: String);
 var
   s: string;
-  reg: String;
   sa: TStringDynArray;
 
   {
@@ -6694,6 +6724,7 @@ begin
     dmMain.qRead.Next;
   end;
   dmMain.qRead.Close;
+  dmMain.qRead.Transaction.Commit;
 end;
 
 end.

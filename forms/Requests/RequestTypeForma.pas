@@ -9,13 +9,13 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter, PrnDbgeh, CnClasses;
 
 type
   TRequestTypeForm = class(TGridForm)
-    dsRequestType: TpFIBDataSet;
+    dsRequestType: TFIBDataSet;
     pgcAddons: TPageControl;
     tsWorks: TTabSheet;
     tsTemplates: TTabSheet;
@@ -29,7 +29,7 @@ type
     btnTplt22: TToolButton;
     dbgTplt: TDBGridEh;
     tsResult: TTabSheet;
-    dsTemplates: TpFIBDataSet;
+    dsTemplates: TFIBDataSet;
     srcReqTemplates: TDataSource;
     actlstTplts: TActionList;
     actTpltsAdd: TAction;
@@ -45,7 +45,7 @@ type
     btnDeleteW: TToolButton;
     btn8W: TToolButton;
     btnQuickFltrW: TToolButton;
-    dsWorks: TpFIBDataSet;
+    dsWorks: TFIBDataSet;
     srcWorks: TDataSource;
     actAddW: TAction;
     actEditW: TAction;
@@ -64,7 +64,7 @@ type
     actEditRes: TAction;
     actDelRes: TAction;
     actQuickRes: TAction;
-    dsResult: TpFIBDataSet;
+    dsResult: TFIBDataSet;
     srcResult: TDataSource;
     dnspltr1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

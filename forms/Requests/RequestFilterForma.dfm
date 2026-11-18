@@ -421,6 +421,7 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.ListSource = srcRequestType
         DropDownBox.ListSourceAutoFilter = True
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1058#1080#1087' '#1079#1072#1103#1074#1082#1080
@@ -446,6 +447,9 @@ object RequestFilterForm: TRequestFilterForm
         DynProps = <>
         DataField = 'EXECUTOR_ID'
         DataSource = srcFilter
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1048#1089#1087#1086#1083#1085#1080#1090#1077#1083#1100
@@ -468,6 +472,9 @@ object RequestFilterForm: TRequestFilterForm
         DynProps = <>
         DataField = 'Analyse'
         DataSource = srcFilter
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1040#1085#1072#1083#1080#1090#1080#1082#1072
@@ -514,6 +521,9 @@ object RequestFilterForm: TRequestFilterForm
             FieldName = 'Subarea_Name'
             Width = 40
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         DropDownBox.Width = 200
@@ -550,6 +560,7 @@ object RequestFilterForm: TRequestFilterForm
         DropDownBox.ListSource = srcStreets
         DropDownBox.ListSourceAutoFilter = True
         DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1059#1083#1080#1094#1072
@@ -581,6 +592,9 @@ object RequestFilterForm: TRequestFilterForm
           item
             FieldName = 'WA_NAME'
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1047#1074#1077#1085#1086
@@ -602,6 +616,9 @@ object RequestFilterForm: TRequestFilterForm
         DynProps = <>
         DataField = 'WORKAREA'
         DataSource = srcFilter
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1059#1095#1072#1089#1090#1086#1082
@@ -623,6 +640,9 @@ object RequestFilterForm: TRequestFilterForm
         DynProps = <>
         DataField = 'AREA_ID'
         DataSource = srcFilter
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1053#1072#1089'. '#1087#1091#1085#1082#1090
@@ -728,6 +748,9 @@ object RequestFilterForm: TRequestFilterForm
           item
             FieldName = 'RT_NAME'
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
         EmptyDataInfo.Text = #1056#1072#1073#1086#1090#1072
@@ -755,6 +778,9 @@ object RequestFilterForm: TRequestFilterForm
             FieldName = 'ORG_NAME'
             Title.Caption = #1054#1073#1089#1083#1091#1078#1080#1074#1072#1102#1097#1072#1103' '#1086#1088#1075#1072#1085#1080#1079#1072#1094#1080#1103
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = []
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
@@ -778,6 +804,9 @@ object RequestFilterForm: TRequestFilterForm
         DataField = 'HE_ID'
         DataSource = srcFilter
         DropDownBox.AutoFitColWidths = False
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = []
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
@@ -809,6 +838,9 @@ object RequestFilterForm: TRequestFilterForm
           item
             FieldName = 'RT_NAME'
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = []
         DropDownBox.AutoDrop = True
         DropDownBox.Sizable = True
@@ -877,6 +909,9 @@ object RequestFilterForm: TRequestFilterForm
             FieldName = 'AREA_NAME'
             Title.Caption = #1056#1072#1081#1086#1085
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         DropDownBox.ShowTitles = True
         DropDownBox.Sizable = True
@@ -1055,7 +1090,7 @@ object RequestFilterForm: TRequestFilterForm
       end
     end
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.street_id'
@@ -1078,7 +1113,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 600
     Top = 93
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    h.HOUSE_ID'
@@ -1105,7 +1140,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 595
     Top = 25
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'
@@ -1123,7 +1158,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 681
     Top = 24
   end
-  object dsSubArea: TpFIBDataSet
+  object dsSubArea: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.subarea_id, s.subarea_name, s.notice, a.area_name'
       'FROM SUBAREA s inner join area a on (s.area_id = a.area_id)'
@@ -1141,11 +1176,11 @@ object RequestFilterForm: TRequestFilterForm
     Left = 615
     Top = 165
   end
-  object dsRequestType: TpFIBDataSet
+  object dsRequestType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    W.*'
-      '    , coalesce(w.Rt_Color,  '#39'clWindow'#39') as COLOR    '
+      '    , coalesce(w.Rt_Color, '#39'clWindow'#39') as COLOR    '
       '  from REQUEST_TYPES W'
       '  where (current_user = '#39'SYSDBA'#39')'
       '          or (RT_DELETED = 0)'
@@ -1162,7 +1197,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 687
     Top = 229
   end
-  object dsExecutor: TpFIBDataSet
+  object dsExecutor: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       
@@ -1189,7 +1224,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 651
     Top = 88
   end
-  object dsWORKAREA: TpFIBDataSet
+  object dsWORKAREA: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from WORKAREA'
@@ -1201,7 +1236,7 @@ object RequestFilterForm: TRequestFilterForm
     Top = 76
     oFetchAll = True
   end
-  object dsWORKGROUP: TpFIBDataSet
+  object dsWORKGROUP: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    s.WG_ID,'
@@ -1227,7 +1262,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 625
     Top = 241
   end
-  object dsANALYS: TpFIBDataSet
+  object dsANALYS: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -1287,7 +1322,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 614
     Top = 310
   end
-  object dsOrg: TpFIBDataSet
+  object dsOrg: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -1345,7 +1380,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 610
     Top = 158
   end
-  object dsMH: TpFIBDataSet
+  object dsMH: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -1395,7 +1430,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 598
     Top = 147
   end
-  object dsWorks: TpFIBDataSet
+  object dsWorks: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -1455,7 +1490,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 739
     Top = 30
   end
-  object dsResult: TpFIBDataSet
+  object dsResult: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -1515,7 +1550,7 @@ object RequestFilterForm: TRequestFilterForm
     Left = 724
     Top = 90
   end
-  object dsErrors: TpFIBDataSet
+  object dsErrors: TFIBDataSet
     SelectSQL.Strings = (
       'select rt.RQTL_ID, rt.rq_content, t.rt_name'
       'from request_templates rt'

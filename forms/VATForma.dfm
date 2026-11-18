@@ -272,7 +272,7 @@ inherited VATForm: TVATForm
     Left = 24
     Top = 96
   end
-  object dsVATs: TpFIBDataSet
+  object dsVATs: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '
@@ -325,7 +325,7 @@ inherited VATForm: TVATForm
     Left = 293
     Top = 41
   end
-  object dsTarif: TpFIBDataSet
+  object dsTarif: TFIBDataSet
     DeleteSQL.Strings = (
       'EXECUTE PROCEDURE TARIF_IUD('
       '  :TARIF_ID, '

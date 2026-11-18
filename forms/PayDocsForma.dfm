@@ -28,7 +28,6 @@ object PayDocsForm: TPayDocsForm
     Height = 501
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 481
     object dbgPayDoc: TDBGridEh
       Left = 1
       Top = 30
@@ -364,6 +363,7 @@ object PayDocsForm: TPayDocsForm
           end>
         DropDownBox.ListSource = srcPaymentSource
         DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
         DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
         DropDownBox.SortLocal = True
@@ -490,7 +490,7 @@ object PayDocsForm: TPayDocsForm
       OnClick = ppmSaveSelectionClick
     end
   end
-  object dsPayDocs: TpFIBDataSet
+  object dsPayDocs: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PAY_DOC'
       'SET '
@@ -699,7 +699,7 @@ object PayDocsForm: TPayDocsForm
     Left = 124
     Top = 399
   end
-  object dsPaymentSource: TpFIBDataSet
+  object dsPaymentSource: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC'
       'FROM PAYSOURCE'
@@ -737,8 +737,8 @@ object PayDocsForm: TPayDocsForm
       OnClick = N3Click
     end
   end
-  object qDetailCount: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qDetailCount: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select count(*) from payment p where p.pay_doc_id = :pay_doc_id')
@@ -777,7 +777,7 @@ object PayDocsForm: TPayDocsForm
       end
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -789,7 +789,7 @@ object PayDocsForm: TPayDocsForm
     Left = 312
     Top = 176
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -800,5 +800,17 @@ object PayDocsForm: TPayDocsForm
     TPBMode = tpbDefault
     Left = 384
     Top = 180
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 520
+    Top = 296
   end
 end

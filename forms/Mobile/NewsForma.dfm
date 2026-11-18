@@ -270,7 +270,7 @@ inherited NewsForm: TNewsForm
     Left = 16
     Top = 208
   end
-  object dsNews: TpFIBDataSet
+  object dsNews: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '

@@ -122,6 +122,9 @@ object MatIncomeDocForm: TMatIncomeDocForm
       DynProps = <>
       DataField = 'WH_ID'
       DataSource = srcDoc
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1055#1088#1080#1093#1086#1076' '#1085#1072' '#1089#1082#1083#1072#1076
       EditButtons = <>
       KeyField = 'O_ID'
@@ -160,6 +163,9 @@ object MatIncomeDocForm: TMatIncomeDocForm
       DynProps = <>
       DataField = 'SHIPPER'
       DataSource = srcDoc
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1055#1086#1089#1090#1072#1074#1097#1080#1082
       EditButtons = <>
       KeyField = 'O_ID'
@@ -622,7 +628,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
       end
     end
   end
-  object dsDoc: TpFIBDataSet
+  object dsDoc: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIAL_DOCS'
       'SET '
@@ -700,7 +706,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 32
     Top = 288
   end
-  object dsDocMat: TpFIBDataSet
+  object dsDocMat: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIALS_IN_DOC'
       'SET '
@@ -769,7 +775,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
       'VALUES('
       '    :ID,'
       '    :M_ID,'
-      '    :M_QUANT,    '
+      '    :M_QUANT,   '
       '    :M_NOTICE,'
       '    :DOC_ID,'
       '    :SHIPPER_COST,'
@@ -842,14 +848,14 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 168
     Top = 288
   end
-  object dsFindMat: TpFIBDataSet
+  object dsFindMat: TFIBDataSet
     Transaction = trReadDS
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     Left = 224
     Top = 265
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.*, g.Mg_Name'
@@ -864,7 +870,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Top = 240
     oFetchAll = True
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -873,15 +879,15 @@ object MatIncomeDocForm: TMatIncomeDocForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 216
-    Top = 406
+    Left = 208
+    Top = 414
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = False
     Left = 272
     Top = 345
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
@@ -912,7 +918,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 336
     Top = 345
   end
-  object qCloseDoc: TpFIBQuery
+  object qCloseDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -920,7 +926,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 760
     Top = 220
   end
-  object dsShippers: TpFIBDataSet
+  object dsShippers: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
@@ -939,7 +945,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 592
     Top = 209
   end
-  object qOpenDoc: TpFIBQuery
+  object qOpenDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -989,15 +995,15 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 432
     Top = 72
   end
-  object qReqFile: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qReqFile: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select b.Bl_Body from Blob_Tbl b where b.Bl_Id = :Bl_Id')
     Left = 496
     Top = 72
   end
-  object qSaveFile: TpFIBQuery
+  object qSaveFile: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1009,7 +1015,7 @@ object MatIncomeDocForm: TMatIncomeDocForm
     Left = 552
     Top = 72
   end
-  object trReadDS: TpFIBTransaction
+  object trReadDS: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1018,10 +1024,10 @@ object MatIncomeDocForm: TMatIncomeDocForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 48
-    Top = 422
+    Left = 56
+    Top = 414
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1030,7 +1036,19 @@ object MatIncomeDocForm: TMatIncomeDocForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 120
-    Top = 428
+    Left = 136
+    Top = 412
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 280
+    Top = 416
   end
 end

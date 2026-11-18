@@ -10,17 +10,17 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
   CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  Vcl.Mask, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, amSplitter,
+  Vcl.Mask, FIBDatabase, FIBQuery, amSplitter,
   PrnDbgeh, CnClasses;
 
 type
   TDocListForm = class(TGridForm)
-    dsDOCS: TpFIBDataSet;
+    dsDOCS: TFIBDataSet;
     btn2: TToolButton;
     actHistory: TAction;
-    dsHistory: TpFIBDataSet;
+    dsHistory: TFIBDataSet;
     srcHistory: TDataSource;
     pnlHistory: TPanel;
     dbgHistory: TDBGridEh;
@@ -51,13 +51,13 @@ type
     cbType: TDBComboBoxEh;
     lbl2: TLabel;
     edtBIRTHDAY: TDBDateTimeEditEh;
-    Query: TpFIBQuery;
-    trReadQ: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    Query: TFIBQuery;
+    trReadQ: TFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     btnOpen: TSpeedButton;
     actViewDoc: TAction;
-    qRead: TpFIBQuery;
+    qRead: TFIBQuery;
     lbl31: TLabel;
     edtMOBILE: TDBEditEh;
     miHistory: TMenuItem;
@@ -232,7 +232,7 @@ begin
   qRead.ExecQuery;
   qRead.FieldByName('content').SaveToFile(fileName);
   qRead.Close;
-  qRead.Transaction.Rollback;
+  qRead.Transaction.Commit;
   ShellExecute(Handle, 'open', PWideChar(fileName), nil, nil, SW_SHOWNORMAL);
 end;
 

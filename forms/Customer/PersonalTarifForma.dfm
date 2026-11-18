@@ -12,7 +12,6 @@ object PersonalTarifForm: TPersonalTarifForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnCreate = FormCreate
@@ -20,7 +19,6 @@ object PersonalTarifForm: TPersonalTarifForm
   DesignSize = (
     357
     229)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -121,7 +119,7 @@ object PersonalTarifForm: TPersonalTarifForm
     Visible = True
     WantReturns = True
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -133,16 +131,16 @@ object PersonalTarifForm: TPersonalTarifForm
         'f_Id) , :Service_Id, :Customer_Id, :Date_From, :Date_To, :Tarif_' +
         'Sum, :Notice, :Add_Method)'
       'matching (Tarif_Id)  ')
-    Left = 229
-    Top = 110
+    Left = 125
+    Top = 94
   end
   object CnErrors: TCnErrorProvider
     DoubleBuffer = False
-    Left = 160
-    Top = 152
+    Left = 192
+    Top = 96
   end
-  object qSelect: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qSelect: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select'
@@ -154,9 +152,21 @@ object PersonalTarifForm: TPersonalTarifForm
       '  where pt.tarif_id = :tarif_id'
       ''
       '    ')
-    Left = 112
-    Top = 120
+    Left = 64
+    Top = 96
     qoAutoCommit = True
     qoStartTransaction = True
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 273
+    Top = 96
   end
 end

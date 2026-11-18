@@ -8,12 +8,12 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask,
-  GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, pFIBDataSet, CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst,
+  GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   TPaymentSourcesForm = class(TGridForm)
-    dsPaymentSource: TpFIBDataSet;
+    dsPaymentSource: TFIBDataSet;
     lbl2: TLabel;
     lbl3: TLabel;
     edtName: TDBEditEh;

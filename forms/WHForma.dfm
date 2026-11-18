@@ -336,7 +336,7 @@ inherited WHform: TWHform
     Left = 160
     Top = 240
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE'
       '    OBJECTS '
@@ -419,7 +419,7 @@ inherited WHform: TWHform
     Left = 112
     Top = 241
   end
-  object dsRights: TpFIBDataSet
+  object dsRights: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    USER_ID  type of UID = :USER_ID,'
@@ -504,7 +504,7 @@ inherited WHform: TWHform
     Left = 560
     Top = 248
   end
-  object dsOwner: TpFIBDataSet
+  object dsOwner: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    w.Worker_Id'

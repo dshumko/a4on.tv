@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.ActnList, Vcl.Menus, Vcl.Dialogs, Vcl.Buttons, Vcl.Forms, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
   Vcl.Controls,
   Vcl.ExtCtrls, Vcl.ComCtrls,
-  DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery, FIBDataSet, pFIBDataSet, GridsEh, frxClass, PaymentDocForma, DM,
+  DBGridEh, DBCtrlsEh, DBLookupEh, FIBQuery, FIBDataSet, GridsEh, frxClass, PaymentDocForma, DM,
   CustomerInfoFrame, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, MemTableDataEh, MemTableEh, PrjConst, EhLibVCL,
   PropFilerEh,
   PropStorageEh, A4onTypeUnit, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter, CnClasses;
@@ -28,25 +28,25 @@ type
     pnlSRV: TPanel;
     lPaymentSrv: TLabel;
     luPaymentSrv: TDBLookupComboboxEh;
-    dsPaymentSRV: TpFIBDataSet;
+    dsPaymentSRV: TFIBDataSet;
     srcPaymentSRV: TDataSource;
-    dsPaymentType: TpFIBDataSet;
+    dsPaymentType: TFIBDataSet;
     srcPaymentType: TDataSource;
     pnlPayDoc: TPanel;
     Label6: TLabel;
     dbluPayDoc: TDBLookupComboboxEh;
-    dsPaymentDocs: TpFIBDataSet;
+    dsPaymentDocs: TFIBDataSet;
     srcPaymentDocs: TDataSource;
     Panel5: TPanel;
     Label9: TLabel;
-    dsFine: TpFIBDataSet;
+    dsFine: TFIBDataSet;
     srcFine: TDataSource;
     pnlPayType: TPanel;
     lPaymentType: TLabel;
     luPaymentType: TDBLookupComboboxEh;
     srcMemPayment: TDataSource;
     mmoNOTICE: TDBMemoEh;
-    qInsertPayment: TpFIBQuery;
+    qInsertPayment: TFIBQuery;
     PopupMenu1: TPopupMenu;
     N1: TMenuItem;
     pnlFineSum: TPanel;
@@ -88,7 +88,7 @@ type
     pnlPayInput: TPanel;
     Label2: TLabel;
     cbbPayTypeStr: TDBLookupComboboxEh;
-    dsPT: TpFIBDataSet;
+    dsPT: TFIBDataSet;
     srcPT: TDataSource;
     pnlLCPS: TPanel;
     lbl11: TLabel;
@@ -96,6 +96,9 @@ type
     spl2: TSplitter;
     pmMonthCalc: TPopupMenu;
     lblWarning: TLabel;
+    pnlBID: TPanel;
+    lblBID: TLabel;
+    ednBID: TDBNumberEditEh;
     procedure FormCreate(Sender: TObject);
     procedure FormShow(Sender: TObject);
     procedure btnCalcFineClick(Sender: TObject);
@@ -121,6 +124,8 @@ type
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormCloseQuery(Sender: TObject; var CanClose: Boolean);
     procedure luPaymentSrvExit(Sender: TObject);
+    procedure luPaymentSrvChange(Sender: TObject);
+    procedure ednBIDExit(Sender: TObject);
   private
     { Private declarations }
     FCustomerRecord: TCustomerInfo;
@@ -135,9 +140,9 @@ type
     FForForm: string;
     FEnterSecondPress: Boolean;
     FIsLTV: Boolean;
-    FRQ_ID: Integer;
     FPayInputShow: Boolean;
     FShowLCPS: Boolean;
+    FShowBID: Boolean;
     procedure FindCustomer(const lic: string; const code: string; id: Integer);
     function InsertPayment(const NeedPrintCheck: Boolean): Boolean;
     function SelectPayDoc: int64;
@@ -154,6 +159,8 @@ type
     procedure JudgeInput;
     procedure CreateMonthMenu;
     procedure MiMonthClick(Sender: TObject);
+    procedure SetBid(const Value: Integer);
+    procedure CheckBIDNumber();
   protected
     procedure AfterSave(const PaymentId: Integer);
   public
@@ -161,7 +168,7 @@ type
     property CurrentDate: TDate read FCurrentDate write FCurrentDate;
     property ForForm: String write SetForForm;
     property PayDoc_id: int64 write SetPayDoc_Id;
-    property RQ_ID: Integer write FRQ_ID;
+    property RQ_ID: Integer write SetBid;
   end;
 
 var
@@ -226,9 +233,9 @@ begin
   Result := -1;
   pf := TPaymentForm.Create(application);
   try
+    pf.dsMemPayment.Open;
     pf.PayDoc_id := aPayDoc_id;
     pf.RQ_ID := aRQ_ID;
-    pf.dsMemPayment.Open;
     pf.dsMemPayment.EmptyTable;
     pf.dsMemPayment.Insert;
     if aPayment_id <> -1 then
@@ -336,14 +343,14 @@ end;
 procedure TPaymentForm.AfterSave(const PaymentId: Integer);
 var
   FSaveProc: String;
-  Q: TpFIBQuery;
+  Q: TFIBQuery;
 begin
   FSaveProc := dmMain.GetSettingsValue('PAY_AFTER_SAVE');
 
   if FSaveProc.IsEmpty then
     Exit;
 
-  Q := TpFIBQuery.Create(Self);
+  Q := TFIBQuery.Create(Self);
   try
     Q.DataBase := dmMain.dbTV;
     Q.Transaction := dmMain.trWriteQ;
@@ -353,6 +360,7 @@ begin
     Q.ExecQuery;
     if (Q.FieldIndex['RESULT_TEXT'] >= 0) and (not Q.FN('RESULT_TEXT').IsNull) then
       FSaveProc := Q.FN('RESULT_TEXT').AsString;
+    Q.Close;
     Q.Transaction.Commit;
   finally
     Q.Free;
@@ -589,6 +597,9 @@ begin
 
   FShowLCPS := (dmMain.GetSettingsValue('SHOW_LCPS') = '1');
   pnlLCPS.Visible := FShowLCPS;
+
+  FShowBID := (dmMain.GetSettingsValue('SHOW_PAY_REQUEST') = '1');
+  pnlBID.Visible := FShowBID;
 
   CreateMonthMenu;
 end;
@@ -923,7 +934,7 @@ var
   res: int64;
 begin
   res := -1;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -1134,8 +1145,8 @@ begin
     else
       ParamByName('EXT_PAY_ID').Clear;
 
-    if FRQ_ID > 0 then
-      ParamByName('RQ_ID').AsInteger := FRQ_ID
+    if not dsMemPayment.FieldByName('BID').IsNull then
+      ParamByName('RQ_ID').AsInteger := dsMemPayment['BID']
     else
       ParamByName('RQ_ID').Clear;
 
@@ -1188,6 +1199,7 @@ begin
     begin
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     end
     else
@@ -1294,6 +1306,11 @@ begin
   edCode.Text := '';
 end;
 
+procedure TPaymentForm.ednBIDExit(Sender: TObject);
+begin
+  CheckBIDNumber();
+end;
+
 procedure TPaymentForm.edLicevoyChange(Sender: TObject);
 begin
   FindCustomer(edLicevoy.Text, '', -1);
@@ -1398,11 +1415,11 @@ begin
   then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select * from IBE$PAYFORJUDGE(:CID)';
       ParamByName('CID').AsInteger := FCustomerRecord.CUSTOMER_ID;
       Transaction.StartTransaction;
@@ -1421,6 +1438,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
   end;
@@ -1446,6 +1464,17 @@ begin
   PostMessage(mmoNOTICE.Handle, WM_KEYDOWN, VK_DOWN, 0);
 end;
 
+procedure TPaymentForm.luPaymentSrvChange(Sender: TObject);
+var
+  s: String;
+begin
+  if (FIsLTV) and (not FShowBID) then
+  begin
+    s := luPaymentSrv.Text.ToUpper;
+    pnlBID.Visible := s.Contains('ШТРАФ') and s.Contains('ТЕХ');
+  end;
+end;
+
 procedure TPaymentForm.luPaymentSrvExit(Sender: TObject);
 begin
   try
@@ -1462,13 +1491,13 @@ end;
 
 procedure TPaymentForm.CheckAndSetContract(const CID: Integer);
 var
-  Q: TpFIBQuery;
+  Q: TFIBQuery;
   NeedUpdate: Boolean;
 begin
-  Q := TpFIBQuery.Create(Nil);
+  Q := TFIBQuery.Create(Nil);
   try
     Q.DataBase := dmMain.dbTV;
-    Q.Transaction := dmMain.trReadQ;
+    Q.Transaction := dmMain.GetTransactionForRead;
     Q.SQL.Text := 'select count(*) CNT from Subscr_Serv ss ' +
       ' where ss.Customer_Id = :CID and ((ss.State_Sgn = 1) or (ss.State_Sgn = 0 and ss.State_Srv = -3)) ' +
       ' and ss.Serv_Id <> 819519 ' +
@@ -1481,6 +1510,7 @@ begin
     Q.Close;
     Q.Transaction.Commit;
   finally
+    if assigned(q.Transaction) then q.Transaction.Free;
     Q.Free;
   end;
   if not NeedUpdate then
@@ -1488,7 +1518,7 @@ begin
 
   application.MessageBox('Необходимо перезаключить договор', 'Внимание!', MB_OK + MB_ICONWARNING);
 
-  Q := TpFIBQuery.Create(Nil);
+  Q := TFIBQuery.Create(Nil);
   try
     Q.DataBase := dmMain.dbTV;
     Q.Transaction := dmMain.trWriteQ;
@@ -1501,6 +1531,7 @@ begin
     Q.ParamByName('PREF').AsString := 'Ар. -';
     Q.Transaction.StartTransaction;
     Q.ExecQuery;
+    Q.Close;
     Q.Transaction.Commit;
   finally
     Q.Free;
@@ -1509,15 +1540,15 @@ end;
 
 procedure TPaymentForm.CheckRequestPay(const CID: Integer);
 var
-  Q: TpFIBQuery;
+  Q: TFIBQuery;
   s: string;
 begin
   lblWarning.Visible := False;
   s := '';
-  Q := TpFIBQuery.Create(Nil);
+  Q := TFIBQuery.Create(Nil);
   try
     Q.DataBase := dmMain.dbTV;
-    Q.Transaction := dmMain.trReadQ;
+    Q.Transaction := dmMain.GetTransactionForRead;
     Q.SQL.Text := 'execute block (CID integer = :CID)' //
       + ' returns ( PROHIBIT_TEXT D_NOTICE) as begin' //
       + ' if (exists(select 1 from RDB$PROCEDURES R where RDB$PROCEDURE_NAME = ''IBE$CHECK_BEFORE_PAYMENT'')) then ' //
@@ -1531,6 +1562,7 @@ begin
     Q.Close;
     Q.Transaction.Commit;
   finally
+    if assigned(q.Transaction) then q.Transaction.Free;
     Q.Free;
   end;
   if s.IsEmpty then
@@ -1600,6 +1632,74 @@ begin
   NewItem.OnClick := MiMonthClick;
   NewItem.Tag := 0;
   pmMonthCalc.Items.Add(NewItem);
+end;
+
+procedure TPaymentForm.SetBid(const Value: Integer);
+var
+  e: Boolean;
+begin
+  if Value <= 0 then
+    Exit;
+
+  if not dsMemPayment.Active then
+    dsMemPayment.Open;
+
+  pnlBID.Visible := true;
+
+  e := not(dsMemPayment.State in [dsEdit, dsInsert]);
+  if e then
+  begin
+    if dsMemPayment.RecordCount = 0 then
+      dsMemPayment.Insert
+    else
+      dsMemPayment.Edit;
+  end;
+
+  ednBID.Value := Value;
+
+  if e then
+    dsMemPayment.Post;
+end;
+
+procedure TPaymentForm.CheckBIDNumber();
+var
+  Save_Cursor: TCursor;
+  h: Integer;
+begin
+  if (not pnlBID.Visible) or (ednBID.Text.IsEmpty) then
+    Exit;
+
+  Save_Cursor := Screen.Cursor;
+  try
+    Screen.Cursor := crSQLWait;
+    with TFIBQuery.Create(Self) do
+    begin
+      try
+        DataBase := dmMain.dbTV;
+        Transaction := dmMain.GetTransactionForRead;
+        SQL.Text := 'select count(*) cnt from REQUEST where RQ_ID = :BID';
+        ParamByName('BID').AsString := ednBID.Value;
+        Transaction.StartTransaction;
+        ExecQuery;
+        if (FN('cnt').IsNull) then
+          h := 0
+        else
+          h := FN('cnt').AsInteger;
+        Close;
+        Transaction.Commit;
+      finally
+        if assigned(Transaction) then Transaction.Free;
+        Free;
+      end;
+    end;
+  finally
+    Screen.Cursor := Save_Cursor;
+  end;
+
+  if h = 1 then
+    CnErrors.Dispose(ednBID)
+  else
+    CnErrors.SetError(ednBID, Format(rsBidNotFound, [ednBID.Text]), iaMiddleLeft, bsNeverBlink);
 end;
 
 end.

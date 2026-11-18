@@ -67,17 +67,17 @@
     Top = 136
   end
   object pFIBValidationService: TpFIBValidationService
-    ServerName = 'LOCALHOST:TV_JODINO'
+    ServerName = 'LOCALHOST:A4ON_DB'
     Protocol = TCP
     LibraryName = 'fbclient.dll'
-    DatabaseName = 'LOCALHOST:TV_JODINO'
+    DatabaseName = 'LOCALHOST:A4ON_DB'
     Options = [ValidateDB]
     GlobalAction = CommitGlobal
     OnTextNotify = pFIBValidationServiceTextNotify
     Left = 48
     Top = 200
   end
-  object pFIBSecurityService1: TpFIBSecurityService
+  object pFIBSecurityService1: TFIBSecurityService
     LibraryName = 'fbclient.dll'
     SecurityAction = ActionAddUser
     UserID = 0

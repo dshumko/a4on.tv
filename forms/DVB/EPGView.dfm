@@ -34,7 +34,6 @@ object EPGViewForm: TEPGViewForm
     Align = alLeft
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitHeight = 352
     object Label2: TLabel
       Left = 0
       Top = 0
@@ -42,7 +41,6 @@ object EPGViewForm: TEPGViewForm
       Height = 13
       Align = alTop
       Caption = ' '#1057#1087#1080#1089#1086#1082' '#1082#1072#1085#1072#1083#1086#1074
-      ExplicitWidth = 84
     end
     object dbgChannels: TDBGridEh
       Left = 0
@@ -106,7 +104,6 @@ object EPGViewForm: TEPGViewForm
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 2
-    ExplicitHeight = 352
     object Label1: TLabel
       Left = 0
       Top = 0
@@ -114,7 +111,6 @@ object EPGViewForm: TEPGViewForm
       Height = 13
       Align = alTop
       Caption = #1056#1072#1089#1087#1080#1089#1072#1085#1080#1077' '#1087#1088#1086#1075#1088#1072#1084#1084
-      ExplicitWidth = 108
     end
     object dbgEPG: TDBGridEh
       Left = 0
@@ -828,14 +824,14 @@ object EPGViewForm: TEPGViewForm
     Left = 310
     Top = 418
   end
-  object dsEPG: TpFIBDataSet
+  object dsEPG: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EPG'
       'SET '
       '    EPG_DATE = :EPG_DATE,'
       '    TITLE = :TITLE,'
       '    DURATION = :DURATION,'
-      '    DATE_START = :DATE_START,    '
+      '    DATE_START = :DATE_START,   '
       '    DATE_STOP = :DATE_STOP,'
       '    DESCRIPTION = :DESCRIPTION,'
       '    GENRES = :GENRES,'
@@ -885,7 +881,7 @@ object EPGViewForm: TEPGViewForm
     Top = 354
     WaitEndMasterScroll = True
   end
-  object dsChennals: TpFIBDataSet
+  object dsChennals: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    CH_ID,'
@@ -902,17 +898,17 @@ object EPGViewForm: TEPGViewForm
     Top = 442
     oFetchAll = True
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 378
     Top = 392
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 482
     Top = 392
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     Left = 435
@@ -925,7 +921,7 @@ object EPGViewForm: TEPGViewForm
     Left = 577
     Top = 401
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 520
     Top = 436
@@ -992,16 +988,6 @@ object EPGViewForm: TEPGViewForm
     Left = 232
     Top = 416
   end
-  object pFIBTransaction1: TpFIBTransaction
-    DefaultDatabase = dmMain.dbTV
-    Left = 669
-    Top = 379
-  end
-  object pFIBTransaction2: TpFIBTransaction
-    DefaultDatabase = dmMain.dbTV
-    Left = 688
-    Top = 451
-  end
   object mmEPG: TMainMenu
     Left = 476
     Top = 325
@@ -1043,7 +1029,7 @@ object EPGViewForm: TEPGViewForm
       end
     end
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 522
     Top = 488

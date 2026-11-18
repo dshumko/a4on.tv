@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
-  FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
+  FIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh,
   DBCtrlsEh, Vcl.Mask, DBLookupEh, Vcl.Buttons, CnErrorProvider, CnClasses;
 
@@ -16,7 +16,7 @@ type
     Panel2: TPanel;
     Panel3: TPanel;
     srcDataSource: TDataSource;
-    dsReqMaterials: TpFIBDataSet;
+    dsReqMaterials: TFIBDataSet;
     PropStorage: TPropStorageEh;
     ednCost: TDBNumberEditEh;
     ednQuant: TDBNumberEditEh;

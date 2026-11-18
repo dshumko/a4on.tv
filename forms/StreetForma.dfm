@@ -5,8 +5,6 @@ inherited StreetForm: TStreetForm
   ClientHeight = 565
   ClientWidth = 993
   StyleElements = [seFont, seClient, seBorder]
-  ExplicitWidth = 1009
-  ExplicitHeight = 604
   TextHeight = 13
   object Splitter1: TSplitter [0]
     Left = 0
@@ -19,8 +17,6 @@ inherited StreetForm: TStreetForm
   inherited splPG: TSplitter
     Top = 75
     Width = 993
-    ExplicitTop = 75
-    ExplicitWidth = 993
   end
   inherited dbGrid: TDBGridEh
     Top = 79
@@ -677,7 +673,6 @@ inherited StreetForm: TStreetForm
                 Height = 13
                 Align = alTop
                 Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
-                ExplicitWidth = 61
               end
               object memHouseNotice: TDBMemoEh
                 Left = 0
@@ -1736,6 +1731,9 @@ inherited StreetForm: TStreetForm
                 DynProps = <>
                 DataField = 'O_ID'
                 DataSource = srcHousesAttr
+                DropDownBox.ListSourceAutoFilter = True
+                DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+                DropDownBox.ListSourceAutoFilterAllColumns = True
                 EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1072#1090#1088#1080#1073#1091#1090
                 EditButtons = <>
                 KeyField = 'O_ID'
@@ -2095,67 +2093,52 @@ inherited StreetForm: TStreetForm
   end
   inherited tlbMain: TToolBar
     Width = 993
-    ExplicitWidth = 993
     inherited ToolButton4: TToolButton
       Width = 8
-      ExplicitWidth = 8
     end
     inherited btnNew: TToolButton
       Left = 8
-      ExplicitLeft = 8
     end
     inherited btnEdit: TToolButton
       Left = 31
-      ExplicitLeft = 31
     end
     inherited ToolButton5: TToolButton
       Left = 54
       Width = 10
-      ExplicitLeft = 54
-      ExplicitWidth = 10
     end
     inherited ToolButton6: TToolButton
       Left = 64
       Visible = False
-      ExplicitLeft = 64
     end
     inherited btnDelete: TToolButton
       Left = 68
-      ExplicitLeft = 68
     end
     inherited ToolButton9: TToolButton
       Left = 91
-      ExplicitLeft = 91
     end
     inherited tbOk: TToolButton
       Left = 106
       Visible = False
       OnClick = tbOkClick
-      ExplicitLeft = 106
     end
     inherited ToolButton10: TToolButton
       Left = 129
       Visible = False
-      ExplicitLeft = 129
     end
     inherited tbCancel: TToolButton
       Left = 133
       Visible = False
       OnClick = tbCancelClick
-      ExplicitLeft = 133
     end
     inherited ToolButton20: TToolButton
       Left = 156
       Visible = False
-      ExplicitLeft = 156
     end
     inherited btnQuickFilter: TToolButton
       Left = 164
-      ExplicitLeft = 164
     end
     inherited sep444: TToolButton
       Left = 187
-      ExplicitLeft = 187
     end
     object ToolButton12: TToolButton
       Left = 195
@@ -2221,30 +2204,24 @@ inherited StreetForm: TStreetForm
     Width = 993
     Height = 50
     StyleElements = [seFont, seClient, seBorder]
-    ExplicitWidth = 993
-    ExplicitHeight = 50
     inherited btnSaveLink: TBitBtn
       Top = 17
       Width = 407
-      ExplicitTop = 17
-      ExplicitWidth = 407
     end
     inherited btnCancelLink: TBitBtn
       Left = 498
       Top = 17
-      ExplicitLeft = 498
-      ExplicitTop = 17
     end
   end
   inherited srcDataSource: TDataSource
     DataSet = dsStreets
-    Left = 672
+    Left = 184
     Top = 176
   end
   inherited actions: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 262
-    Top = 176
+    Left = 342
+    Top = 160
     inherited actNew: TAction
       Caption = #1044#1086#1073#1072#1074#1080#1090#1100' '#1091#1083#1080#1094#1091
       OnExecute = actNewExecute
@@ -2334,13 +2311,14 @@ inherited StreetForm: TStreetForm
     end
   end
   inherited pmPopUp: TPopupMenu
-    Top = 175
+    Left = 291
+    Top = 159
   end
   inherited CnErrors: TCnErrorProvider
-    Left = 328
-    Top = 176
+    Left = 416
+    Top = 160
   end
-  object dsHouses: TpFIBDataSet
+  object dsHouses: TFIBDataSet
     UpdateSQL.Strings = (
       'update HOUSE H'
       'set h.NOTICE = :NOTICE'
@@ -2522,7 +2500,7 @@ inherited StreetForm: TStreetForm
     dcForceMasterRefresh = True
     dcForceOpen = True
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    STREET'
@@ -2531,67 +2509,53 @@ inherited StreetForm: TStreetForm
       '    ')
     RefreshSQL.Strings = (
       'select'
-      '    s.*'
+      '    S.Street_Id'
+      '  , S.Street_Code'
+      '  , S.Street_Short'
+      '  , S.Street_Name'
+      '  , S.Area_Id'
+      '  , S.Notice'
+      '  , S.Added_By'
+      '  , S.Added_On'
+      '  , S.Edit_By'
+      '  , S.Edit_On'
+      '  , S.Tag'
+      '  , S.Tag_Str'
       '  , a.area_name'
-      '  ,'
-      '    (select'
+      '  , (select'
       '         count(*)'
       '       from house h'
       '       where (h.street_id = s.street_id)) as HOUSES'
-      '  ,'
-      '    (select'
-      '         sum(h.q_flat)'
-      '       from house h'
-      '       where (h.street_id = s.street_id)) as FLATS'
-      ''
-      '  , p.q_porch'
-      '  from STREET s'
-      '       left outer join area a on (a.area_id = s.area_id)'
-      '       left outer join(select'
-      '                           h.Street_Id'
-      '                         , count(hp.Porch_N) q_porch'
-      '                         from house h'
-      
-        '                              inner join Houseporch hp on (hp.Ho' +
-        'use_Id = h.House_Id)'
-      
-        '                         group by 1) p on (p.Street_Id = s.Stree' +
-        't_Id)'
-      ''
-      'where'
-      '        S.STREET_ID = :OLD_STREET_ID'
-      '    ')
-    SelectSQL.Strings = (
-      'select'
-      '    s.*'
-      '  , a.area_name'
-      '  ,'
-      '    (select'
-      '         count(*)'
-      '       from house h'
-      '       where (h.street_id = s.street_id)) as HOUSES'
-      '  ,'
-      '    (select'
+      '  , (select'
       '         sum(h.q_flat)'
       '       from house h'
       '       where (h.street_id = s.street_id)) as FLATS'
       ''
       '  , cast((select'
-      '    list(distinct sa.SUBAREA_NAME)'
-      '  from HOUSE H'
-      '       inner join SUBAREA sA on (sA.SUBAREA_ID = h.SUBAREA_ID)'
+      '              list(distinct sa.SUBAREA_NAME)'
+      '            from HOUSE H'
       
-        '  where h.street_id = s.street_id ) as VARCHAR(500)) SUBAREA_LIS' +
-        'T'
+        '                 inner join SUBAREA sA on (sA.SUBAREA_ID = h.SUB' +
+        'AREA_ID)'
+      
+        '            where h.street_id = s.street_id) as varchar(500)) SU' +
+        'BAREA_LIST'
       ''
       '  , cast((select'
-      '    list(distinct w.Name)'
-      '  from HOUSE H'
-      '       inner join WORKGROUPS w on (w.WG_ID = h.WG_ID)   '
-      '  where h.street_id = s.street_id ) as VARCHAR(500)) WG_LIST'
+      '              list(distinct w.Name)'
+      '            from HOUSE H'
+      '                 inner join WORKGROUPS w on (w.WG_ID = h.WG_ID)'
+      
+        '            where h.street_id = s.street_id) as varchar(500)) WG' +
+        '_LIST'
       ''
-      ''
-      '  , p.q_porch'
+      '  , (select'
+      '         count(distinct hp.Porch_N) q_porch'
+      '       from house h'
+      
+        '            inner join Houseporch hp on (hp.House_Id = h.House_I' +
+        'd)'
+      '       where h.Street_Id = s.Street_Id) q_porch'
       '  , (select'
       '         sum(CNT)'
       '       from (select ('
@@ -2609,18 +2573,76 @@ inherited StreetForm: TStreetForm
       '               where h.street_id = s.Street_Id)) as CONNECTED'
       '  from STREET s'
       '       left outer join area a on (a.area_id = s.area_id)'
-      '       left outer join(select'
-      '                           h.Street_Id'
-      '                         , count(hp.Porch_N) q_porch'
-      '                         from house h'
-      
-        '                              inner join Houseporch hp on (hp.Ho' +
-        'use_Id = h.House_Id)'
-      
-        '                         group by 1) p on (p.Street_Id = s.Stree' +
-        't_Id)'
       ''
-      '  order by STREET_NAME, a.area_name')
+      'where S.STREET_ID = :OLD_STREET_ID')
+    SelectSQL.Strings = (
+      'select'
+      '    S.Street_Id'
+      '  , S.Street_Code'
+      '  , S.Street_Short'
+      '  , S.Street_Name'
+      '  , S.Area_Id'
+      '  , S.Notice'
+      '  , S.Added_By'
+      '  , S.Added_On'
+      '  , S.Edit_By'
+      '  , S.Edit_On'
+      '  , S.Tag'
+      '  , S.Tag_Str'
+      '  , a.area_name'
+      '  , (select'
+      '         count(*)'
+      '       from house h'
+      '       where (h.street_id = s.street_id)) as HOUSES'
+      '  , (select'
+      '         sum(h.q_flat)'
+      '       from house h'
+      '       where (h.street_id = s.street_id)) as FLATS'
+      ''
+      '  , cast((select'
+      '              list(distinct sa.SUBAREA_NAME)'
+      '            from HOUSE H'
+      
+        '                 inner join SUBAREA sA on (sA.SUBAREA_ID = h.SUB' +
+        'AREA_ID)'
+      
+        '            where h.street_id = s.street_id) as varchar(500)) SU' +
+        'BAREA_LIST'
+      ''
+      '  , cast((select'
+      '              list(distinct w.Name)'
+      '            from HOUSE H'
+      '                 inner join WORKGROUPS w on (w.WG_ID = h.WG_ID)'
+      
+        '            where h.street_id = s.street_id) as varchar(500)) WG' +
+        '_LIST'
+      ''
+      '  , (select'
+      '         count(distinct hp.Porch_N) q_porch'
+      '       from house h'
+      
+        '            inner join Houseporch hp on (hp.House_Id = h.House_I' +
+        'd)'
+      '       where h.Street_Id = s.Street_Id) q_porch'
+      '  , (select'
+      '         sum(CNT)'
+      '       from (select ('
+      '                 select'
+      '                     count(distinct a.Flat_No) CNT'
+      '                   from CUSTOMER A'
+      
+        '                        inner join Subscr_Hist ash on (a.Custome' +
+        'r_Id = ash.Customer_Id)'
+      '                   where a.HOUSE_ID = h.HOUSE_ID'
+      
+        '                         and current_date between ash.Date_From ' +
+        'and ash.Date_To) as CNT'
+      '               from HOUSE H'
+      '               where h.street_id = s.Street_Id)) as CONNECTED'
+      '  from STREET s'
+      '       left outer join area a on (a.area_id = s.area_id)'
+      ''
+      'order by STREET_NAME, a.area_name')
     BeforePost = dsStreetsBeforePost
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
@@ -2677,7 +2699,7 @@ inherited StreetForm: TStreetForm
     Left = 514
     Top = 178
   end
-  object dsHouseEquipment: TpFIBDataSet
+  object dsHouseEquipment: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -2724,7 +2746,7 @@ inherited StreetForm: TStreetForm
     Left = 560
     Top = 480
   end
-  object dsHouseService: TpFIBDataSet
+  object dsHouseService: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       
@@ -2763,7 +2785,7 @@ inherited StreetForm: TStreetForm
     Left = 288
     Top = 368
   end
-  object dsFloor: TpFIBDataSet
+  object dsFloor: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSEFLOOR'
       'SET '
@@ -2816,7 +2838,7 @@ inherited StreetForm: TStreetForm
     Left = 182
     Top = 455
   end
-  object dsPorch: TpFIBDataSet
+  object dsPorch: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSEPORCH'
       'SET '
@@ -2891,7 +2913,7 @@ inherited StreetForm: TStreetForm
     Left = 460
     Top = 380
   end
-  object dsWorks: TpFIBDataSet
+  object dsWorks: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    HOUSEWORKS'
@@ -2942,7 +2964,7 @@ inherited StreetForm: TStreetForm
     Left = 402
     Top = 370
   end
-  object dsCustomers: TpFIBDataSet
+  object dsCustomers: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER'
       'SET '
@@ -3111,7 +3133,7 @@ inherited StreetForm: TStreetForm
     Left = 590
     Top = 175
   end
-  object dsFlats: TpFIBDataSet
+  object dsFlats: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSEFLATS'
       'SET '
@@ -3231,7 +3253,7 @@ inherited StreetForm: TStreetForm
       OnClick = N2Click
     end
   end
-  object dsCirciut: TpFIBDataSet
+  object dsCirciut: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSE_CIRCUIT'
       'SET '
@@ -3320,7 +3342,7 @@ inherited StreetForm: TStreetForm
     Left = 696
     Top = 496
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'nowait'
@@ -3330,7 +3352,7 @@ inherited StreetForm: TStreetForm
     Left = 744
     Top = 424
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -3341,14 +3363,14 @@ inherited StreetForm: TStreetForm
     Left = 744
     Top = 488
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SERVICES_LINKS'
       'SET '
       '    LINK_TYPE = 6,'
       '    PARENT = :PARENT,'
       '    CHILD = :CHILD,'
-      '    ADD_SRV = :ADD_SRV,    '
+      '    ADD_SRV = :ADD_SRV,   '
       '    DESCRIPTION = :DESCRIPTION'
       'WHERE'
       '    LINK_ID = :OLD_LINK_ID'
@@ -3428,7 +3450,7 @@ inherited StreetForm: TStreetForm
     Left = 893
     Top = 430
   end
-  object dsHousesAttr: TpFIBDataSet
+  object dsHousesAttr: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSES_ATTRIBUTES'
       'SET '

@@ -228,7 +228,7 @@ inherited BlackListForm: TBlackListForm
     Left = 232
     Top = 240
   end
-  object dsBlackList: TpFIBDataSet
+  object dsBlackList: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '

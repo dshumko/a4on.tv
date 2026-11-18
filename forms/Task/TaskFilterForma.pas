@@ -8,14 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.DBCtrls, Vcl.ComCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, PrjConst, MemTableEh,
   DBGridEh;
 
 type
   TTaskFilterForm = class(TForm)
     pnlOKCancel: TPanel;
     SpeedButton3: TSpeedButton;
-    dsExecutor: TpFIBDataSet;
+    dsExecutor: TFIBDataSet;
     srcExecutor: TDataSource;
     chkDefaultFilter: TCheckBox;
     pnlBtns: TPanel;

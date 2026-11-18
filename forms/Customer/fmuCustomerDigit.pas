@@ -9,13 +9,13 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.ActnList,
   Vcl.Buttons, Vcl.Menus,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, PropFilerEh, PropStorageEh, amSplitter;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TapgCustomerDigit = class(TA4onPage)
-    dsDecoders: TpFIBDataSet;
+    dsDecoders: TFIBDataSet;
     srcDecoders: TDataSource;
     ActListCustomers: TActionList;
     actDigitDecoderAdd: TAction;
@@ -23,7 +23,7 @@ type
     actDigitDecoderDel: TAction;
     actDigitPacketAdd: TAction;
     actDigitPacketDel: TAction;
-    dsDecoderPacket: TpFIBDataSet;
+    dsDecoderPacket: TFIBDataSet;
     srcDecoderPacket: TDataSource;
     pmDigit: TPopupMenu;
     actPairing: TAction;
@@ -31,13 +31,13 @@ type
     actParing1: TMenuItem;
     actResetPIN1: TMenuItem;
     actMenu: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     actChanAdd: TAction;
     actChanEdit: TAction;
     actChanDel: TAction;
     srcChannels: TDataSource;
-    dsChannels: TpFIBDataSet;
+    dsChannels: TFIBDataSet;
     PropStorage: TPropStorageEh;
     pnlPers: TPanel;
     pnlDecPackets: TPanel;
@@ -93,7 +93,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, AtrCommon, DM, DecoderPacketForma, DigitCardForma, DecoderDeleteDlgForma, pFIBQuery, CustChannelForma;
+  MAIN, AtrCommon, DM, DecoderPacketForma, DigitCardForma, DecoderDeleteDlgForma, FIBQuery, CustChannelForma;
 
 class function TapgCustomerDigit.GetPageName: string;
 begin
@@ -378,7 +378,7 @@ begin
   if (dsDecoders.FieldByName('STB_N').IsNull) then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -405,7 +405,7 @@ begin
   if (dsDecoders.FieldByName('DECODER_N').IsNull) then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -429,7 +429,7 @@ begin
     (FDataSource.DataSet.FieldByName('CUSTOMER_ID').IsNull) then
     Exit;
 
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
     try
     DataBase := dmMain.dbTV;

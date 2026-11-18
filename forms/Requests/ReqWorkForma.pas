@@ -7,16 +7,16 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
-  OkCancel_frame, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, FIBQuery, pFIBQuery,
+  OkCancel_frame, FIBDatabase, FIBDataSet, DBCtrlsEh, DBLookupEh, FIBQuery,
   DBGridEh;
 
 type
   TReqWorkForm = class(TForm)
     okcnclfrm1: TOkCancelFrame;
     srcWork: TDataSource;
-    dsWork: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    dsWork: TFIBDataSet;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     Label2: TLabel;
     Label3: TLabel;
     dbmmoSolution: TDBMemoEh;
@@ -26,12 +26,12 @@ type
     grpAfterAdd: TGroupBox;
     lbl3: TLabel;
     cbATRAction: TDBComboBoxEh;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     srcAttributes: TDataSource;
     cbbAttribute: TDBLookupComboboxEh;
     lbl4: TLabel;
     cbService: TDBLookupComboboxEh;
-    dsService: TpFIBDataSet;
+    dsService: TFIBDataSet;
     srcService: TDataSource;
     dbckDefault: TDBCheckBoxEh;
     lbl5: TLabel;
@@ -41,8 +41,8 @@ type
     lcbW_SRV: TDBLookupComboboxEh;
     lcbOnOffService: TDBLookupComboboxEh;
     srcOnOffService: TDataSource;
-    dsOnOffService: TpFIBDataSet;
-    dsServiceON: TpFIBDataSet;
+    dsOnOffService: TFIBDataSet;
+    dsServiceON: TFIBDataSet;
     srcServiceOn: TDataSource;
     chkW_ONOFF: TDBCheckBoxEh;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

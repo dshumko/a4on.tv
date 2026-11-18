@@ -1,5 +1,4 @@
 object EPGEditEvent: TEPGEditEvent
-  ShowHint = True
   Left = 0
   Top = 0
   Caption = #1056#1077#1076#1072#1082#1090#1086#1088' EPG'
@@ -12,13 +11,12 @@ object EPGEditEvent: TEPGEditEvent
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyUp = FormKeyUp
   DesignSize = (
     497
     446)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 20
@@ -133,10 +131,12 @@ object EPGEditEvent: TEPGEditEvent
     TabOrder = 13
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 269
@@ -160,6 +160,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1047#1072#1075#1086#1083#1086#1074#1086#1082
+    ShowHint = True
     TabOrder = 0
     Visible = True
   end
@@ -172,6 +173,7 @@ object EPGEditEvent: TEPGEditEvent
     DataSource = srcProgramma
     DynProps = <>
     EditButtons = <>
+    ShowHint = True
     TabOrder = 1
     Visible = True
     EditFormat = 'DD/MM/YYYY'
@@ -186,6 +188,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     Kind = dtkDateEh
+    ShowHint = True
     TabOrder = 3
     Visible = True
   end
@@ -200,6 +203,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1046#1072#1085#1088#1099' '#1095#1077#1088#1077#1079' '#1079#1072#1087#1103#1090#1091#1102
+    ShowHint = True
     TabOrder = 5
     Visible = True
   end
@@ -213,6 +217,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EmptyDataInfo.Text = #1042#1086#1079#1088#1072#1089#1090'. '#1086#1075#1088#1072#1085#1080#1095#1077#1085#1080#1077
     EditButtons = <>
+    ShowHint = True
     TabOrder = 7
     Visible = True
   end
@@ -227,6 +232,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1040#1082#1090#1077#1088#1099
+    ShowHint = True
     TabOrder = 9
     Visible = True
   end
@@ -241,6 +247,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1056#1077#1078#1080#1089#1077#1088
+    ShowHint = True
     TabOrder = 10
     Visible = True
   end
@@ -255,6 +262,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1057#1090#1088#1072#1085#1072' '#1089#1086#1079#1076#1072#1085#1080#1103
+    ShowHint = True
     TabOrder = 11
     Visible = True
   end
@@ -263,11 +271,17 @@ object EPGEditEvent: TEPGEditEvent
     Top = 309
     Width = 369
     Height = 95
+    ScrollBars = ssBoth
     Anchors = [akLeft, akTop, akRight, akBottom]
+    AutoSize = False
     DataField = 'DESCRIPTION'
     DataSource = srcProgramma
-    ScrollBars = ssBoth
+    DynProps = <>
+    EditButtons = <>
+    ShowHint = True
     TabOrder = 12
+    Visible = True
+    WantReturns = True
   end
   object edStopTime: TDBDateTimeEditEh
     Left = 248
@@ -279,6 +293,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButton.Visible = False
     EditButtons = <>
+    ShowHint = True
     TabOrder = 4
     Visible = True
     EditFormat = 'HH:NN'
@@ -293,6 +308,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButton.Visible = False
     EditButtons = <>
+    ShowHint = True
     TabOrder = 2
     Visible = True
     EditFormat = 'HH:NN'
@@ -308,6 +324,7 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1043#1086#1076' '#1089#1086#1079#1076#1072#1085#1080#1103
+    ShowHint = True
     TabOrder = 8
     Visible = True
   end
@@ -322,10 +339,11 @@ object EPGEditEvent: TEPGEditEvent
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1050#1086#1076#1099' '#1078#1072#1085#1088#1086#1074' DVB, '#1095#1077#1088#1077#1079' '#1079#1072#1087#1103#1090#1091#1102
+    ShowHint = True
     TabOrder = 6
     Visible = True
   end
-  object dsProgramma: TpFIBDataSet
+  object dsProgramma: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EPG'
       'SET '
@@ -411,12 +429,12 @@ object EPGEditEvent: TEPGEditEvent
     Left = 409
     Top = 324
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 245
     Top = 323
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 336
     Top = 323

@@ -596,6 +596,9 @@ inherited WorkersForm: TWorkersForm
         item
           FieldName = 'AREA_NAME'
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1047#1074#1077#1085#1086
       EditButtons = <>
@@ -632,6 +635,9 @@ inherited WorkersForm: TWorkersForm
       DynProps = <>
       DataField = 'WA_ID'
       DataSource = srcDataSource
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EmptyDataInfo.Text = #1059#1095#1072#1089#1090#1086#1082
       EditButtons = <>
@@ -769,7 +775,7 @@ inherited WorkersForm: TWorkersForm
     Left = 328
     Top = 320
   end
-  object dsWorkers: TpFIBDataSet
+  object dsWorkers: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE WORKER'
       'SET '
@@ -918,7 +924,7 @@ inherited WorkersForm: TWorkersForm
     Left = 40
     Top = 393
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -930,7 +936,7 @@ inherited WorkersForm: TWorkersForm
     Left = 206
     Top = 457
   end
-  object dsTEAM: TpFIBDataSet
+  object dsTEAM: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    s.name as subarea_name,'
@@ -948,7 +954,7 @@ inherited WorkersForm: TWorkersForm
     Left = 140
     Top = 446
   end
-  object dsWA: TpFIBDataSet
+  object dsWA: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    a.wa_id,'
@@ -965,7 +971,7 @@ inherited WorkersForm: TWorkersForm
     Left = 263
     Top = 459
   end
-  object dsDEPART: TpFIBDataSet
+  object dsDEPART: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct DEPARTMENT'
       'from WORKER'
@@ -980,7 +986,7 @@ inherited WorkersForm: TWorkersForm
     Left = 423
     Top = 393
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -991,7 +997,7 @@ inherited WorkersForm: TWorkersForm
     Left = 527
     Top = 402
   end
-  object qrySaveMessages: TpFIBQuery
+  object qrySaveMessages: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

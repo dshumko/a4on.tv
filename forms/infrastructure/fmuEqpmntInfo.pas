@@ -9,7 +9,7 @@ uses
   Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs,
   Vcl.ToolWin,
   Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
-  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
+  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, GridsEh, DBGridEh, FIBDataSet,
   EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh, DBCtrlsEh, DBLookupEh, amSplitter;
 
@@ -41,10 +41,10 @@ type
     actParentPing: TAction;
     actParentTelnet: TAction;
     actParentWeb: TAction;
-    dsData: TpFIBDataSet;
+    dsData: TFIBDataSet;
     srcData: TDataSource;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     lbl5: TLabel;
     dbtxtSTREET1: TDBEditEh;
     dbtxtparent_name: TDBEditEh;

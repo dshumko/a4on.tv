@@ -10,10 +10,8 @@ object ExportSettingsForm: TExportSettingsForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlGrid: TPanel
     Left = 0
@@ -568,10 +566,12 @@ object ExportSettingsForm: TExportSettingsForm
     TabOrder = 2
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 530
@@ -596,7 +596,7 @@ object ExportSettingsForm: TExportSettingsForm
     Left = 276
     Top = 236
   end
-  object dsTypes: TpFIBDataSet
+  object dsTypes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EXPORTTYPES'
       'SET '
@@ -768,7 +768,7 @@ object ExportSettingsForm: TExportSettingsForm
       OnExecute = actDelExecute
     end
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -780,7 +780,7 @@ object ExportSettingsForm: TExportSettingsForm
     Left = 120
     Top = 164
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (

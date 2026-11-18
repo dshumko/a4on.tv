@@ -8,21 +8,21 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
   Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase;
 
 type
   TapgNodeLayout = class(TA4onPage)
-    dsLayout: TpFIBDataSet;
+    dsLayout: TFIBDataSet;
     srcLayout: TDataSource;
     dbgCustAttr: TDBGridEh;
     ActListCustomers: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlBottLeft: TPanel;
     btnAddL: TSpeedButton;
     btnEditL: TSpeedButton;
@@ -53,7 +53,7 @@ implementation
 {$R *.dfm}
 
 uses
-  MAIN, A4onTypeUnit, AtrCommon, DM, NodesForma, NodeLayoutForma, NodeLayoutFactForma, FIBQuery, pFIBQuery;
+  MAIN, A4onTypeUnit, AtrCommon, DM, NodesForma, NodeLayoutForma, NodeLayoutFactForma, FIBQuery;
 
 class function TapgNodeLayout.GetPageName: string;
 begin
@@ -108,7 +108,7 @@ begin
 
     if (MessageDlg(rsNodeLayotEmpty, mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
-      with TpFIBQuery.Create(self) do
+      with TFIBQuery.Create(self) do
       begin
         try
           DataBase := dmMain.dbTV;

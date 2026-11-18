@@ -8,14 +8,14 @@ uses
   Data.DB, Data.Win.ADODB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ButtonGroup, Vcl.ExtCtrls, Vcl.Grids,
   Vcl.ComCtrls, Vcl.Buttons, Vcl.ExtDlgs, Vcl.ActnList,
-  DBGridEh, DBCtrlsEh, DBLookupEh, RxPlacemnt, FIBDataSet, pFIBDataSet, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
-  DynVarsEh, GridsEh, DBAxisGridsEh, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, pFIBScripter,
+  DBGridEh, DBCtrlsEh, DBLookupEh, RxPlacemnt, FIBDataSet, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
+  DynVarsEh, GridsEh, DBAxisGridsEh, MemTableDataEh, MemTableEh, FIBQuery, FIBDatabase, FIBScripter,
   VKDBFDataSet, RxToolEdit, EhLibVCL, amSplitter;
 
 type
   TLoaderForm = class(TForm)
     fmStorage: TFormStorage;
-    dsFileFormats: TpFIBDataSet;
+    dsFileFormats: TFIBDataSet;
     srcFileFormats: TDataSource;
     pcShowFile: TPageControl;
     tsTXT: TTabSheet;
@@ -32,16 +32,16 @@ type
     mdsErrors: TMemTableEh;
     srcErrors: TDataSource;
     srcPaymentSrc: TDataSource;
-    dsPaymentSource: TpFIBDataSet;
-    qFindCustomer: TpFIBQuery;
-    qFindCustomerForAdres: TpFIBQuery;
-    trReadQ: TpFIBTransaction;
-    trWriteQ: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsPaymentSource: TFIBDataSet;
+    qFindCustomer: TFIBQuery;
+    qFindCustomerForAdres: TFIBQuery;
+    trReadQ: TFIBTransaction;
+    trWriteQ: TFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     srcDBF: TDataSource;
-    SelectQuery: TpFIBQuery;
-    Script: TpFIBScripter;
+    SelectQuery: TFIBQuery;
+    Script: TFIBScripter;
     pnlReestr: TPanel;
     pnl3: TPanel;
     dbgehReestr: TDBGridEh;
@@ -57,9 +57,9 @@ type
     deDocDate: TDBDateTimeEditEh;
     edtDocNumber: TDBEditEh;
     cbbDocSrc: TDBLookupComboboxEh;
-    qFindServices: TpFIBQuery;
+    qFindServices: TFIBQuery;
     SaveTextFileDialog: TSaveTextFileDialog;
-    dsServices: TpFIBDataSet;
+    dsServices: TFIBDataSet;
     srcServices: TDataSource;
     grp2: TGroupBox;
     lbl6: TLabel;

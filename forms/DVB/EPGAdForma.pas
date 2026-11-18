@@ -9,8 +9,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.Mask,
-  ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh, EhLibFIB,
-  FIBQuery, pFIBQuery, MemTableDataEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh;
+  ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, FIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh, EhLibFIB,
+  FIBQuery, MemTableDataEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh;
 
 type
   TEPGAdForm = class(TForm)
@@ -19,12 +19,12 @@ type
     srcEPGAd: TDataSource;
     dbgEPGAd: TDBGridEh;
     Label1: TLabel;
-    dsEPGAd: TpFIBDataSet;
-    dsChennals: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    Query: TpFIBQuery;
-    trReadQ: TpFIBTransaction;
+    dsEPGAd: TFIBDataSet;
+    dsChennals: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    Query: TFIBQuery;
+    trReadQ: TFIBTransaction;
     ActionList1: TActionList;
     ActADDAd: TAction;
     ActEDITAd: TAction;
@@ -32,8 +32,6 @@ type
     ToolBar1: TToolBar;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    pFIBTransaction1: TpFIBTransaction;
-    pFIBTransaction2: TpFIBTransaction;
     pnlEditEvent: TPanel;
     Label3: TLabel;
     Label4: TLabel;

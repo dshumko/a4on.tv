@@ -10,12 +10,10 @@ object HouseMapForm: THouseMapForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlSettings: TPanel
     Left = 0
@@ -71,7 +69,7 @@ object HouseMapForm: THouseMapForm
     Align = alClient
     TabOrder = 1
   end
-  object dsHouse: TpFIBDataSet
+  object dsHouse: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    h.house_no,'
@@ -102,7 +100,7 @@ object HouseMapForm: THouseMapForm
     dcForceMasterRefresh = True
     dcForceOpen = True
   end
-  object dsPORCH: TpFIBDataSet
+  object dsPORCH: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    p.porch_id,'
@@ -133,7 +131,7 @@ object HouseMapForm: THouseMapForm
     dcForceMasterRefresh = True
     dcForceOpen = True
   end
-  object dsCustomers: TpFIBDataSet
+  object dsCustomers: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    c.CUSTOMER_ID, '

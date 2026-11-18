@@ -11,14 +11,12 @@ object CircuitForm: TCircuitForm
   Font.Name = 'Tahoma'
   Font.Style = []
   Menu = MainMenu
-  OldCreateOrder = False
   ShowHint = True
   WindowState = wsMaximized
   OnCloseQuery = FormCloseQuery
   OnCreate = FormCreate
   OnDestroy = FormDestroy
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object ToolBar: TToolBar
     Left = 0
@@ -433,50 +431,6 @@ object CircuitForm: TCircuitForm
       Top = 0
       Action = ViewZoomOut
     end
-  end
-  object SimpleGraph: TSimpleGraph
-    Left = 0
-    Top = 48
-    Width = 815
-    Height = 485
-    Align = alClient
-    ClipboardFormats = [cfNative, cfMetafile, cfBitmap]
-    Color = clWhite
-    FixedScrollBars = True
-    Font.Charset = DEFAULT_CHARSET
-    Font.Color = clNavy
-    Font.Height = -13
-    Font.Name = 'Arial'
-    Font.Style = [fsBold]
-    HorzScrollBar.Margin = 8
-    HorzScrollBar.Smooth = True
-    HorzScrollBar.Tracking = True
-    ObjectPopupMenu = ObjectsPopup
-    ParentColor = False
-    ParentFont = False
-    ParentShowHint = False
-    PopupMenu = DesignerPopup
-    ShowHint = True
-    TabOrder = 3
-    VertScrollBar.Margin = 8
-    VertScrollBar.Smooth = True
-    VertScrollBar.Tracking = True
-    OnDblClick = SimpleGraphDblClick
-    OnMouseMove = SimpleGraphMouseMove
-    OnMouseWheelDown = SimpleGraphMouseWheelDown
-    OnMouseWheelUp = SimpleGraphMouseWheelUp
-    OnObjectInitInstance = SimpleGraphObjectInitInstance
-    OnObjectChange = SimpleGraphObjectChange
-    OnObjectSelect = SimpleGraphObjectSelect
-    OnObjectDblClick = SimpleGraphObjectDblClick
-    OnCanHookLink = SimpleGraphCanHookLink
-    OnCanLinkObjects = SimpleGraphCanLinkObjects
-    OnCanRemoveObject = SimpleGraphCanRemoveObject
-    OnNodeMoveResize = SimpleGraphNodeMoveResize
-    OnGraphChange = SimpleGraphGraphChange
-    OnCommandModeChange = SimpleGraphCommandModeChange
-    OnInfoTip = SimpleGraphInfoTip
-    OnZoomChange = SimpleGraphZoomChange
   end
   object ImageList: TImageList
     Left = 54

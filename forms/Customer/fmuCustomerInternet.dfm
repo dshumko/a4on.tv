@@ -150,7 +150,7 @@ object apgCustomerInternet: TapgCustomerInternet
     Left = 66
     Top = 35
   end
-  object dsInternet: TpFIBDataSet
+  object dsInternet: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE BILLING'
       'SET '
@@ -219,7 +219,7 @@ object apgCustomerInternet: TapgCustomerInternet
       OnExecute = actUnblockExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -231,7 +231,7 @@ object apgCustomerInternet: TapgCustomerInternet
     Left = 548
     Top = 26
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

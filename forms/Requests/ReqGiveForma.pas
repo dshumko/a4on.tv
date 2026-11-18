@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, MemTableDataEh, MemTableEh, GridsEh,
+  OkCancel_frame, DBGridEh, DBCtrlsEh, DBLookupEh, FIBDataSet, ToolCtrlsEh, MemTableDataEh, MemTableEh, GridsEh,
   DBGridEhGrouping, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, DBAxisGridsEh;
 
 type
@@ -17,9 +17,9 @@ type
     luWorkGroup: TDBLookupComboboxEh;
     deDate: TDBDateTimeEditEh;
     lbl2: TLabel;
-    dsWORKGROUP: TpFIBDataSet;
+    dsWORKGROUP: TFIBDataSet;
     srcWORKGROUP: TDataSource;
-    dsW: TpFIBDataSet;
+    dsW: TFIBDataSet;
     srcWorkers: TDataSource;
     dbGrid: TDBGridEh;
     Label1: TLabel;

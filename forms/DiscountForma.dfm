@@ -273,7 +273,7 @@ object DiscountForm: TDiscountForm
     Left = 264
     Top = 144
   end
-  object dsluService: TpFIBDataSet
+  object dsluService: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.Name || coalesce('#39' / '#39' ||(select'
@@ -314,7 +314,7 @@ object DiscountForm: TDiscountForm
     Left = 344
     Top = 192
   end
-  object dsSrvType: TpFIBDataSet
+  object dsSrvType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    *'
@@ -334,7 +334,7 @@ object DiscountForm: TDiscountForm
     Left = 264
     Top = 192
   end
-  object qDiscount: TpFIBQuery
+  object qDiscount: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -345,7 +345,7 @@ object DiscountForm: TDiscountForm
     Left = 32
     Top = 152
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -357,7 +357,7 @@ object DiscountForm: TDiscountForm
     Left = 96
     Top = 150
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -369,7 +369,7 @@ object DiscountForm: TDiscountForm
     Left = 32
     Top = 200
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -393,7 +393,7 @@ object DiscountForm: TDiscountForm
     Left = 328
     Top = 144
   end
-  object dsPromo: TpFIBDataSet
+  object dsPromo: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'

@@ -553,7 +553,7 @@ object ReqPlanerForm: TReqPlanerForm
       end
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -564,7 +564,7 @@ object ReqPlanerForm: TReqPlanerForm
     Left = 325
     Top = 307
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -575,7 +575,7 @@ object ReqPlanerForm: TReqPlanerForm
     Left = 387
     Top = 303
   end
-  object drvPlan: TpFIBDataDriverEh
+  object drvPlan: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -661,7 +661,7 @@ object ReqPlanerForm: TReqPlanerForm
     Left = 574
     Top = 110
   end
-  object dsRequest: TpFIBDataSet
+  object dsRequest: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    R.RQ_ID,'
@@ -720,7 +720,7 @@ object ReqPlanerForm: TReqPlanerForm
     Left = 639
     Top = 110
   end
-  object dsFilter: TpFIBDataSet
+  object dsFilter: TFIBDataSet
     SelectSQL.Strings = (
       
         'select RT.RT_ID as ID, RT.RT_NAME as NAME from REQUEST_TYPES RT ' +

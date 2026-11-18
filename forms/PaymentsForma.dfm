@@ -26,7 +26,6 @@ object PaymentsForm: TPaymentsForm
     Height = 283
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 263
     object dbgPayments: TDBGridEh
       Left = 1
       Top = 30
@@ -408,6 +407,9 @@ object PaymentsForm: TPaymentsForm
             FieldName = 'TAX_PRC'
             Title.Caption = #1055#1088#1086#1094#1077#1085#1090'|'#1053#1044#1057
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
         DropDownBox.UseMultiTitle = True
         DropDownBox.ShowTitles = True
@@ -480,15 +482,13 @@ object PaymentsForm: TPaymentsForm
     Align = alBottom
     BevelOuter = bvNone
     TabOrder = 1
-    ExplicitTop = 263
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 917
+      Width = 141
       Height = 13
       Align = alTop
       Caption = #1054#1096#1080#1073#1082#1080' '#1079#1072#1075#1088#1091#1079#1082#1080' '#1087#1083#1072#1090#1077#1078#1077#1081
-      ExplicitWidth = 141
     end
     object dbgrdErrors: TDBGridEh
       Left = 0
@@ -648,7 +648,7 @@ object PaymentsForm: TPaymentsForm
       OnClick = ppmSaveSelectionClick
     end
   end
-  object dsPayments: TpFIBDataSet
+  object dsPayments: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PAY_DOC'
       'SET '
@@ -808,7 +808,7 @@ object PaymentsForm: TPaymentsForm
     Left = 315
     Top = 211
   end
-  object dsPaymentSource: TpFIBDataSet
+  object dsPaymentSource: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC'
       'FROM PAYSOURCE'
@@ -847,14 +847,13 @@ object PaymentsForm: TPaymentsForm
       OnClick = N3Click
     end
   end
-  object qDetailCount: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qDetailCount: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select count(*) from payment p where p.pay_doc_id = :pay_doc_id')
     Left = 128
     Top = 216
-    qoStartTransaction = True
   end
   object MainMenu1: TMainMenu
     Left = 520
@@ -897,7 +896,7 @@ object PaymentsForm: TPaymentsForm
     Left = 378
     Top = 135
   end
-  object drvPayments: TpFIBDataDriverEh
+  object drvPayments: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -986,7 +985,7 @@ object PaymentsForm: TPaymentsForm
     Left = 457
     Top = 135
   end
-  object dsErrors: TpFIBDataSet
+  object dsErrors: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    PAY_ERRORS'
@@ -1022,7 +1021,7 @@ object PaymentsForm: TPaymentsForm
       OnClick = miAbonentClick
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -1033,7 +1032,7 @@ object PaymentsForm: TPaymentsForm
     Left = 709
     Top = 147
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -1043,5 +1042,17 @@ object PaymentsForm: TPaymentsForm
     TPBMode = tpbDefault
     Left = 763
     Top = 151
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 704
+    Top = 216
   end
 end

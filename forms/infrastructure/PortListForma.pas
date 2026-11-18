@@ -10,12 +10,12 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin,
   GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh,
   DBAxisGridsEh,
-  DBGridEh, FIBDataSet, pFIBDataSet, EhLibFIB, MemTableDataEh, MemTableEh,
+  DBGridEh, FIBDataSet, EhLibFIB, MemTableDataEh, MemTableEh,
   PrnDbgeh;
 
 type
   TPortListForm = class(TGridForm)
-    dsPort: TpFIBDataSet;
+    dsPort: TFIBDataSet;
     btnLinkPort: TToolButton;
     actLinkPort: TAction;
     dsFilter: TMemTableEh;
@@ -61,7 +61,7 @@ var
 implementation
 
 uses
-  MAIN, DM, EQPort, A4onTypeUnit, PortLinkForma, PrjConst, PortFilter, FIBQuery, pFIBQuery, AtrCommon, AtrStrUtils;
+  MAIN, DM, EQPort, A4onTypeUnit, PortLinkForma, PrjConst, PortFilter, FIBQuery, AtrCommon, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -219,14 +219,14 @@ var
   s: string;
   grid: TCustomDBGridEh;
   id: Integer;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   inherited;
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   grid := TCustomDBGridEh(Sender);
-  FIBDS := grid.DataSource.DataSet as TpFIBDataSet;
+  FIBDS := grid.DataSource.DataSet as TFIBDataSet;
   id := -1;
   if Sender is TCustomDBGridEh then
   begin
@@ -304,7 +304,7 @@ end;
 procedure TPortListForm.actEnableFilterExecute(Sender: TObject);
 begin
   inherited;
-  if srcDataSource.DataSet is TpFIBDataSet then
+  if srcDataSource.DataSet is TFIBDataSet then
   begin
     actEnableFilter.Checked := not actEnableFilter.Checked;
     dsPort.ParamByName('Filter').Value := GenerateFilter;
@@ -317,7 +317,7 @@ var
   filter: string;
 begin
   inherited;
-  if not(srcDataSource.DataSet is TpFIBDataSet) then
+  if not(srcDataSource.DataSet is TFIBDataSet) then
     exit;
 
   filter := '';

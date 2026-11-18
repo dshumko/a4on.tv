@@ -10,9 +10,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
   Vcl.ToolWin,
   Vcl.Mask, Vcl.Menus, Vcl.Buttons,
-  ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh,
+  ToolCtrlsEh, DBGridEhToolCtrls, FIBDatabase, FIBDataSet, GridsEh, DBAxisGridsEh, DBGridEh,
   EhLibFIB,
-  FIBQuery, pFIBQuery, MemTableDataEh, MemTableEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh,
+  FIBQuery, MemTableDataEh, MemTableEh, EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh,
   PropFilerEh, PropStorageEh, amSplitter;
 
 type
@@ -25,14 +25,14 @@ type
     dbgEPG: TDBGridEh;
     Label1: TLabel;
     Label2: TLabel;
-    dsEPG: TpFIBDataSet;
-    dsChennals: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsEPG: TFIBDataSet;
+    dsChennals: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     Splitter1: TSplitter;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     SaveDialog: TSaveDialog;
-    trReadQ: TpFIBTransaction;
+    trReadQ: TFIBTransaction;
     ActionList1: TActionList;
     ActADDProgramm: TAction;
     ActEDITProgramm: TAction;
@@ -54,8 +54,6 @@ type
     chk5: TCheckBox;
     chk6: TCheckBox;
     chk0: TCheckBox;
-    pFIBTransaction1: TpFIBTransaction;
-    pFIBTransaction2: TpFIBTransaction;
     pnlEditEvent: TPanel;
     Label3: TLabel;
     Label4: TLabel;
@@ -99,7 +97,7 @@ type
     actUTCAll: TAction;
     UTC1: TMenuItem;
     UTC2: TMenuItem;
-    trWriteQ: TpFIBTransaction;
+    trWriteQ: TFIBTransaction;
     actReloadEPG: TAction;
     btnReloadEPG: TToolButton;
     btn2: TToolButton;

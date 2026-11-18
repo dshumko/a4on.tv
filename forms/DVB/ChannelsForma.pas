@@ -11,15 +11,15 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.ExtCtrls,
   Vcl.Menus, Vcl.Buttons,
-  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB,
+  GridForma, FIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB,
   EhLibJPegImage,
-  PrjConst, CnErrorProvider, EhLibVCL, EhLibGIFImage, EhLibPNGImage, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
+  PrjConst, CnErrorProvider, EhLibVCL, EhLibGIFImage, EhLibPNGImage, FIBDatabase, FIBQuery,
   DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, amSplitter,
   PrnDbgeh;
 
 type
   TChannelsForm = class(TGridForm)
-    dsChannels: TpFIBDataSet;
+    dsChannels: TFIBDataSet;
     ToolButton7: TToolButton;
     ToolButton8: TToolButton;
     actImport: TAction;
@@ -38,8 +38,8 @@ type
     dsChannelsDVBGENRES: TFIBWideStringField;
     dsChannelsMINAGE: TFIBIntegerField;
     dsChannelsACCESS_ID: TFIBIntegerField;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     dsChannelsCH_CONTACT: TFIBWideStringField;
     dsChannelsCONTRACT_ID: TFIBIntegerField;
     dsChannelsSRC_NAME: TFIBWideStringField;
@@ -76,8 +76,8 @@ type
     splAddons: TSplitter;
     dbgAddons: TDBGridEh;
     PropStorageEh: TPropStorageEh;
-    dsIssues: TpFIBDataSet;
-    trRA: TpFIBTransaction;
+    dsIssues: TFIBDataSet;
+    trRA: TFIBTransaction;
     srcIssues: TDataSource;
     btn3: TToolButton;
     chkATV: TCheckBox;
@@ -304,7 +304,7 @@ var
   i: Integer;
   S: string;
   answer: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   inherited;
   if dsChannels.RecordCount > 0 then
@@ -327,10 +327,10 @@ begin
       if dbGrid.DataSource.DataSet.FieldByName('CH_NAME').IsNull then
         S := dbGrid.DataSource.DataSet['CH_NAME'];
       answer := '';
-      fq := TpFIBQuery.Create(self);
+      fq := TFIBQuery.Create(self);
       try
         fq.Database := dmMain.dbTV;
-        fq.Transaction := dmMain.trReadQ;
+        fq.Transaction := dmMain.GetTransactionForRead;
         fq.sql.Add('select '' услуга '' || s.Name  as WS');
         fq.sql.Add('  from CHANNELS_IN_SERVCE cs');
         fq.sql.Add(' inner join services s on (s.Service_Id = cs.Srv_Id)');
@@ -351,6 +351,7 @@ begin
         fq.Close;
         fq.Transaction.Commit;
       finally
+        if assigned(fq.Transaction) then fq.Transaction.Free;
         fq.Free;
       end;
       if (answer = '') then

@@ -7,9 +7,9 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ComCtrls,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
+  FIBDatabase, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
   GridsEh,
-  DBAxisGridsEh, DBGridEh, EhLibMTE, DBCtrlsEh, FIBQuery, pFIBQuery, OXmlReadWrite, OXmlUtils, OXmlPDOM, OTextReadWrite,
+  DBAxisGridsEh, DBGridEh, EhLibMTE, DBCtrlsEh, FIBQuery, OXmlReadWrite, OXmlUtils, OXmlPDOM, OTextReadWrite,
   PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, httpsend, synacode, blcksock, ftpsend, synsock, amSplitter;
 
@@ -23,17 +23,17 @@ type
     cbType: TDBComboBoxEh;
     Label2: TLabel;
     Label3: TLabel;
-    dsChennals: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsChennals: TFIBDataSet;
+    trRead: TFIBTransaction;
     srcChennals: TDataSource;
     srcMAPChennals: TDataSource;
     dsMAPChennals: TMemTableEh;
     dsMAPChennalsATR_NAME: TStringField;
-    dsSource: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
+    dsSource: TFIBDataSet;
+    trWrite: TFIBTransaction;
     srcSource: TDataSource;
     edNotice: TDBEditEh;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     OpenDialog: TOpenDialog;
     btnDel: TButton;
     pnlChennals: TPanel;
@@ -43,7 +43,7 @@ type
     DBGridEh2: TDBGridEh;
     Label8: TLabel;
     Splitter1: TSplitter;
-    dsGenre: TpFIBDataSet;
+    dsGenre: TFIBDataSet;
     srcGenre: TDataSource;
     dsMAPGenre: TMemTableEh;
     srcMAPGenre: TDataSource;
@@ -66,7 +66,7 @@ type
     edtXMLFile: TDBEditEh;
     btnLoad: TButton;
     chkHand: TDBCheckBoxEh;
-    trWriteQ: TpFIBTransaction;
+    trWriteQ: TFIBTransaction;
     dsMAPChennalsID: TWideStringField;
     dsMAPChennalsNAME: TWideStringField;
     dsMAPChennalsICON: TWideStringField;

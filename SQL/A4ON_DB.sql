@@ -322,7 +322,7 @@ CREATE GENERATOR GEN_VPN_SESSIONS_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR GEN_VPN_SESSIONS_ID TO 0;
 
 CREATE GENERATOR G_LOG_ID START WITH 0 INCREMENT BY 1;
-SET GENERATOR G_LOG_ID TO 5063395;
+SET GENERATOR G_LOG_ID TO 5063400;
 
 CREATE GENERATOR MAP_LOG_ID START WITH 0 INCREMENT BY 1;
 SET GENERATOR MAP_LOG_ID TO 0;
@@ -349,7 +349,7 @@ CREATE EXCEPTION E_WRONG_DATE '#9 wrong on/off date';
 
 CREATE OR ALTER PROCEDURE ADD_CUSTOMER (
     ACCOUNT_NO VARCHAR(15) /* TYPE OF COLUMN CUSTOMER.ACCOUNT_NO */,
-    SURNAME VARCHAR(100) /* TYPE OF COLUMN CUSTOMER.SURNAME */,
+    SURNAME VARCHAR(255) /* TYPE OF COLUMN CUSTOMER.SURNAME */,
     HOUSE_ID INTEGER /* TYPE OF COLUMN CUSTOMER.HOUSE_ID */,
     CID D_UID_NULL = null,
     FIRSTNAME VARCHAR(50) /* TYPE OF COLUMN CUSTOMER.FIRSTNAME */ = null,
@@ -358,7 +358,7 @@ CREATE OR ALTER PROCEDURE ADD_CUSTOMER (
     NOTICE VARCHAR(1000) /* TYPE OF COLUMN CUSTOMER.NOTICE */ = null,
     JURIDICAL SMALLINT /* TYPE OF COLUMN CUSTOMER.JURIDICAL */ = 0,
     MOBILE VARCHAR(50) /* TYPE OF COLUMN CUSTOMER.MOBILE_PHONE */ = null,
-    EMAIL VARCHAR(50) /* TYPE OF COLUMN CUSTOMER.EMAIL */ = null,
+    EMAIL VARCHAR(100) /* TYPE OF COLUMN CUSTOMER.EMAIL */ = null,
     EXTERNAL_ID VARCHAR(20) /* TYPE OF COLUMN CUSTOMER.EXTERNAL_ID */ = null)
 RETURNS (
     CUSTOMER_ID UID)
@@ -4568,7 +4568,7 @@ CREATE TABLE CUSTOMER (
     HOUSE_ID               UID,
     ACCOUNT_NO             D_ACCOUNT_NS NOT NULL,
     DOGOVOR_NO             D_VARCHAR50,
-    SURNAME                D_VARCHAR100,
+    SURNAME                D_VARCHAR255,
     FIRSTNAME              D_VARCHAR50,
     MIDLENAME              D_VARCHAR50,
     INITIALS               D_VARCHAR10,
@@ -4595,7 +4595,7 @@ CREATE TABLE CUSTOMER (
     MOBILE_PHONE           D_VARCHAR50,
     HIS_COLOR              D_VARCHAR10,
     INVISIBLE              D_IBOOLEAN DEFAULT 0,
-    EMAIL                  D_VARCHAR50,
+    EMAIL                  D_VARCHAR100,
     TIME_ON_MINUS          D_TIMESTAMP,
     BIRTHDAY               D_DATE,
     ADRES_REGISTR          D_VARCHAR255,
@@ -10213,6 +10213,12 @@ as
 begin
   execute procedure UpdateCustomerDebt4pay (new.CUSTOMER_ID, new.PAY_SUM);
   execute procedure Bonus_Add_After_Payment(new.CUSTOMER_ID, new.Payment_Id, new.PAY_SUM);
+
+  -- пропишем номер квитанции в заявке
+  if ((new.RQ_ID is not null) and (new.Ext_Pay_Id is not null)) then
+    update request r
+    set r.Receipt = new.Ext_Pay_Id
+    where r.Rq_Id = new.Rq_Id;
 end;
 
 CREATE OR ALTER TRIGGER PAYMENT_AU0 FOR PAYMENT
@@ -10235,6 +10241,21 @@ begin
       set C.DEBT_SUM = coalesce(C.DEBT_SUM, 0) - new.PAY_SUM
       where C.CUSTOMER_ID = new.CUSTOMER_ID;
     end
+  end
+
+  -- пропишем номер квитанции в заявке
+  if ((old.Rq_Id is distinct from new.Rq_Id)
+      or
+      (old.EXT_PAY_ID is distinct from new.Ext_Pay_Id)) then begin
+    if ((old.Rq_Id is distinct from new.Rq_Id) and (old.RQ_ID is not null)) then
+      update request r
+      set r.Receipt = null
+      where r.Rq_Id = old.Rq_Id;
+
+    if ((new.RQ_ID is not null) and (old.EXT_PAY_ID is distinct from new.Ext_Pay_Id)) then
+      update request r
+      set r.Receipt = new.Ext_Pay_Id
+      where r.Rq_Id = new.Rq_Id;
   end
 end;
 

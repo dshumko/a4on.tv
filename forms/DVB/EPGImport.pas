@@ -7,8 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.TimeSpan, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ComCtrls,
-  ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, FIBDatabase,
-  pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, OXmlPDOM, OTextReadWrite, EhLibVCL, httpsend, synacode, blcksock,
+  ToolCtrlsEh, DBGridEhToolCtrls, GridsEh, DBAxisGridsEh, DBGridEh, MemTableDataEh, MemTableEh, FIBQuery, FIBDatabase,
+   FIBDataSet, DBCtrlsEh, DBLookupEh, OXmlPDOM, OTextReadWrite, EhLibVCL, httpsend, synacode, blcksock,
   ftpsend, synsock, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
@@ -18,23 +18,23 @@ type
     Panel2: TPanel;
     DBGridEh2: TDBGridEh;
     srcSources: TDataSource;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     cbSource: TDBLookupComboboxEh;
     Label1: TLabel;
     Label7: TLabel;
     edtXMLFile: TDBEditEh;
     btnOpenAndLoad: TButton;
     btnCreate: TButton;
-    dsSources: TpFIBDataSet;
+    dsSources: TFIBDataSet;
     OpenDialog: TOpenDialog;
-    dsSrcChennals: TpFIBDataSet;
+    dsSrcChennals: TFIBDataSet;
     srcSrcChennals: TDataSource;
     Label2: TLabel;
     btnLoad: TButton;
     Splitter1: TSplitter;
     ProgressBar: TProgressBar;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     mpg: TMemTableEh;
     btnOpen: TButton;
     mtAssoc: TMemTableEh;
@@ -856,7 +856,7 @@ begin
   mtAssoc.First;
 
   // почистим устаревшие данные
-  Query.SQL.Text := 'delete from Epg where Epg_Date < dateadd(day,  -8, current_date)';
+  Query.SQL.Text := 'delete from Epg where Epg_Date < dateadd(day, -8, current_date)';
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   Query.Transaction.Commit;
@@ -882,7 +882,7 @@ begin
   mtAssoc.First;
 
   // почистим устаревшие данные
-  Query.SQL.Text := 'delete from Epg where Epg_Date < dateadd(day,  -8, current_date)';
+  Query.SQL.Text := 'delete from Epg where Epg_Date < dateadd(day, -8, current_date)';
   Query.Transaction.StartTransaction;
   Query.ExecQuery;
   Query.Transaction.Commit;

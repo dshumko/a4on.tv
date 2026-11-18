@@ -8,21 +8,21 @@ uses
   Data.DB,
   Vcl.ActnList, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Dialogs,
   Vcl.ToolWin,
-  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, pFIBDatabase, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet,
+  AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, GridsEh, DBGridEh, FIBDataSet,
   EhLibVCL,
   DBGridEhGrouping, DynVarsEh, FIBDatabase, ToolCtrlsEh;
 
 type
   TapgNodeAttributes = class(TA4onPage)
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     srcAttributes: TDataSource;
     dbgCustAttr: TDBGridEh;
     ActListCustomers: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;

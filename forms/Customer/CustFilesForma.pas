@@ -9,10 +9,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
   Vcl.ActnList,
   Vcl.ExtCtrls, Vcl.Buttons,
-  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery, pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, GridsEh, FIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, FIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
-  EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh;
+  EhLibVCL, FIBDatabase, DynVarsEh;
 
 type
   TCustFilesForm = class(TForm)
@@ -31,7 +31,7 @@ type
     ppmSelectAll: TMenuItem;
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
-    dsFiles: TpFIBDataSet;
+    dsFiles: TFIBDataSet;
     srcFiles: TDataSource;
     frxDBPayments: TfrxDBDataset;
     ToolBar3: TToolBar;
@@ -66,11 +66,11 @@ type
     pmGridClick: TPopupMenu;
     miPayDoc: TMenuItem;
     miAbonent: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsFileType: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsFileType: TFIBDataSet;
     srcFileType: TDataSource;
-    qRead: TpFIBQuery;
+    qRead: TFIBQuery;
     btnEdit: TToolButton;
     actEdit: TAction;
     miN6: TMenuItem;
@@ -79,6 +79,7 @@ type
     miEdit: TMenuItem;
     miFilterCustomers: TMenuItem;
     miN7: TMenuItem;
+    trReadQ: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -396,7 +397,7 @@ begin
     qRead.ExecQuery;
     qRead.FieldByName('content').SaveToFile(FileName);
     qRead.Close;
-    qRead.Transaction.Rollback;
+    qRead.Transaction.Commit;
     ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);
   end;
 end;

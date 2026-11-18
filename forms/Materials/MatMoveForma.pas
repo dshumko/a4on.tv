@@ -7,20 +7,20 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, DBGridEh, DBCtrlsEh, DBLookupEh;
+  OkCancel_frame, FIBDataSet, FIBDatabase, FIBQuery, DBGridEh, DBCtrlsEh, DBLookupEh;
 
 type
   TMatMoveForm = class(TForm)
     frmOK: TOkCancelFrame;
-    trReadQ: TpFIBTransaction;
-    trWriteQ: TpFIBTransaction;
-    dsWH: TpFIBDataSet;
-    dsFROMWH: TpFIBDataSet;
+    trReadQ: TFIBTransaction;
+    trWriteQ: TFIBTransaction;
+    dsWH: TFIBDataSet;
+    dsFROMWH: TFIBDataSet;
     cbWH: TDBLookupComboboxEh;
     cbbFROM_WH: TDBLookupComboboxEh;
     edDate: TDBDateTimeEditEh;
     edQuant: TDBNumberEditEh;
-    dsMW: TpFIBDataSet;
+    dsMW: TFIBDataSet;
     edCost: TDBNumberEditEh;
     edNumber: TDBEditEh;
     srcMW: TDataSource;

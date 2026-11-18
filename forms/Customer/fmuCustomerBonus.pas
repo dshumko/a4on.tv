@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase;
 
 type
   TapgCustomerBonus = class(TA4onPage)
-    dsBonus: TpFIBDataSet;
+    dsBonus: TFIBDataSet;
     srcBonus: TDataSource;
     dbgGrid: TDBGridEh;
     ActListCustomers: TActionList;
@@ -21,8 +21,8 @@ type
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure dsBonusAfterOpen(DataSet: TDataSet);

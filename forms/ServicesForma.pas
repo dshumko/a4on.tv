@@ -9,7 +9,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Buttons,
   Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase, pFIBDatabase,
+  DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, FIBDatabase,
   DBCtrlsEh,
   DBLookupEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter,
   PrnDbgeh, Vcl.Menus, CnClasses;
@@ -24,11 +24,11 @@ type
     srcTarif: TDataSource;
     srcLinks: TDataSource;
     srcServices: TDataSource;
-    dsServices: TpFIBDataSet;
-    dsTarif: TpFIBDataSet;
-    dsLinks: TpFIBDataSet;
+    dsServices: TFIBDataSet;
+    dsTarif: TFIBDataSet;
+    dsLinks: TFIBDataSet;
     srcONOFFServices: TDataSource;
-    dsONOFFServices: TpFIBDataSet;
+    dsONOFFServices: TFIBDataSet;
     ssGrid: TDBGridEh;
     fsGrid: TDBGridEh;
     ToolBar2: TToolBar;
@@ -39,9 +39,9 @@ type
     tbSrvCancel: TToolButton;
     ToolButton1: TToolButton;
     ToolButton2: TToolButton;
-    dsSC: TpFIBDataSet;
+    dsSC: TFIBDataSet;
     srcSC: TDataSource;
-    dsC: TpFIBDataSet;
+    dsC: TFIBDataSet;
     srcC: TDataSource;
     ActionList1: TActionList;
     Action1: TAction;
@@ -49,17 +49,17 @@ type
     actEditSrv: TAction;
     actDelSrv: TAction;
     srcSwitch: TDataSource;
-    dsSwitch: TpFIBDataSet;
+    dsSwitch: TFIBDataSet;
     srcSwitchToSrv: TDataSource;
-    dsSwitchToSrv: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsSrvAttr: TpFIBDataSet;
+    dsSwitchToSrv: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsSrvAttr: TFIBDataSet;
     srcSrvAttr: TDataSource;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     srcAttributes: TDataSource;
     CnErrors: TCnErrorProvider;
-    dsCMPLX: TpFIBDataSet;
+    dsCMPLX: TFIBDataSet;
     srcCMPLX: TDataSource;
     btnQF: TToolButton;
     btn1: TToolButton;
@@ -168,6 +168,10 @@ type
     pmgSep1: TMenuItem;
     miRefresh: TMenuItem;
     actCopyID: TAction;
+    lbl1: TLabel;
+    lbl6: TLabel;
+    lbl7: TLabel;
+    lbl8: TLabel;
     procedure tbSrvCancelClick(Sender: TObject);
     procedure tbSrvOkClick(Sender: TObject);
     procedure srcServicesStateChange(Sender: TObject);
@@ -259,8 +263,8 @@ var
 implementation
 
 uses
-  System.RegularExpressions, System.StrUtils,
-  AtrStrUtils, DM, TarifForma, pFIBQuery, ServiceForma, MAIN;
+  System.RegularExpressions, System.StrUtils, FIBQuery,
+  AtrStrUtils, DM, TarifForma, ServiceForma, MAIN;
 
 {$R *.dfm}
 
@@ -455,6 +459,9 @@ procedure TServicesForm.actCmxAddExecute(Sender: TObject);
 var
   bm: TBookmark;
 begin
+  if pnlCmxAdd.Visible then
+    exit;
+
   if dsCMPLX.RecordCount > 0 then
   begin
     bm := dsCMPLX.GetBookmark;
@@ -827,7 +834,7 @@ begin
   else
     Channel_ON := 0;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -860,7 +867,7 @@ begin
   else
     Channel_ON := 0;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;

@@ -9,22 +9,22 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh,
   VCLTee.TeCanvas, PrnDbgeh, CnClasses;
 
 type
   TFileTypeForm = class(TGridForm)
-    dsFileType: TpFIBDataSet;
+    dsFileType: TFIBDataSet;
     pmMemo: TPopupMenu;
-    dsSrvType: TpFIBDataSet;
+    dsSrvType: TFIBDataSet;
     srcSrvType: TDataSource;
-    dsReqType: TpFIBDataSet;
+    dsReqType: TFIBDataSet;
     srcReqType: TDataSource;
-    dsOnOffSrv: TpFIBDataSet;
+    dsOnOffSrv: TFIBDataSet;
     srcOnOffSrv: TDataSource;
-    dsReqTempl: TpFIBDataSet;
+    dsReqTempl: TFIBDataSet;
     srcReqTempl: TDataSource;
     gbJSON: TGroupBox;
     lcbRequest: TDBLookupComboboxEh;
@@ -39,7 +39,7 @@ type
     lbl1: TLabel;
     lcbSingleSrv: TDBLookupComboboxEh;
     srcSingleSrv: TDataSource;
-    dsSingleSrv: TpFIBDataSet;
+    dsSingleSrv: TFIBDataSet;
     edtNameFmt: TDBEditEh;
     mmoNOTICE: TDBMemoEh;
     chkMemoRO: TDBCheckBoxEh;
@@ -61,7 +61,7 @@ type
     edtText1: TDBEditEh;
     Заявка: TLabel;
     lbl4: TLabel;
-    dsService: TpFIBDataSet;
+    dsService: TFIBDataSet;
     srcService: TDataSource;
     lcbService: TDBLookupComboboxEh;
     lcbServiceFrom: TDBLookupComboboxEh;
@@ -74,7 +74,7 @@ type
     lbl11: TLabel;
     lcbAllowFT: TDBLookupComboboxEh;
     srcAllowFT: TDataSource;
-    dsAllowFT: TpFIBDataSet;
+    dsAllowFT: TFIBDataSet;
     edtPROC: TDBEditEh;
     chkMat: TDBCheckBoxEh;
     chkMatCustOnly: TDBCheckBoxEh;

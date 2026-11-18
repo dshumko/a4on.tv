@@ -448,7 +448,7 @@ object apgCustomerRequests: TapgCustomerRequests
         7F00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
     end
   end
-  object dsRequests: TpFIBDataSet
+  object dsRequests: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST'
       'SET '
@@ -689,7 +689,7 @@ object apgCustomerRequests: TapgCustomerRequests
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -701,7 +701,7 @@ object apgCustomerRequests: TapgCustomerRequests
     Left = 172
     Top = 130
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

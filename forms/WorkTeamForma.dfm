@@ -680,7 +680,7 @@ inherited WorkTeamForm: TWorkTeamForm
     Left = 493
     Top = 121
   end
-  object dsAreas: TpFIBDataSet
+  object dsAreas: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE WORKAREA'
       'SET '
@@ -757,7 +757,7 @@ inherited WorkTeamForm: TWorkTeamForm
     Left = 183
     Top = 367
   end
-  object dsWORKGROUPS: TpFIBDataSet
+  object dsWORKGROUPS: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE WORKGROUPS'
       'SET'
@@ -859,7 +859,7 @@ inherited WorkTeamForm: TWorkTeamForm
       end
     end
   end
-  object dsHouses: TpFIBDataSet
+  object dsHouses: TFIBDataSet
     DeleteSQL.Strings = (
       
         'execute procedure HOUSE_IUD('#39'D'#39', :HOUSE_ID, null, null, null, nu' +
@@ -956,7 +956,7 @@ inherited WorkTeamForm: TWorkTeamForm
     Left = 402
     Top = 366
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     SelectSQL.Strings = (
       
         'select O_ID, O_TYPE, O_NAME, O_DESCRIPTION from OBJECTS WHERE O_' +
@@ -967,7 +967,7 @@ inherited WorkTeamForm: TWorkTeamForm
     Left = 375
     Top = 116
   end
-  object dsLimit: TpFIBDataSet
+  object dsLimit: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    WORKAREALIMIT'

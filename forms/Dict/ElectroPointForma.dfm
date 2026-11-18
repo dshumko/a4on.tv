@@ -974,7 +974,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 304
     Top = 408
   end
-  object dsElectroPoint: TpFIBDataSet
+  object dsElectroPoint: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 76, :O_ID, :O_Name, :O_Descript' +
@@ -1094,7 +1094,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 144
     Top = 136
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1106,7 +1106,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 200
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1118,7 +1118,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 312
     Top = 188
   end
-  object dsERecipient: TpFIBDataSet
+  object dsERecipient: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'
@@ -1144,7 +1144,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 265
     Top = 302
   end
-  object dsHistory: TpFIBDataSet
+  object dsHistory: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS_HISTORY'
       'SET '
@@ -1215,7 +1215,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 457
     Top = 302
   end
-  object dsNodes: TpFIBDataSet
+  object dsNodes: TFIBDataSet
     UpdateSQL.Strings = (
       'update Nodes'
       'set Pce = :Pce'
@@ -1366,7 +1366,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 97
     Top = 417
   end
-  object dsNodePce: TpFIBDataSet
+  object dsNodePce: TFIBDataSet
     UpdateSQL.Strings = (
       
         'update or insert into Objects_History (O_Id, O_Type, Hdate, Nval' +
@@ -1413,7 +1413,7 @@ inherited ElectroPointForm: TElectroPointForm
     Left = 849
     Top = 414
   end
-  object dsTarif: TpFIBDataSet
+  object dsTarif: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'
@@ -1465,7 +1465,7 @@ inherited ElectroPointForm: TElectroPointForm
       OnExecute = actADelExecute
     end
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     DeleteSQL.Strings = (
       'update'
       '    ATTRIBUTE'
@@ -1487,7 +1487,7 @@ inherited ElectroPointForm: TElectroPointForm
       ''
       '    ')
     SelectSQL.Strings = (
-      'SELECT A.O_NAME, CA.Object_Id O_ID,  CA.*'
+      'SELECT A.O_NAME, CA.Object_Id O_ID, CA.*'
       'FROM attribute CA'
       
         '   INNER JOIN OBJECTS A ON (A.O_ID = CA.Aid and a.O_Type = ca.Ty' +

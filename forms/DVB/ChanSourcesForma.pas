@@ -9,10 +9,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.Menus,
   Vcl.Grids,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
   DBGridEhToolCtrls,
-  DBAxisGridsEh, PrjConst, FIBDatabase, pFIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
-  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh, amSplitter;
+  DBAxisGridsEh, PrjConst, FIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
+  FIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TChanSourcesForm = class(TForm)
@@ -23,9 +23,9 @@ type
     pmgSelectAll: TMenuItem;
     pmgSep1: TMenuItem;
     pmgSaveSelection: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsChannel: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsChannel: TFIBDataSet;
     actlstSearch: TActionList;
     actFilterSearchText: TAction;
     actSearchNext: TAction;
@@ -53,7 +53,7 @@ type
     ToolButton14: TToolButton;
     dbgChannel: TDBGridEh;
     srcSource: TDataSource;
-    dsSource: TpFIBDataSet;
+    dsSource: TFIBDataSet;
     actCHnew: TAction;
     actCHedit: TAction;
     actCHdel: TAction;
@@ -66,7 +66,7 @@ type
     tsView: TTabSheet;
     dbgView: TDBGridEh;
     mtView: TMemTableEh;
-    drvFIBView: TpFIBDataDriverEh;
+    drvFIBView: TFIBDataDriverEh;
     dsView: TDataSource;
     pmViewGrid: TPopupMenu;
     actSave: TAction;
@@ -111,7 +111,7 @@ implementation
 
 uses
   System.DateUtils, System.Math,
-  DM, MAIN, AtrStrUtils, atrCmdUtils, DVBStreamForma, pFIBQuery, pFIBProps, ChanSrcForma, ChanForSrcForma;
+  DM, MAIN, AtrStrUtils, atrCmdUtils, DVBStreamForma, FIBProps, ChanSrcForma, ChanForSrcForma;
 
 {$R *.dfm}
 

@@ -115,7 +115,7 @@ object HouseWorkForm: THouseWorkForm
     Left = 96
     Top = 128
   end
-  object dsWork: TpFIBDataSet
+  object dsWork: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSEWORKS'
       'SET '
@@ -167,7 +167,7 @@ object HouseWorkForm: THouseWorkForm
     Left = 32
     Top = 128
   end
-  object dsWorker: TpFIBDataSet
+  object dsWorker: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       ' W.*'
@@ -178,7 +178,7 @@ object HouseWorkForm: THouseWorkForm
     Left = 336
     Top = 80
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -190,7 +190,7 @@ object HouseWorkForm: THouseWorkForm
     Left = 84
     Top = 76
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

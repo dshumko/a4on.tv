@@ -345,7 +345,7 @@ object DVBNetworkForm: TDVBNetworkForm
     TabOrder = 2
     Visible = True
   end
-  object dsNetwork: TpFIBDataSet
+  object dsNetwork: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DVB_NETWORK'
       'SET '
@@ -417,7 +417,7 @@ object DVBNetworkForm: TDVBNetworkForm
     Left = 16
     Top = 346
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

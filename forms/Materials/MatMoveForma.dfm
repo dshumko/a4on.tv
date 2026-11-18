@@ -224,7 +224,7 @@ object MatMoveForm: TMatMoveForm
     TabOrder = 3
     Visible = True
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -236,7 +236,7 @@ object MatMoveForm: TMatMoveForm
     Left = 137
     Top = 173
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -248,7 +248,7 @@ object MatMoveForm: TMatMoveForm
     Left = 356
     Top = 152
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
@@ -272,7 +272,7 @@ object MatMoveForm: TMatMoveForm
     Left = 79
     Top = 169
   end
-  object dsFROMWH: TpFIBDataSet
+  object dsFROMWH: TFIBDataSet
     SelectSQL.Strings = (
       
         'select O_ID, O_NAME, O_DESCRIPTION from OBJECTS o where O_TYPE = 1' +
@@ -290,7 +290,7 @@ object MatMoveForm: TMatMoveForm
     Left = 217
     Top = 164
   end
-  object dsMW: TpFIBDataSet
+  object dsMW: TFIBDataSet
     InsertSQL.Strings = (
       'execute procedure MATERIALSMOVMENT('
       ' :M_ID, '

@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Actions,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.Menus, Vcl.ComCtrls, Vcl.ToolWin,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
+  FIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
   DynVarsEh;
 
 type
@@ -27,7 +27,7 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     srcSerials: TDataSource;
-    dsserials: TpFIBDataSet;
+    dsserials: TFIBDataSet;
     actlstactions: TActionList;
     actNew: TAction;
     actDelete: TAction;

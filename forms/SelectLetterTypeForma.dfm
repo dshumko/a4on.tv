@@ -98,7 +98,7 @@ object frmSelectLetterType: TfrmSelectLetterType
       OnEnter = cbLetterTypeEnter
     end
   end
-  object dsLetterTypes: TpFIBDataSet
+  object dsLetterTypes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    -2 LETTERTYPEID'

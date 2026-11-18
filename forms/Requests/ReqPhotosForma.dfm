@@ -27,7 +27,6 @@ object ReqPhotosForm: TReqPhotosForm
     Height = 491
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 471
     object ToolBar3: TToolBar
       Left = 1
       Top = 1
@@ -109,6 +108,9 @@ object ReqPhotosForm: TReqPhotosForm
             Title.Caption = #1054#1087#1080#1089#1072#1085#1080#1077
             Width = 90
           end>
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
         DropDownBox.UseMultiTitle = True
         DropDownBox.ShowTitles = True
@@ -172,7 +174,6 @@ object ReqPhotosForm: TReqPhotosForm
       Align = alClient
       BevelOuter = bvNone
       TabOrder = 1
-      ExplicitHeight = 440
       object spl1: TSplitter
         Left = 669
         Top = 0
@@ -190,7 +191,6 @@ object ReqPhotosForm: TReqPhotosForm
         DynProps = <>
         TabOrder = 0
         OnDblClick = imgJPGDblClick
-        ExplicitHeight = 440
       end
       object dbgFiles: TDBGridEh
         Left = 0
@@ -647,7 +647,7 @@ object ReqPhotosForm: TReqPhotosForm
       OnClick = ppmSaveSelectionClick
     end
   end
-  object dsFiles: TpFIBDataSet
+  object dsFiles: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_FILES'
       'SET '
@@ -762,7 +762,7 @@ object ReqPhotosForm: TReqPhotosForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME,    '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info,'
@@ -922,7 +922,7 @@ object ReqPhotosForm: TReqPhotosForm
       OnClick = miAbonentClick
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -933,7 +933,7 @@ object ReqPhotosForm: TReqPhotosForm
     Left = 709
     Top = 147
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -944,7 +944,7 @@ object ReqPhotosForm: TReqPhotosForm
     Left = 763
     Top = 151
   end
-  object dsFileType: TpFIBDataSet
+  object dsFileType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    Rt_Id O_ID'
@@ -966,17 +966,6 @@ object ReqPhotosForm: TReqPhotosForm
     DataSet = dsFileType
     Left = 512
     Top = 400
-  end
-  object qRead: TpFIBQuery
-    Transaction = dmMain.trReadQ
-    Database = dmMain.dbTV
-    SQL.Strings = (
-      'select'
-      'p.Jpg'
-      'from Request_Photos p '
-      'where p.Id = :ID')
-    Left = 536
-    Top = 280
   end
   object PropStorageEh: TPropStorageEh
     Section = 'RequestsPhoto'

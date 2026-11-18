@@ -1,6 +1,5 @@
 ﻿unit CustomersFilter;
 
-
 interface
 
 uses
@@ -11,9 +10,8 @@ uses
   Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.Mask,
   DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh,
-  FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
-  pFIBQuery,
-  PrjConst, PropFilerEh, PropStorageEh, Vcl.Menus;
+  FIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit, SynDBEdit,
+  FIBQuery, PrjConst, PropFilerEh, PropStorageEh, Vcl.Menus;
 
 type
   TCustomersFilterForm = class(TForm)
@@ -22,24 +20,24 @@ type
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     srcStreets: TDataSource;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcHomes: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcServices: TDataSource;
-    dsServices: TpFIBDataSet;
+    dsServices: TFIBDataSet;
     srcArea: TDataSource;
-    dsArea: TpFIBDataSet;
+    dsArea: TFIBDataSet;
     srcSubArea: TDataSource;
-    dsSubArea: TpFIBDataSet;
+    dsSubArea: TFIBDataSet;
     btnClear: TSpeedButton;
     srcLetterType: TDataSource;
-    dsLetterType: TpFIBDataSet;
+    dsLetterType: TFIBDataSet;
     OpenDialog1: TOpenDialog;
     srcSingleServ: TDataSource;
-    dsSingleServ: TpFIBDataSet;
+    dsSingleServ: TFIBDataSet;
     srcAttributes: TDataSource;
-    dsAttributes: TpFIBDataSet;
-    dsOrg: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
+    dsOrg: TFIBDataSet;
     srcOrg: TDataSource;
     pgcFilter: TPageControl;
     tsFilter: TTabSheet;
@@ -82,9 +80,9 @@ type
     cbb1: TDBLookupComboboxEh;
     cbb2: TDBLookupComboboxEh;
     lbl5: TLabel;
-    dsWORKGROUP: TpFIBDataSet;
+    dsWORKGROUP: TFIBDataSet;
     srcWORKGROUP: TDataSource;
-    dsWORKAREA: TpFIBDataSet;
+    dsWORKAREA: TFIBDataSet;
     srcWORKAREA: TDataSource;
     cbSF_TYPE: TDBComboBoxEh;
     lbl3: TLabel;
@@ -92,7 +90,7 @@ type
     lbl7: TLabel;
     lbl8: TLabel;
     cbbMH: TDBLookupComboboxEh;
-    dsMH: TpFIBDataSet;
+    dsMH: TFIBDataSet;
     srcMH: TDataSource;
     actlst1: TActionList;
     actOk: TAction;
@@ -162,7 +160,7 @@ type
     lbl14: TLabel;
     chkCUST_NOT_ATTRIBUTE: TDBCheckBoxEh;
     cbbFileType: TDBLookupComboboxEh;
-    dsFileType: TpFIBDataSet;
+    dsFileType: TFIBDataSet;
     srcFileType: TDataSource;
     edtNOTPAY: TDBNumberEditEh;
     lbl15: TLabel;
@@ -183,7 +181,7 @@ type
     SelectAll1: TMenuItem;
     lblSrvAtr: TLabel;
     lcbSrvAtr: TDBLookupComboboxEh;
-    dsSrvAttr: TpFIBDataSet;
+    dsSrvAttr: TFIBDataSet;
     srcSrvAttr: TDataSource;
     procedure SpeedButton2Click(Sender: TObject);
     procedure SpeedButton1Click(Sender: TObject);
@@ -360,9 +358,9 @@ begin
 
   dbchkHiden.Visible := dmMain.SuperMode = 1;
 
-  cbAdress.Top := grpAddress.Top - Trunc(cbAdress.Height/2);
-  cbDolg.Top := grpDolg.Top - Trunc(cbDolg.Height/2);
-  chkAddon.Top := grpAddon.Top - Trunc(chkAddon.Height/2);
+  cbAdress.Top := grpAddress.Top - trunc(cbAdress.Height / 2);
+  cbDolg.Top := grpDolg.Top - trunc(cbDolg.Height / 2);
+  chkAddon.Top := grpAddon.Top - trunc(chkAddon.Height / 2);
 
   {
     0
@@ -500,7 +498,7 @@ procedure TCustomersFilterForm.actSaveToDbExecute(Sender: TObject);
 var
   n: string;
   s: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   if InputQuery('Введите название фильтра', 'Название', n) and (not n.IsEmpty) then
   begin
@@ -513,7 +511,7 @@ begin
     if s.IsEmpty then
       exit;
 
-    fq := TpFIBQuery.Create(self);
+    fq := TFIBQuery.Create(self);
     try
       fq.Database := dmMain.dbTV;
       fq.Transaction := dmMain.trWriteQ;
@@ -536,8 +534,8 @@ begin
       fq.ParamByName('json').AsString := s;
       fq.Transaction.StartTransaction;
       fq.ExecQuery;
-      fq.Transaction.Commit;
       fq.Close;
+      fq.Transaction.Commit;
     finally
       fq.Free;
     end;
@@ -547,7 +545,7 @@ end;
 procedure TCustomersFilterForm.bbOkClick(Sender: TObject);
 var
   v: Boolean;
-  q: TpFIBQuery;
+  q: TFIBQuery;
 begin
   // проверим на какой закладке открыто окно.
   // для того чтоб понять по чем выставлять фильтр
@@ -566,22 +564,25 @@ begin
       end
       else if (not srcFilter.DataSet.FieldByName('SQL_FLTR').IsNull) and (pgcFilter.ActivePage = tsSQL) then
       begin
-        q := TpFIBQuery.Create(Nil);
+        q := TFIBQuery.Create(Nil);
         try
           try
             q.Database := dmMain.dbTV;
-            q.Transaction := dmMain.trReadQ;
+            q.Transaction := dmMain.GetTransactionForRead;
             q.sql.Text := memSQL.Lines.Text;
             q.Transaction.StartTransaction;
             q.ExecQuery;
-            q.Close;
-            q.Transaction.Commit;
             srcFilter.DataSet['EXTENDED_FLTR'] := 2;
           except
             ShowMessage(rsIncorrectSQL);
             srcFilter.DataSet['EXTENDED_FLTR'] := 0
           end;
+          if q.Open then
+            q.Close;
+          if q.Transaction.InTransaction then
+            q.Transaction.Commit;
         finally
+          q.Transaction.Free;
           q.Free;
         end;
       end;
@@ -734,4 +735,3 @@ begin
 end;
 
 end.
-

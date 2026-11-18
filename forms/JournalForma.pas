@@ -7,15 +7,15 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  FIBDataSet, GridsEh, DBGridEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase;
 
 type
   TJournalForm = class(TForm)
     dbgrdJournal: TDBGridEh;
     srcJournal: TDataSource;
-    dsJournal: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsJournal: TFIBDataSet;
+    trRead: TFIBTransaction;
     procedure dbgrdJournalSortMarkingChanged(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
@@ -42,12 +42,12 @@ var
   s : string;
   I,J  : integer;
   Grid : TCustomDBGridEh;
-  FIBDS : TpFibDataset;
+  FIBDS : TFIBDataSet;
 begin
   cr:= Screen.Cursor;
   Screen.Cursor := crSqlWait;
   Grid:=TCustomDBGridEh(Sender);
-  FIBDS :=  TpFibDataset(Grid.DataSource.DataSet);
+  FIBDS :=  TFIBDataSet(Grid.DataSource.DataSet);
   FIBDS.Close;
   if Sender is TCustomDBGridEh
   then begin

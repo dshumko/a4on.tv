@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBCtrlsEh,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBCtrlsEh,
   CnErrorProvider, VclTee.TeCanvas, EhLibVCL, DBGridEhGrouping, DynVarsEh,
   PrjConst, A4onTypeUnit, AtrPages, amSplitter, PrnDbgeh;
 
 type
   TEQGroupsForm = class(TGridForm)
-    dsEQGroups: TpFIBDataSet;
+    dsEQGroups: TFIBDataSet;
     lbl1: TLabel;
     edtName: TDBEditEh;
     dbmmoO_DESCRIPTION: TDBMemoEh;

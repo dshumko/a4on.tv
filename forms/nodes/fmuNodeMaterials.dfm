@@ -182,7 +182,7 @@ object apgNodeMaterials: TapgNodeMaterials
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -194,7 +194,7 @@ object apgNodeMaterials: TapgNodeMaterials
     Left = 347
     Top = 90
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -226,7 +226,7 @@ object apgNodeMaterials: TapgNodeMaterials
       OnExecute = actFindExecute
     end
   end
-  object dsEquipment: TpFIBDataSet
+  object dsEquipment: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')

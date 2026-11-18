@@ -724,7 +724,7 @@ inherited WireForm: TWireForm
     Left = 344
     Top = 176
   end
-  object dsWire: TpFIBDataSet
+  object dsWire: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    WIRE'
@@ -847,7 +847,7 @@ inherited WireForm: TWireForm
     Left = 488
     Top = 136
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -859,7 +859,7 @@ inherited WireForm: TWireForm
     Left = 272
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -889,7 +889,7 @@ inherited WireForm: TWireForm
       Action = actQuickFilter
     end
   end
-  object dsPorts: TpFIBDataSet
+  object dsPorts: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    WIRE'
@@ -1116,7 +1116,7 @@ inherited WireForm: TWireForm
       end
     end
   end
-  object dsPoint: TpFIBDataSet
+  object dsPoint: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    WIRE'

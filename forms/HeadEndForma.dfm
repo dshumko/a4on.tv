@@ -12,13 +12,11 @@ object HeadEndForm: THeadEndForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyDown = FormKeyDown
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlHead: TPanel
     Left = 0
@@ -168,6 +166,9 @@ object HeadEndForm: THeadEndForm
           FieldName = 'AREA_NAME'
           Title.Caption = #1056#1072#1081#1086#1085
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.ShowTitles = True
       DropDownBox.Sizable = True
@@ -187,6 +188,9 @@ object HeadEndForm: THeadEndForm
       DynProps = <>
       DataField = 'HOUSE_ID'
       DataSource = srcHE
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EditButtons = <>
       KeyField = 'HOUSE_ID'
       ListField = 'HOUSE_NO'
@@ -218,6 +222,9 @@ object HeadEndForm: THeadEndForm
       DynProps = <>
       DataField = 'HE_TYPE'
       DataSource = srcHE
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EditButtons = <>
       KeyField = 'O_ID'
       ListField = 'O_NAME'
@@ -243,6 +250,9 @@ object HeadEndForm: THeadEndForm
         end
         item
         end>
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Sizable = True
       EditButtons = <>
       KeyField = 'HE_ID'
@@ -262,10 +272,12 @@ object HeadEndForm: THeadEndForm
     TabOrder = 2
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 327
@@ -574,8 +586,8 @@ object HeadEndForm: THeadEndForm
             Footers = <>
             Title.Caption = #1050#1074#1072#1088#1090#1080#1088
             Title.Hint = #1050#1074#1072#1088#1090#1080#1088
-            Title.Orientation = tohVertical
             Title.TitleButton = True
+            Title.Orientation = tohVertical
             Width = 33
           end
           item
@@ -588,8 +600,8 @@ object HeadEndForm: THeadEndForm
             Footers = <>
             Title.Caption = #1055#1086#1076#1082#1083'.'
             Title.Hint = #1055#1086#1076#1082#1083'.'
-            Title.Orientation = tohVertical
             Title.TitleButton = True
+            Title.Orientation = tohVertical
             Width = 32
           end
           item
@@ -601,8 +613,8 @@ object HeadEndForm: THeadEndForm
             Footers = <>
             Title.Caption = #1054#1090#1082#1083'.'
             Title.Hint = #1054#1090#1082#1083'.'
-            Title.Orientation = tohVertical
             Title.TitleButton = True
+            Title.Orientation = tohVertical
             Width = 27
           end
           item
@@ -646,8 +658,8 @@ object HeadEndForm: THeadEndForm
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|TB'
             Title.Hint = 'TB'
-            Title.Orientation = tohVertical
             Title.TitleButton = True
+            Title.Orientation = tohVertical
             Width = 20
           end
           item
@@ -659,8 +671,8 @@ object HeadEndForm: THeadEndForm
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|'#1057#1055#1044
             Title.Hint = #1057#1055#1044
-            Title.Orientation = tohVertical
             Title.TitleButton = True
+            Title.Orientation = tohVertical
             Width = 23
           end
           item
@@ -672,8 +684,8 @@ object HeadEndForm: THeadEndForm
             Footers = <>
             Title.Caption = #1045#1089#1090#1100'|'#1062'TB'
             Title.Hint = #1062'TB'
-            Title.Orientation = tohVertical
             Title.TitleButton = True
+            Title.Orientation = tohVertical
             Width = 24
           end>
         object RowDetailData: TRowDetailPanelControlEh
@@ -681,7 +693,7 @@ object HeadEndForm: THeadEndForm
       end
     end
   end
-  object dsHC: TpFIBDataSet
+  object dsHC: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HEADEND_CHANNELS'
       'SET '
@@ -742,7 +754,7 @@ object HeadEndForm: THeadEndForm
     Left = 472
     Top = 372
   end
-  object dsC: TpFIBDataSet
+  object dsC: TFIBDataSet
     SelectSQL.Strings = (
       'select c.Ch_Id, c.Ch_Number, c.Ch_Name'
       'FROM Channels c'
@@ -765,7 +777,7 @@ object HeadEndForm: THeadEndForm
     Left = 576
     Top = 372
   end
-  object dsHE: TpFIBDataSet
+  object dsHE: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HEADEND'
       'SET '
@@ -829,7 +841,7 @@ object HeadEndForm: THeadEndForm
     Left = 103
     Top = 322
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -841,7 +853,7 @@ object HeadEndForm: THeadEndForm
     Left = 142
     Top = 259
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -858,7 +870,7 @@ object HeadEndForm: THeadEndForm
     Left = 103
     Top = 376
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.street_id, s.street_short,s.street_name, a.area_name'
       'FROM STREET s left outer join area a on (a.area_id = s.area_id)'
@@ -875,7 +887,7 @@ object HeadEndForm: THeadEndForm
     Left = 430
     Top = 299
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '    H.HOUSE_ID,'
@@ -900,7 +912,7 @@ object HeadEndForm: THeadEndForm
     Left = 515
     Top = 242
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME'
       'FROM OBJECTS'
@@ -919,7 +931,7 @@ object HeadEndForm: THeadEndForm
     Left = 372
     Top = 98
   end
-  object dsHouses: TpFIBDataSet
+  object dsHouses: TFIBDataSet
     DeleteSQL.Strings = (
       
         'execute procedure HOUSE_IUD('#39'D'#39', :HOUSE_ID, null, null, null, nu' +
@@ -1010,7 +1022,7 @@ object HeadEndForm: THeadEndForm
     Left = 299
     Top = 322
   end
-  object dsParent: TpFIBDataSet
+  object dsParent: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HEADEND'
       'SET '

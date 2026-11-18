@@ -753,7 +753,7 @@ object ChanSourcesForm: TChanSourcesForm
       OnClick = miN2Click
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -765,7 +765,7 @@ object ChanSourcesForm: TChanSourcesForm
     Left = 228
     Top = 402
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -777,7 +777,7 @@ object ChanSourcesForm: TChanSourcesForm
     Left = 300
     Top = 408
   end
-  object dsChannel: TpFIBDataSet
+  object dsChannel: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    CHANNEL_SRC_PARAM'
@@ -871,7 +871,7 @@ object ChanSourcesForm: TChanSourcesForm
     Left = 216
     Top = 120
   end
-  object dsSource: TpFIBDataSet
+  object dsSource: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    Channel_Src'
@@ -915,7 +915,7 @@ object ChanSourcesForm: TChanSourcesForm
     Left = 548
     Top = 136
   end
-  object drvFIBView: TpFIBDataDriverEh
+  object drvFIBView: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (

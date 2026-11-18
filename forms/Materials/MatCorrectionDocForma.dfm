@@ -121,6 +121,9 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
       DynProps = <>
       DataField = 'WH_ID'
       DataSource = srcDoc
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1055#1088#1080#1093#1086#1076' '#1085#1072' '#1089#1082#1083#1072#1076
       EditButtons = <>
       KeyField = 'O_ID'
@@ -390,7 +393,7 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
       end
     end
   end
-  object dsDoc: TpFIBDataSet
+  object dsDoc: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIAL_DOCS'
       'SET '
@@ -452,7 +455,7 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
     Left = 24
     Top = 288
   end
-  object dsDocMat: TpFIBDataSet
+  object dsDocMat: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIALS_IN_DOC'
       'SET '
@@ -479,7 +482,7 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
       'VALUES('
       '    :M_ID,'
       '    :M_COST,'
-      '    :M_QUANT,    '
+      '    :M_QUANT,   '
       '    :M_NOTICE,'
       '    :DOC_ID'
       ')')
@@ -534,14 +537,14 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
     Left = 168
     Top = 288
   end
-  object dsFindMat: TpFIBDataSet
+  object dsFindMat: TFIBDataSet
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     Left = 256
     Top = 289
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.M_Id, m.Name, m.Dimension, g.Mg_Name, m.DESCRIPTION'
@@ -554,7 +557,7 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
     Left = 360
     Top = 288
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -571,7 +574,7 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
     Left = 208
     Top = 297
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
@@ -601,7 +604,7 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
     Left = 136
     Top = 169
   end
-  object qCloseDoc: TpFIBQuery
+  object qCloseDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -609,7 +612,7 @@ object MatCorrectionDocForm: TMatCorrectionDocForm
     Left = 248
     Top = 172
   end
-  object qOpenDoc: TpFIBQuery
+  object qOpenDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

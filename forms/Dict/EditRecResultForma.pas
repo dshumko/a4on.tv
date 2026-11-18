@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
+  FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
   CnClasses, Vcl.Buttons;
 
 type
@@ -37,8 +37,7 @@ function EditRecResult(const aResult_ID: Integer): Integer;
 implementation
 
 uses
-  System.RegularExpressions,
-  DM, pFIBQuery;
+  System.RegularExpressions, DM;
 
 {$R *.dfm}
 
@@ -86,7 +85,7 @@ end;
 
 procedure TEditRecResultForm.SaveResult;
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
   sql: string;
 begin
 
@@ -100,7 +99,7 @@ begin
     sql := 'update Objects set O_Name = :O_Name, O_Description = :O_Description, O_Check = :O_Check, ' +
       ' O_Numericfield = :O_Numericfield where O_Id = :O_Id and O_Type = 81';
 
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
@@ -123,12 +122,12 @@ begin
 
     fq.Transaction.StartTransaction;
     fq.ExecQuery;
-    fq.Transaction.Commit;
 
     if FResult_ID < 0 then
       FResult_ID := fq.fn('O_Id').AsInteger;
 
     fq.Close;
+    fq.Transaction.Commit;
   finally
     fq.free;
   end;
@@ -138,7 +137,7 @@ end;
 
 procedure TEditRecResultForm.SetID(value: Integer);
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   FResult_ID := value;
   if FResult_ID < 0 then begin
@@ -146,10 +145,10 @@ begin
     Exit;
   end;
 
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
-    fq.Transaction := dmMain.trReadQ;
+    fq.Transaction := dmMain.GetTransactionForRead;
     fq.sql.Text := 'select O_NAME, O_DESCRIPTION, O_Check, O_Numericfield from OBJECTS ' +
       ' where O_TYPE = 81 and O_ID = :O_ID';
 
@@ -166,9 +165,10 @@ begin
         chkTask.Checked := pos('"task"', fq.fn('O_Check').AsString) > 0;
       end;
     end;
-    fq.Transaction.Commit;
     fq.Close;
+    fq.Transaction.Commit;
   finally
+    if assigned(fq.Transaction) then fq.Transaction.Free;
     fq.free;
   end;
 

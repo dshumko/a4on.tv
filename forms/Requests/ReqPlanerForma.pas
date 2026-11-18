@@ -9,9 +9,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, PlannersEh, SpreadGridsEh, PlannerCalendarPickerEh,
   EhLibVCL,
-  GridsEh, DBAxisGridsEh, DBGridEh, DBCtrlsEh, PlannerDataEh, MemTableDataEh, MemTableEh, FIBDataSet, pFIBDataSet,
+  GridsEh, DBAxisGridsEh, DBGridEh, DBCtrlsEh, PlannerDataEh, MemTableDataEh, MemTableEh, FIBDataSet,
   DataDriverEh,
-  pFIBDataDriverEh, FIBDatabase, pFIBDatabase, amSplitter;
+  FIBDataDriverEh, FIBDatabase, amSplitter;
 
 type
   TReqPlanerForm = class(TForm)
@@ -30,18 +30,18 @@ type
     cbbPlanerViewMode: TDBComboBoxEh;
     pldsPlanner: TPlannerDataSourceEh;
     mtPlannerData: TMemTableEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    drvPlan: TpFIBDataDriverEh;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    drvPlan: TFIBDataDriverEh;
     srcPlan: TDataSource;
-    dsRequest: TpFIBDataSet;
+    dsRequest: TFIBDataSet;
     edtEndWorkTime: TDBDateTimeEditEh;
     edtStartWorkTime: TDBDateTimeEditEh;
     chkWorkOnly: TCheckBox;
     bFillPlanner: TButton;
     NewPlanItem: TButton;
     cbbGroupBy: TDBComboBoxEh;
-    dsFilter: TpFIBDataSet;
+    dsFilter: TFIBDataSet;
     srcFilter: TDataSource;
     mmoItem: TDBMemoEh;
     spl1: TSplitter;
@@ -83,7 +83,7 @@ implementation
 
 uses
   System.DateUtils, System.Generics.Collections,
-  DM, RequestForma, RequestNewForma, pFIBQuery, PrjConst, MAIN;
+  DM, RequestForma, RequestNewForma, FIBQuery, PrjConst, MAIN;
 
 function TReqPlanerForm.GetItemText: String;
 var
@@ -120,7 +120,7 @@ end;
 procedure TReqPlanerForm.PlannerControlPlannerItemInteractiveChanged(PlannerControl: TPlannerControlEh;
   PlannerView: TCustomPlannerViewEh; Item, OldValuesItem: TPlannerDataItemEh);
 var
-  Query: TpFIBQuery;
+  Query: TFIBQuery;
 begin
   if not FREdit then
     Exit;
@@ -130,7 +130,7 @@ begin
       [FormatDateTime('dd.mm.yy hh:nn', Item.StartTime), FormatDateTime('dd.mm.yy hh:nn', Item.EndTime)])),
       PChar('Перенос времени'), MB_YESNO + MB_ICONQUESTION) = IDYES then
     begin
-      Query := TpFIBQuery.Create(self);
+      Query := TFIBQuery.Create(self);
       try
         Query.Database := dmMain.dbTV;
         Query.Transaction := trWrite;

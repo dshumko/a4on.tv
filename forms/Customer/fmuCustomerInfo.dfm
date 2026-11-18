@@ -85,8 +85,8 @@ object apgCustomerInfo: TapgCustomerInfo
         object dbtxtDEBT: TDBText
           Left = 2
           Top = 15
-          Width = 253
-          Height = 22
+          Width = 99
+          Height = 25
           Align = alClient
           Alignment = taCenter
           AutoSize = True
@@ -97,8 +97,6 @@ object apgCustomerInfo: TapgCustomerInfo
           Font.Name = 'Tahoma'
           Font.Style = []
           ParentFont = False
-          ExplicitWidth = 99
-          ExplicitHeight = 25
         end
         object pnlPrepay: TPanel
           Left = 2
@@ -120,8 +118,8 @@ object apgCustomerInfo: TapgCustomerInfo
           object dbtxtPrepay: TDBText
             Left = 0
             Top = 0
-            Width = 253
-            Height = 21
+            Width = 84
+            Height = 19
             Hint = #1054#1073#1077#1097#1072#1085#1085#1099#1081' '#1087#1083#1072#1090#1077#1078
             Align = alClient
             Alignment = taCenter
@@ -133,8 +131,6 @@ object apgCustomerInfo: TapgCustomerInfo
             Font.Name = 'Tahoma'
             Font.Style = []
             ParentFont = False
-            ExplicitWidth = 84
-            ExplicitHeight = 19
           end
         end
       end
@@ -279,10 +275,9 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 96
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alLeft
             Caption = '       '
-            ExplicitHeight = 13
           end
           object btnCAdd: TSpeedButton
             Left = 60
@@ -306,10 +301,9 @@ object apgCustomerInfo: TapgCustomerInfo
             Left = 218
             Top = 0
             Width = 21
-            Height = 18
+            Height = 13
             Align = alRight
             Caption = '       '
-            ExplicitHeight = 13
           end
           object btnCEdit: TSpeedButton
             Left = 78
@@ -437,7 +431,7 @@ object apgCustomerInfo: TapgCustomerInfo
       end
     end
   end
-  object dsContacts: TpFIBDataSet
+  object dsContacts: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Customer_Contacts_Iu(:Customer_Id, :Cc_Value, ' +
@@ -517,7 +511,7 @@ object apgCustomerInfo: TapgCustomerInfo
       OnClick = N2Click
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -529,7 +523,7 @@ object apgCustomerInfo: TapgCustomerInfo
     Left = 796
     Top = 50
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -618,7 +612,7 @@ object apgCustomerInfo: TapgCustomerInfo
       OnClick = miCopyClick
     end
   end
-  object dsCustomer: TpFIBDataSet
+  object dsCustomer: TFIBDataSet
     AutoCalcFields = False
     Transaction = trRead
     Database = dmMain.dbTV

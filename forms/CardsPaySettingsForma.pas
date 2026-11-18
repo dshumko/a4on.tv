@@ -7,13 +7,13 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  FIBQuery, pFIBQuery, OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh;
+  FIBQuery, OkCancel_frame, FIBDataSet, DBCtrlsEh;
 
 type
   TCardsPaySettingsForm = class(TForm)
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     OkCancelFrame1: TOkCancelFrame;
-    select: TpFIBDataSet;
+    select: TFIBDataSet;
     GlobalGB: TGroupBox;
     PIN_LEN: TDBNumberEditEh;
     Label1: TLabel;

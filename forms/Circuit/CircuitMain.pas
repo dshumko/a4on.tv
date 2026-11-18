@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Classes, System.UITypes, System.Actions,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtDlgs, Vcl.Menus, Vcl.ActnList, Vcl.ImgList, Vcl.StdCtrls,
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Imaging.jpeg, Vcl.Buttons, Vcl.Imaging.pngimage,
-  SimpleGraph;
+  SimpleGraph, System.ImageList;
 
 type
   TCircuitForm = class(TForm)
@@ -238,7 +238,6 @@ type
     Size1: TMenuItem;
     Size2: TMenuItem;
     ToolButton31: TToolButton;
-    SimpleGraph: TSimpleGraph;
     procedure FileNewExecute(Sender: TObject);
     procedure FileOpenExecute(Sender: TObject);
     procedure FileSaveExecute(Sender: TObject);
@@ -378,6 +377,7 @@ type
     procedure ShowHint(Sender: TObject);
     function ForEachCallback(GraphObject: TGraphObject; Action: Integer): Boolean;
   public
+    SimpleGraph: TSimpleGraph;
     procedure GetCircuitStream(CircuitStream: TMemoryStream);
     procedure GetPngStream(PngStream: TMemoryStream);
     property IsReadonly: Boolean read FIsReadonly write FIsReadonly;
@@ -576,6 +576,53 @@ procedure TCircuitForm.FormCreate(Sender: TObject);
 var
   i: Integer;
 begin
+  SimpleGraph := TSimpleGraph.Create(Self);
+  with SimpleGraph do
+  begin
+    Left := 0;
+    Top := 48;
+    Width := 815;
+    Height := 485;
+    Align := alClient;
+    ClipboardFormats := [cfNative, cfMetafile, cfBitmap];
+    Color := clWhite;
+    FixedScrollBars := True;
+    Font.Charset := DEFAULT_CHARSET;
+    Font.Color := clNavy;
+    Font.Height := -13;
+    Font.Name := 'Arial';
+    Font.Style := [fsBold];
+    HorzScrollBar.Margin := 8;
+    HorzScrollBar.Smooth := True;
+    HorzScrollBar.Tracking := True;
+    ObjectPopupMenu := ObjectsPopup;
+    ParentColor := False;
+    ParentFont := False;
+    ParentShowHint := False;
+    PopupMenu := DesignerPopup;
+    ShowHint := True;
+    TabOrder := 3;
+    VertScrollBar.Margin := 8;
+    VertScrollBar.Smooth := True;
+    VertScrollBar.Tracking := True;
+    OnDblClick := SimpleGraphDblClick;
+    OnMouseMove := SimpleGraphMouseMove;
+    OnMouseWheelDown := SimpleGraphMouseWheelDown;
+    OnMouseWheelUp := SimpleGraphMouseWheelUp;
+    OnObjectInitInstance := SimpleGraphObjectInitInstance;
+    OnObjectChange := SimpleGraphObjectChange;
+    OnObjectSelect := SimpleGraphObjectSelect;
+    OnObjectDblClick := SimpleGraphObjectDblClick;
+    OnCanHookLink := SimpleGraphCanHookLink;
+    OnCanLinkObjects := SimpleGraphCanLinkObjects;
+    OnCanRemoveObject := SimpleGraphCanRemoveObject;
+    OnNodeMoveResize := SimpleGraphNodeMoveResize;
+    OnGraphChange := SimpleGraphGraphChange;
+    OnCommandModeChange := SimpleGraphCommandModeChange;
+    OnInfoTip := SimpleGraphInfoTip;
+    OnZoomChange := SimpleGraphZoomChange;
+  end;
+
   if Assigned(Application.OnHint) then
     SaveHint := Application.OnHint;
   if not TryStrToInt(dmMain.GetIniValue('HIDEHINT'), i) then
@@ -1573,8 +1620,12 @@ begin
   else
     Application.OnHint := nil;
 
-  FPngStream.Free;
-  FCircuitStream.Free;
+  if Assigned(FPngStream) then
+    FPngStream.Free;
+  if Assigned(FCircuitStream) then
+    FCircuitStream.Free;
+  if Assigned(SimpleGraph) then
+    SimpleGraph.Free;
 end;
 
 procedure TCircuitForm.FormShow(Sender: TObject);

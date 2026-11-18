@@ -153,7 +153,7 @@ object MatOutForm: TMatOutForm
     DataSource = srcMO
     TabOrder = 4
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -165,7 +165,7 @@ object MatOutForm: TMatOutForm
     Left = 151
     Top = 121
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -177,7 +177,7 @@ object MatOutForm: TMatOutForm
     Left = 340
     Top = 130
   end
-  object dsMO: TpFIBDataSet
+  object dsMO: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIALS_OUTLAY'
       'SET '
@@ -259,7 +259,7 @@ object MatOutForm: TMatOutForm
     Left = 55
     Top = 129
   end
-  object dsMW: TpFIBDataSet
+  object dsMW: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT '
       

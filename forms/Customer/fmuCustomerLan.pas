@@ -8,13 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.ActnList, Vcl.Menus,
   Vcl.ComCtrls, Vcl.ToolWin,
-  FIBDataSet, pFIBDataSet, DM, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  FIBDataSet, DM, AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit, amSplitter;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, A4onTypeUnit, amSplitter,
+  FIBQuery;
 
 type
   TapgCustomerLan = class(TA4onPage)
-    dsLAN: TpFIBDataSet;
+    dsLAN: TFIBDataSet;
     srcLan: TDataSource;
     dbgCustLAN: TDBGridEh;
     ActListCustomers: TActionList;
@@ -28,7 +29,7 @@ type
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;
     btnActLanPing: TSpeedButton;
-    dsIPPacket: TpFIBDataSet;
+    dsIPPacket: TFIBDataSet;
     srcIPPacket: TDataSource;
     PanelIPTV: TPanel;
     Label7: TLabel;
@@ -40,14 +41,16 @@ type
     actAddPack: TAction;
     actLanTelnet: TAction;
     actLanHttp: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     splitter: TSplitter;
     actOpenObject: TAction;
     actOpenEqpmnt: TAction;
     btnOpen: TSpeedButton;
     pmOpen: TPopupMenu;
     miEqpmnt: TMenuItem;
+    trReadQ: TFIBTransaction;
+    qRead: TFIBQuery;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -471,20 +474,19 @@ begin
   NewItem.Caption := '-';
   NewItem.Tag := 0;
   pmLanPopUp.Items.Add(NewItem);
-  with dmMain.qRead do
+  with qRead do
   begin
     SQL.Clear;
-    SQL.Add('select distinct *');
-    SQL.Add('  from (select ec.ec_id, ec.name, ec.command');
-    SQL.Add('from equipment_cmd_grp ec');
+    SQL.Add('select distinct * from (');
+    SQL.Add('  select ec.ec_id, ec.name, ec.command');
+    SQL.Add('  from equipment_cmd_grp ec');
     SQL.Add('   inner join equipment e on (ec.eg_id = e.eq_group)');
     SQL.Add('   inner join tv_lan t on (e.eid = t.eq_id)');
-    SQL.Add('where ec.in_gui = 1 and t.customer_id = :customer_id');
-    SQL.Add('        union');
-    SQL.Add('        select ec.ec_id, ec.name, ec.command');
-    SQL.Add('          from equipment_cmd_grp ec');
-    SQL.Add('          where ec.in_gui = 1 and ec.Eg_Id = -1)');
-    SQL.Add('order by name');
+    SQL.Add('  where ec.in_gui = 1 and t.customer_id = :customer_id');
+    SQL.Add('  union');
+    SQL.Add('  select ec.ec_id, ec.name, ec.command from equipment_cmd_grp ec');
+    SQL.Add('  where ec.in_gui = 1 and ec.Eg_Id = -1');
+    SQL.Add(') order by name');
     ParamByName('customer_id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
     Transaction.StartTransaction;
     ExecQuery;
@@ -563,7 +565,7 @@ begin
   if not dsLAN.FieldByName('TAG_STR').IsNull then
     C_TAGSTR := dsLAN.FieldByName('TAG_STR').AsString;
 
-  with dmMain.qRead do
+  with qRead do
   begin
     SQL.Clear;
     SQL.Add('select ec.ec_id, ec.name, ec.command, e.ip, e.mac, e.e_admin, e.e_pass, ec.eol_chrs');
@@ -783,21 +785,18 @@ end;
 function TapgCustomerLan.LanServicesExists(): Boolean;
 begin
   try
-    with dmMain.qRead do
+    with qRead do
     begin
       SQL.Clear;
       SQL.Add('select  count(*) CNT');
-      SQL.Add('  from Subscr_serv h');
-      SQL.Add('       inner join services s on (s.Service_Id = h.Serv_Id)');
-      SQL.Add('  where s.Business_Type = 1');
-      SQL.Add('        and h.State_Sgn = 1');
-      SQL.Add('        and h.Customer_Id = :customer_id  ');
+      SQL.Add('from Subscr_serv h inner join services s on (s.Service_Id = h.Serv_Id)');
+      SQL.Add('where s.Business_Type = 1 and h.State_Sgn = 1 and h.Customer_Id = :customer_id');
       ParamByName('customer_id').AsInteger := FDataSource.DataSet['CUSTOMER_ID'];
       Transaction.StartTransaction;
       ExecQuery;
       Result := (FieldByName('CNT').AsInteger > 0);
       Close;
-      Transaction.Rollback;
+      Transaction.Commit;
     end;
   except
     Result := False;

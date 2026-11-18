@@ -125,7 +125,7 @@ object SubAreaViewForm: TSubAreaViewForm
     Visible = True
     OnChange = dblAreaChange
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -136,7 +136,7 @@ object SubAreaViewForm: TSubAreaViewForm
     Left = 320
     Top = 56
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -148,7 +148,7 @@ object SubAreaViewForm: TSubAreaViewForm
     Left = 320
     Top = 104
   end
-  object dsSubArea: TpFIBDataSet
+  object dsSubArea: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -208,7 +208,7 @@ object SubAreaViewForm: TSubAreaViewForm
     Left = 248
     Top = 48
   end
-  object dsAreas: TpFIBDataSet
+  object dsAreas: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '

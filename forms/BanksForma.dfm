@@ -197,7 +197,7 @@ inherited BanksForm: TBanksForm
       Hint = #1041#1099#1089#1090#1088#1099#1081' '#1092#1080#1083#1100#1090#1088
     end
   end
-  object dsBanks: TpFIBDataSet
+  object dsBanks: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '
@@ -231,7 +231,7 @@ inherited BanksForm: TBanksForm
       '    :O_ID,'
       '    :O_NAME,'
       '    :O_DESCRIPTION,'
-      '    :O_DIMENSION,    '
+      '    :O_DIMENSION,   '
       '    :O_DELETED,'
       '    11'
       ')')

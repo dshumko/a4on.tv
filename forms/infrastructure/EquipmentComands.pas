@@ -8,15 +8,15 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus, Vcl.StdCtrls,
   Vcl.DBCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  GridForma, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  GridForma, GridsEh, DBGridEh, FIBDatabase, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBCtrlsEh,
   PrnDbgeh;
 
 type
   TEquipmentCommandsForm = class(TGridForm)
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    dsCGR: TpFIBDataSet;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
+    dsCGR: TFIBDataSet;
     dbmCMD: TDBMemoEh;
     procedure srcDataSourceStateChange(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

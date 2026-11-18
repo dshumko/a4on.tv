@@ -1,9 +1,5 @@
 ﻿program A4ON;
 
-{$IF CompilerVersion >= 21.0}
-{$WEAKLINKRTTI ON}
-{$RTTI EXPLICIT METHODS([]) PROPERTIES([]) FIELDS([])}
-{$ENDIF}
 {$I defines.inc}
 
 uses
@@ -94,7 +90,7 @@ uses
   ScriptModule in 'forms\ScriptModule.pas' {SM: TDataModule},
   ScripEditorForma in 'forms\ScripEditorForma.pas' {ScripEditorForm},
   BarSettingForma in 'forms\BarSettingForma.pas' {BarSettingForm},
-  pFIBExtract in 'units\pFIBExtract.pas',
+  FIBExtract in 'units\FIBExtract.pas', // FIB v8
   EquipmentComands in 'forms\infrastructure\EquipmentComands.pas' {EquipmentCommandsForm},
   SelectColumnsForma in 'forms\SelectColumnsForma.pas' {SelectColumnsForm},
   ExportSettingsForma in 'forms\ExportSettingsForma.pas' {ExportSettingsForm},
@@ -355,8 +351,10 @@ begin
   Application.CreateForm(TSM, SM);
   Application.CreateForm(TA4MainForm, A4MainForm);
   Application.Run;
-
 end.
+
+
+
 
 
 

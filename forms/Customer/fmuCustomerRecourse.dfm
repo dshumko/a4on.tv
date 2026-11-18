@@ -353,7 +353,7 @@ object apgCustomerRecourse: TapgCustomerRecourse
       OnClick = btnEdit1Click
     end
   end
-  object dsRecourses: TpFIBDataSet
+  object dsRecourses: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    RECOURSE'
@@ -480,7 +480,7 @@ object apgCustomerRecourse: TapgCustomerRecourse
       OnExecute = actDelRecExecute
     end
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -492,7 +492,7 @@ object apgCustomerRecourse: TapgCustomerRecourse
     Left = 376
     Top = 50
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

@@ -8,14 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  GridForma, FIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, EhLibFIB,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, EhLibFIB,
   PrnDbgeh, CnClasses;
 
 type
   TRecoursesForm = class(TGridForm)
-    dsRecourses: TpFIBDataSet;
+    dsRecourses: TFIBDataSet;
     btnDateFilter: TToolButton;
     btn2: TToolButton;
     actDateFilter: TAction;
@@ -27,7 +27,7 @@ type
     actFilterCustomer: TAction;
     btnFilterCustomer: TToolButton;
     mtRecourses: TMemTableEh;
-    drvRecourses: TpFIBDataDriverEh;
+    drvRecourses: TFIBDataDriverEh;
     ToolButton7: TToolButton;
     chkGroup: TCheckBox;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -62,7 +62,7 @@ type
     FclOutcome: TColor;
     FShowDirect: Boolean;
     procedure SetFilter;
-    procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet; MemDS: TMemTableEh);
+    procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TFIBDataSet; MemDS: TMemTableEh);
   public
     { Public declarations }
   end;
@@ -73,7 +73,7 @@ var
 implementation
 
 uses
-  DM, RecourseForma, MAIN, PeriodForma, AtrStrUtils, CF, pFIBProps, atrCmdUtils;
+  DM, RecourseForma, MAIN, PeriodForma, AtrStrUtils, CF, FIBProps, atrCmdUtils;
 
 {$R *.dfm}
 
@@ -367,7 +367,7 @@ begin
     ShowCustomers(7, s);
 end;
 
-procedure TRecoursesForm.SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet;
+procedure TRecoursesForm.SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TFIBDataSet;
   MemDS: TMemTableEh);
 var
   Crsr: TCursor;

@@ -12,7 +12,6 @@ object LoaderReestrForm: TLoaderReestrForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   Visible = True
@@ -20,7 +19,6 @@ object LoaderReestrForm: TLoaderReestrForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Splitter2: TSplitter
     Left = 0
@@ -101,6 +99,9 @@ object LoaderReestrForm: TLoaderReestrForm
       Height = 21
       DynProps = <>
       DataField = ''
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EditButtons = <>
       KeyField = 'Profile'
       ListField = 'Profile'
@@ -472,7 +473,7 @@ object LoaderReestrForm: TLoaderReestrForm
           object Label1: TLabel
             Left = 0
             Top = 0
-            Width = 213
+            Width = 61
             Height = 13
             Align = alTop
             Caption = #1055#1088#1080#1084#1077#1095#1072#1085#1080#1077
@@ -559,6 +560,9 @@ object LoaderReestrForm: TLoaderReestrForm
             Height = 21
             DynProps = <>
             DataField = ''
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             EditButtons = <>
             KeyField = 'PAYSOURCE_ID'
             ListField = 'PAYSOURCE_DESCR'
@@ -587,7 +591,7 @@ object LoaderReestrForm: TLoaderReestrForm
     Left = 344
     Top = 305
   end
-  object qFindCustomer: TpFIBQuery
+  object qFindCustomer: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -639,7 +643,7 @@ object LoaderReestrForm: TLoaderReestrForm
     Left = 336
     Top = 528
   end
-  object dsPaymentSource: TpFIBDataSet
+  object dsPaymentSource: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT PAYSOURCE_ID, PAYSOURCE_DESCR, LEAK_PRC, TAX_PRC, Code'
       'FROM PAYSOURCE'
@@ -651,20 +655,20 @@ object LoaderReestrForm: TLoaderReestrForm
     Top = 128
     oFetchAll = True
   end
-  object Script: TpFIBScripter
+  object Script: TFIBScripter
     Database = dmMain.dbTV
     Transaction = trWriteQ
     OnExecuteError = ScriptExecuteError
     Left = 536
     Top = 128
   end
-  object SelectQuery: TpFIBQuery
+  object SelectQuery: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     Left = 536
     Top = 72
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -676,7 +680,7 @@ object LoaderReestrForm: TLoaderReestrForm
     Left = 688
     Top = 132
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -688,7 +692,7 @@ object LoaderReestrForm: TLoaderReestrForm
     Left = 644
     Top = 132
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -700,7 +704,7 @@ object LoaderReestrForm: TLoaderReestrForm
     Left = 644
     Top = 76
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -712,7 +716,7 @@ object LoaderReestrForm: TLoaderReestrForm
     Left = 688
     Top = 76
   end
-  object qFindCustomerForAdres: TpFIBQuery
+  object qFindCustomerForAdres: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1616,7 +1620,7 @@ object LoaderReestrForm: TLoaderReestrForm
     Left = 411
     Top = 72
   end
-  object qFindByExtID: TpFIBQuery
+  object qFindByExtID: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (

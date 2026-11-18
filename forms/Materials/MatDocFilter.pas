@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.ActnList,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, pFIBQuery,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, FIBQuery,
   PrjConst, DBGridEh;
 
 type
@@ -19,7 +19,7 @@ type
     SpeedButton2: TSpeedButton;
     btnClear: TSpeedButton;
     srcType: TDataSource;
-    dsType: TpFIBDataSet;
+    dsType: TFIBDataSet;
     OpenDialog1: TOpenDialog;
     pgcFilter: TPageControl;
     tsFilter: TTabSheet;
@@ -48,11 +48,11 @@ type
     lbl2: TLabel;
     lblMat: TLabel;
     lcbMat: TDBLookupComboboxEh;
-    dsMaterials: TpFIBDataSet;
+    dsMaterials: TFIBDataSet;
     srcMat: TDataSource;
     lbl3: TLabel;
     lcbM_ID: TDBLookupComboboxEh;
-    dsWHIN: TpFIBDataSet;
+    dsWHIN: TFIBDataSet;
     srcWHIN: TDataSource;
     lbl4: TLabel;
     lcbWH_IN: TDBLookupComboboxEh;

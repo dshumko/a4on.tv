@@ -9,15 +9,15 @@ uses
   Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls,
   Vcl.Menus,
   Vcl.ActnList, Vcl.ExtCtrls, Vcl.ToolWin, Vcl.Controls,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, pFIBDataSet, DBCtrlsEh,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, GridForma, ToolCtrlsEh, DBGridEhToolCtrls, FIBDataSet, DBCtrlsEh,
   CnErrorProvider, GridsEh, DBAxisGridsEh, DBGridEh, PrjConst, amSplitter,
-  PrnDbgeh;
+  PrnDbgeh, CnClasses;
 
 type
   TVlansForm = class(TGridForm)
-    dsVlans: TpFIBDataSet;
-    dsEnabled: TpFIBDataSet;
-    dsExists: TpFIBDataSet;
+    dsVlans: TFIBDataSet;
+    dsEnabled: TFIBDataSet;
+    dsExists: TFIBDataSet;
     srcExists: TDataSource;
     srcEnabled: TDataSource;
     pgcInfo: TPageControl;
@@ -34,7 +34,7 @@ type
     tsUsers: TTabSheet;
     srcUsed: TDataSource;
     dbgUsed: TDBGridEh;
-    dsUsed: TpFIBDataSet;
+    dsUsed: TFIBDataSet;
     btnViewInfo: TToolButton;
     btn1: TToolButton;
     actViewInfo: TAction;
@@ -70,7 +70,7 @@ type
     tsAttr: TTabSheet;
     dbgCustAttr: TDBGridEh;
     srcAttributes: TDataSource;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     ActListAttr: TActionList;
     actAttrAdd: TAction;
     actAttrEdit: TAction;
@@ -121,7 +121,7 @@ implementation
 
 uses
   System.StrUtils,
-  DM, pFIBQuery, A4onTypeUnit, AttributeEditForma, AtrStrUtils, AtrCommon;
+  DM, FIBQuery, A4onTypeUnit, AttributeEditForma, AtrStrUtils, AtrCommon;
 
 {$R *.dfm}
 
@@ -175,10 +175,10 @@ begin
     Exit;
 
   s := '';
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select IP from GET_FREE_VLAN_IP(' + dsVlans.FieldByName('V_ID').AsString + ')';
       Transaction.StartTransaction;
       ExecQuery;
@@ -188,6 +188,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
   ShowMessage('IP: ' + s);
@@ -534,10 +535,10 @@ begin
   if ip = '' then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select Name from Vlans v where v.Ip_Begin = :IP';
 
       if dsVlans.State in [dsEdit] then
@@ -554,6 +555,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
 end;

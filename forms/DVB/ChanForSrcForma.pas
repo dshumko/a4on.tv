@@ -8,18 +8,18 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtDlgs,
-  FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages, CnErrorProvider, DBGridEh,
+  FIBDataSet, OkCancel_frame, FIBDatabase, DBCtrlsEh, uDBImages, CnErrorProvider, DBGridEh,
   DBLookupEh;
 
 type
 
   TChanForSrcForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
-    dsChForSrc: TpFIBDataSet;
+    dsChForSrc: TFIBDataSet;
     srcChForSrc: TDataSource;
-    trWrite: TpFIBTransaction;
+    trWrite: TFIBTransaction;
     cnError: TCnErrorProvider;
-    dsSYSTEM: TpFIBDataSet;
+    dsSYSTEM: TFIBDataSet;
     Label2: TLabel;
     cbbSYSTEM: TDBLookupComboboxEh;
     srcSYSTEM: TDataSource;
@@ -28,15 +28,15 @@ type
     edtURL: TDBEditEh;
     Label3: TLabel;
     dbmNOTICE: TDBMemoEh;
-    trRead: TpFIBTransaction;
-    dsChan: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    dsChan: TFIBDataSet;
     srcChan: TDataSource;
     srcCODEC: TDataSource;
-    dsCODEC: TpFIBDataSet;
+    dsCODEC: TFIBDataSet;
     lblChan: TLabel;
     cbbChan: TDBLookupComboboxEh;
     srcCrypt: TDataSource;
-    dsCrypt: TpFIBDataSet;
+    dsCrypt: TFIBDataSet;
     lbl2: TLabel;
     cbbS_Crypt: TDBLookupComboboxEh;
     lblVideo: TLabel;
@@ -45,7 +45,7 @@ type
     edtSYMRATE: TDBEditEh;
     lbl4: TLabel;
     cbbCARD: TDBLookupComboboxEh;
-    dsCard: TpFIBDataSet;
+    dsCard: TFIBDataSet;
     srcCard: TDataSource;
     chkAnalog: TDBCheckBoxEh;
     chkDVB: TDBCheckBoxEh;

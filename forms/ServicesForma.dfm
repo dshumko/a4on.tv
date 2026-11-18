@@ -926,6 +926,9 @@ object ServicesForm: TServicesForm
             DynProps = <>
             DataField = 'CHILD'
             DataSource = srcLinks
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             EditButtons = <>
             KeyField = 'SERVICE_ID'
             ListField = 'NAME'
@@ -1156,7 +1159,7 @@ object ServicesForm: TServicesForm
             object Label1: TLabel
               Left = 0
               Top = 0
-              Width = 125
+              Width = 321
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1082#1083#1102#1095#1077#1085#1099' '#1074' '#1087#1072#1082#1077#1090' ::.'
@@ -1285,7 +1288,7 @@ object ServicesForm: TServicesForm
             object Label2: TLabel
               Left = 0
               Top = 0
-              Width = 106
+              Width = 476
               Height = 13
               Align = alTop
               Caption = '.:: '#1042#1089#1077' '#1076#1086#1089#1090#1091#1087#1085#1099#1077' ::.'
@@ -1567,6 +1570,9 @@ object ServicesForm: TServicesForm
             DynProps = <>
             DataField = 'CHILD'
             DataSource = srcSwitch
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             EmptyDataInfo.Text = #1053#1072' '#1082#1072#1082#1091#1102' '#1091#1089#1083#1091#1075#1091' '#1087#1077#1088#1077#1082#1083#1102#1095#1072#1090#1100
             EditButtons = <>
             KeyField = 'SERVICE_ID'
@@ -1584,6 +1590,9 @@ object ServicesForm: TServicesForm
             DynProps = <>
             DataField = 'ADD_SRV'
             DataSource = srcSwitch
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             EmptyDataInfo.Text = #1050#1072#1082#1086#1081' '#1091#1089#1083#1091#1075#1086#1081' '#1087#1077#1088#1077#1082#1083#1102#1095#1072#1090#1100
             EditButtons = <>
             KeyField = 'SERVICE_ID'
@@ -1901,6 +1910,9 @@ object ServicesForm: TServicesForm
             DynProps = <>
             DataField = 'O_ID'
             DataSource = srcSrvAttr
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1072#1090#1088#1080#1073#1091#1090
             EditButtons = <>
             KeyField = 'O_ID'
@@ -2098,10 +2110,10 @@ object ServicesForm: TServicesForm
       Caption = #1050#1086#1084#1087#1083#1077#1082#1089
       ImageIndex = 6
       object dbgCMPLX: TDBGridEh
-        Left = 329
-        Top = 0
-        Width = 499
-        Height = 215
+        Left = 25
+        Top = 106
+        Width = 803
+        Height = 109
         Align = alClient
         AllowedOperations = [alopUpdateEh]
         DataSource = srcCMPLX
@@ -2192,18 +2204,18 @@ object ServicesForm: TServicesForm
       end
       object pnlCmxButtons: TPanel
         Left = 0
-        Top = 0
+        Top = 106
         Width = 25
-        Height = 215
+        Height = 109
         Align = alLeft
         BevelOuter = bvNone
         TabOrder = 1
         DesignSize = (
           25
-          215)
+          109)
         object btnCmxDel: TSpeedButton
           Left = 1
-          Top = 191
+          Top = 85
           Width = 22
           Height = 22
           Action = actCmxDel
@@ -2221,17 +2233,48 @@ object ServicesForm: TServicesForm
         end
       end
       object pnlCmxAdd: TPanel
-        Left = 25
+        Left = 0
         Top = 0
-        Width = 304
-        Height = 215
-        Align = alLeft
+        Width = 828
+        Height = 106
+        Align = alTop
         BevelOuter = bvLowered
         TabOrder = 2
         Visible = False
-        object edCmxFrom: TDBDateTimeEditEh
+        DesignSize = (
+          828
+          106)
+        object lbl1: TLabel
           Left = 6
-          Top = 43
+          Top = 10
+          Width = 36
+          Height = 13
+          Caption = #1043#1088#1091#1087#1087#1072
+        end
+        object lbl6: TLabel
+          Left = 258
+          Top = 10
+          Width = 42
+          Height = 13
+          Caption = #1087#1088#1086#1094#1077#1085#1090
+        end
+        object lbl7: TLabel
+          Left = 400
+          Top = 10
+          Width = 36
+          Height = 13
+          Caption = #1044#1072#1090#1099' '#1089
+        end
+        object lbl8: TLabel
+          Left = 580
+          Top = 10
+          Width = 12
+          Height = 13
+          Caption = #1087#1086
+        end
+        object edCmxFrom: TDBDateTimeEditEh
+          Left = 444
+          Top = 7
           Width = 130
           Height = 21
           DynProps = <>
@@ -2242,8 +2285,8 @@ object ServicesForm: TServicesForm
           Visible = True
         end
         object edCmxTo: TDBDateTimeEditEh
-          Left = 168
-          Top = 43
+          Left = 598
+          Top = 7
           Width = 130
           Height = 21
           DynProps = <>
@@ -2254,8 +2297,8 @@ object ServicesForm: TServicesForm
           Visible = True
         end
         object dbcCmxGroup: TDBComboBoxEh
-          Left = 6
-          Top = 16
+          Left = 48
+          Top = 7
           Width = 203
           Height = 21
           DynProps = <>
@@ -2265,12 +2308,13 @@ object ServicesForm: TServicesForm
           Visible = True
         end
         object enCmxValue: TDBNumberEditEh
-          Left = 215
-          Top = 16
+          Left = 306
+          Top = 7
           Width = 83
           Height = 21
           DecimalPlaces = 4
           DynProps = <>
+          EmptyDataInfo.Text = #1055#1088#1086#1094#1077#1085#1090
           EditButton.Visible = True
           EditButtons = <>
           TabOrder = 1
@@ -2278,27 +2322,31 @@ object ServicesForm: TServicesForm
         end
         object btn2: TButton
           Left = 6
-          Top = 127
-          Width = 203
+          Top = 77
+          Width = 723
           Height = 25
+          Anchors = [akLeft, akTop, akRight]
           Caption = #1057#1086#1093#1088#1072#1085#1080#1090#1100
           TabOrder = 5
           OnClick = btn2Click
         end
         object btn3: TButton
-          Left = 223
-          Top = 127
+          Left = 745
+          Top = 77
           Width = 75
           Height = 25
+          Anchors = [akTop, akRight]
           Caption = #1054#1090#1084#1077#1085#1072
           TabOrder = 6
           OnClick = btn3Click
         end
         object dbmCmxNotice: TDBMemoEh
           Left = 6
-          Top = 72
-          Width = 292
-          Height = 49
+          Top = 34
+          Width = 815
+          Height = 38
+          ScrollBars = ssVertical
+          Anchors = [akLeft, akTop, akRight]
           AutoSize = False
           DynProps = <>
           EditButtons = <>
@@ -2332,7 +2380,7 @@ object ServicesForm: TServicesForm
     Left = 72
     Top = 72
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     DeleteSQL.Strings = (
       'EXECUTE PROCEDURE SERVICES_D(:OLD_SERVICE_ID)'
       '    ')
@@ -2482,7 +2530,7 @@ object ServicesForm: TServicesForm
     Top = 121
     oFetchAll = True
   end
-  object dsTarif: TpFIBDataSet
+  object dsTarif: TFIBDataSet
     DeleteSQL.Strings = (
       'EXECUTE PROCEDURE TARIF_IUD('
       '  :TARIF_ID, '
@@ -2520,7 +2568,7 @@ object ServicesForm: TServicesForm
     Top = 432
     oFetchAll = True
   end
-  object dsLinks: TpFIBDataSet
+  object dsLinks: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SERVICES_LINKS'
       'SET '
@@ -2599,7 +2647,7 @@ object ServicesForm: TServicesForm
     Left = 90
     Top = 241
   end
-  object dsONOFFServices: TpFIBDataSet
+  object dsONOFFServices: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    S.Service_Id'
@@ -2626,7 +2674,7 @@ object ServicesForm: TServicesForm
     Top = 193
     oFetchAll = True
   end
-  object dsSC: TpFIBDataSet
+  object dsSC: TFIBDataSet
     SelectSQL.Strings = (
       'select c.Ch_Id, c.Ch_Number, c.Ch_Name'
       'FROM Channels c '
@@ -2648,7 +2696,7 @@ object ServicesForm: TServicesForm
     Left = 368
     Top = 460
   end
-  object dsC: TpFIBDataSet
+  object dsC: TFIBDataSet
     SelectSQL.Strings = (
       'select c.Ch_Id, c.Ch_Number, c.Ch_Name'
       'FROM Channels c'
@@ -2728,14 +2776,14 @@ object ServicesForm: TServicesForm
     Left = 245
     Top = 242
   end
-  object dsSwitch: TpFIBDataSet
+  object dsSwitch: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SERVICES_LINKS'
       'SET '
       '    LINK_TYPE = 6,'
       '    PARENT = :PARENT,'
       '    CHILD = :CHILD,'
-      '    ADD_SRV = :ADD_SRV,    '
+      '    ADD_SRV = :ADD_SRV,   '
       '    SWITCH_TIME = :SWITCH_TIME,'
       '    DESCRIPTION = :DESCRIPTION'
       'WHERE'
@@ -2806,7 +2854,7 @@ object ServicesForm: TServicesForm
     Left = 273
     Top = 457
   end
-  object dsSwitchToSrv: TpFIBDataSet
+  object dsSwitchToSrv: TFIBDataSet
     DeleteSQL.Strings = (
       'EXECUTE PROCEDURE SERVICES_D(:OLD_SERVICE_ID)'
       '    ')
@@ -2815,7 +2863,7 @@ object ServicesForm: TServicesForm
     RefreshSQL.Strings = (
       
         'SELECT Service_Id, Srv_Type_Id, Shift_Months, Name, Shortname, D' +
-        'escription, Dimension,  Extra,'
+        'escription, Dimension, Extra,'
       
         ' CASE (select 1 from SERVICES_LINKS sl where sl.PARENT is null a' +
         'nd sl.CHILD = s.SERVICE_ID)'
@@ -2855,7 +2903,7 @@ object ServicesForm: TServicesForm
     Top = 405
     oFetchAll = True
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -2867,7 +2915,7 @@ object ServicesForm: TServicesForm
     Left = 160
     Top = 120
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -2879,7 +2927,7 @@ object ServicesForm: TServicesForm
     Left = 216
     Top = 124
   end
-  object dsSrvAttr: TpFIBDataSet
+  object dsSrvAttr: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SERVICES_ATTRIBUTES'
       'SET '
@@ -2954,14 +3002,14 @@ object ServicesForm: TServicesForm
     Left = 565
     Top = 238
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SERVICES_LINKS'
       'SET '
       '    LINK_TYPE = 6,'
       '    PARENT = :PARENT,'
       '    CHILD = :CHILD,'
-      '    ADD_SRV = :ADD_SRV,    '
+      '    ADD_SRV = :ADD_SRV,   '
       '    DESCRIPTION = :DESCRIPTION'
       'WHERE'
       '    LINK_ID = :OLD_LINK_ID'
@@ -3041,7 +3089,7 @@ object ServicesForm: TServicesForm
     Left = 123
     Top = 62
   end
-  object dsCMPLX: TpFIBDataSet
+  object dsCMPLX: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SERVICES_CMPLX'
       'SET '

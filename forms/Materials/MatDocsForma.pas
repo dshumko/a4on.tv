@@ -9,16 +9,15 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.ComCtrls, Vcl.ToolWin,
   GridForma, ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, FIBDataSet,
-  pFIBDataSet,
-  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, amSplitter,
+  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, MemTableDataEh, MemTableEh, amSplitter,
   PrnDbgeh, CnClasses;
 
 type
   TMatDocsForm = class(TGridForm)
     pnlDetail: TPanel;
     dbgDetail: TDBGridEh;
-    dsDocs: TpFIBDataSet;
-    dsMaterials: TpFIBDataSet;
+    dsDocs: TFIBDataSet;
+    dsMaterials: TFIBDataSet;
     srcMaterials: TDataSource;
     spl1: TSplitter;
     pmBTN: TPopupMenu;
@@ -33,8 +32,8 @@ type
     btnPrint: TToolButton;
     actPrint: TAction;
     frxReport: TfrxReport;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     btnFilterDate: TToolButton;
     pmPeriod: TPopupMenu;
     MenuItem1: TMenuItem;
@@ -264,7 +263,7 @@ var
   filter: string;
 begin
   inherited;
-  if not(srcDataSource.DataSet is TpFIBDataSet) then
+  if not(srcDataSource.DataSet is TFIBDataSet) then
     exit;
 
   filter := '';
@@ -753,7 +752,7 @@ var
   filter: string;
 begin
   inherited;
-  if not(srcDataSource.DataSet is TpFIBDataSet) then
+  if not(srcDataSource.DataSet is TFIBDataSet) then
     exit;
 
   filter := '';

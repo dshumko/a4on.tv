@@ -11,7 +11,6 @@ object EQPortForm: TEQPortForm
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   Position = poMainFormCenter
   OnClose = FormClose
   OnKeyPress = FormKeyPress
@@ -20,7 +19,6 @@ object EQPortForm: TEQPortForm
   DesignSize = (
     534
     397)
-  PixelsPerInch = 96
   TextHeight = 13
   object lblCNT: TLabel
     Left = 8
@@ -175,6 +173,9 @@ object EQPortForm: TEQPortForm
       item
         FieldName = 'O_DESCRIPTION'
       end>
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1058#1080#1087' '#1087#1086#1088#1090#1072
     EditButtons = <>
     KeyField = 'O_ID'
@@ -224,6 +225,9 @@ object EQPortForm: TEQPortForm
       item
         FieldName = 'O_DESCRIPTION'
       end>
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1057#1090#1072#1090#1091#1089' '#1087#1086#1088#1090#1072
     EditButtons = <>
     KeyField = 'O_ID'
@@ -272,6 +276,7 @@ object EQPortForm: TEQPortForm
       end>
     DropDownBox.ListSource = srcVLANS
     DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
     DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
     DropDownBox.SortLocal = True
@@ -327,6 +332,7 @@ object EQPortForm: TEQPortForm
       end>
     DropDownBox.ListSource = srcWire
     DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
     DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
     DropDownBox.SortLocal = True
@@ -382,7 +388,7 @@ object EQPortForm: TEQPortForm
     Left = 360
     Top = 16
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     DeleteSQL.Strings = (
       'UPDATE'
       '    REQUEST_TYPES'
@@ -416,7 +422,7 @@ object EQPortForm: TEQPortForm
     Left = 72
     Top = 216
   end
-  object dsState: TpFIBDataSet
+  object dsState: TFIBDataSet
     DeleteSQL.Strings = (
       'UPDATE'
       '    REQUEST_TYPES'
@@ -455,7 +461,7 @@ object EQPortForm: TEQPortForm
     Left = 286
     Top = 210
   end
-  object dsVlans: TpFIBDataSet
+  object dsVlans: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -504,7 +510,7 @@ object EQPortForm: TEQPortForm
     Left = 238
     Top = 207
   end
-  object dsWire: TpFIBDataSet
+  object dsWire: TFIBDataSet
     RefreshSQL.Strings = (
       'select'
       '    T.O_NAME CT_NAME'

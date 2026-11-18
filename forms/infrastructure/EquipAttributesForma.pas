@@ -7,20 +7,21 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst, DBGridEh;
+  OkCancel_frame, FIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst, DBGridEh,
+  CnClasses;
 
 type
   TEquipAttributesForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
     srcAttributes: TDataSource;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     dbluAttribute: TDBLookupComboboxEh;
     DBMemo1: TDBMemoEh;
     Label1: TLabel;
     lblAttribute: TLabel;
     Label2: TLabel;
     dbValue: TDBEditEh;
-    dsAttr: TpFIBDataSet;
+    dsAttr: TFIBDataSet;
     srcAttr: TDataSource;
     CnErrors: TCnErrorProvider;
     cbbList: TDBComboBoxEh;
@@ -41,8 +42,7 @@ function AttributeIPTV(const IPTV_ID: Integer; const Attribut: Integer): boolean
 implementation
 
 uses
-  System.RegularExpressions,
-  DM, pFIBQuery;
+  System.RegularExpressions, DM, FIBQuery;
 
 {$R *.dfm}
 
@@ -193,7 +193,7 @@ procedure TEquipAttributesForm.OkCancelFrame1bbOkClick(Sender: TObject);
 var
   errors: boolean;
   s, reg: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   errors := false;
   if dbluAttribute.Text = '' then
@@ -233,10 +233,10 @@ begin
 
   if (dsAttributes['O_UNIQ'] = 1) then
   begin
-    fq := TpFIBQuery.Create(Self);
+    fq := TFIBQuery.Create(Self);
     try
       fq.Database := dmMain.dbTV;
-      fq.Transaction := dmMain.trReadQ;
+      fq.Transaction := dmMain.GetTransactionForRead;
       with fq.sql do
       begin
         Clear;
@@ -255,9 +255,10 @@ begin
       s := '';
       if not fq.FieldByName('who').IsNull then
         s := fq.FieldByName('who').AsString;
-      fq.Transaction.Commit;
       fq.Close;
+      fq.Transaction.Commit;
     finally
+      if assigned(fq.Transaction) then fq.Transaction.Free;
       fq.free;
     end;
     if s <> '' then

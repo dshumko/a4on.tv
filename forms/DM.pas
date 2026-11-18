@@ -9,12 +9,12 @@ uses
   System.SysUtils, System.Classes, System.UITypes, System.Variants, System.Types,
   Data.DB,
   Vcl.ImgList, Vcl.Dialogs,
-  FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, pFIBErrorHandler, FIBDatabase, FIB, pFIBDatabase, OverbyteIcsWndControl,
+  FIBDataSet, FIBQuery, FIBErrorHandler, FIBDatabase, FIB, OverbyteIcsWndControl,
   MemTableDataEh, frxDMPExport, frxGradient, frxOLE, frxRich, frxChart, frxChBox, frxDCtrl, frxCross, frxExportText,
   frxExportHTML, frxExportMail, frxExportImage, frxExportXML, frxExportODF, frxExportRTF, frxExportPDF, frxExportBIFF,
   frxExportXLS, frxExportTXT, frxExportCSV, frxClass, frxExportDBF, frxExportDOCX, frxExportXLSX, frxExportHTMLDiv,
   frxExportPPTX,
-  MemTableEh, DataDriverEh, pFIBDataDriverEh, frxDesgn, frxADOComponents, frxFIBComponents, frxBarcode, frxDBSet,
+  MemTableEh, DataDriverEh, FIBDataDriverEh, frxDesgn, frxADOComponents, frxFIBComponents, frxBarcode, frxDBSet,
   JclLocales,
 {$IFDEF USE_ZEOS}
   frxZeosComponents,
@@ -28,25 +28,25 @@ type
   TTaskCreateCallBack = procedure(const TaskID: Integer) of object;
 
   TdmMain = class(TDataModule)
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dbTV: TpFIBDatabase;
-    dsSettings: TpFIBDataSet;
-    Query: TpFIBQuery;
-    trReadQ: TpFIBTransaction;
-    trWriteQ: TpFIBTransaction;
-    dsCompany: TpFIBDataSet;
-    FibErrorHandler: TpFibErrorHandler;
-    trReadCustomer: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dbTV: TFIBDatabase;
+    dsSettings: TFIBDataSet;
+    Query: TFIBQuery;
+    trReadQ: TFIBTransaction;
+    trWriteQ: TFIBTransaction;
+    dsCompany: TFIBDataSet;
+    FIBErrorHandler: TFibErrorHandler;
+    trReadCustomer: TFIBTransaction;
     srcSrvTypes: TDataSource;
-    qRead: TpFIBQuery;
-    fddReport: TpFIBDataDriverEh;
+    qRead: TFIBQuery;
+    fddReport: TFIBDataDriverEh;
     mtReportsTree: TMemTableEh;
-    fdsLoadReport: TpFIBDataSet;
-    qCommon: TpFIBQuery;
-    fdsReport: TpFIBDataSet;
-    trRepRead: TpFIBTransaction;
-    trRepWrite: TpFIBTransaction;
+    fdsLoadReport: TFIBDataSet;
+    qCommon: TFIBQuery;
+    fdsReport: TFIBDataSet;
+    trRepRead: TFIBTransaction;
+    trRepWrite: TFIBTransaction;
     frxCrossObject1: TfrxCrossObject;
     frxDialogControls1: TfrxDialogControls;
     frxCheckBoxObject1: TfrxCheckBoxObject;
@@ -61,8 +61,8 @@ type
     mdsCompany: TMemTableEh;
     dsmSrvTypes: TMemTableEh;
     iniPropStorage: TIniPropStorageManEh;
-    dsFindCN: TpFIBDataSet;
-    trReadFind: TpFIBTransaction;
+    dsFindCN: TFIBDataSet;
+    trReadFind: TFIBTransaction;
     frxGaugeObject1: TfrxGaugeObject;
     frxMapObject1: TfrxMapObject;
     frxReportCellularTextObject1: TfrxReportCellularTextObject;
@@ -71,10 +71,12 @@ type
     frxGZipCompressor1: TfrxGZipCompressor;
     frxPDFObject1: TfrxPDFObject;
     frxFIBComponents1: TfrxFIBComponents;
+    trReadQTasks: TFIBTransaction;
+    qReadTasks: TFIBQuery;
     procedure DataModuleDestroy(Sender: TObject);
     procedure dbTVAfterDisconnect(Sender: TObject);
     procedure FormStorage1SavePlacement(Sender: TObject);
-    procedure FibErrorHandlerFIBErrorEvent(Sender: TObject; ErrorValue: EFIBError; KindIBError: TKindIBError;
+    procedure FibErrorHandlerFIBErrorEvent(Sender: TObject; ErrorValue: EFIBError; KindIBError: TFIBErrorKind;
       var DoRaise: Boolean);
     function frxReportUserFunction(const MethodName: string; var Params: Variant): Variant;
     procedure frxAddFunctions(Report: TfrxReport);
@@ -82,6 +84,12 @@ type
     procedure frxDesignerShow(Sender: TObject);
     procedure dbTVAfterConnect(Sender: TObject);
     procedure frxModalReportPreview(Sender: TObject);
+    procedure trReadQAfterStart(Sender: TObject);
+    procedure trReadQAfterSQLExecute(Query: TComponent; SQLType: TFIBSQLTypes);
+    procedure trReadQAfterFirstFetch(Query: TComponent; SQLType: TFIBSQLTypes);
+    procedure trReadQAfterEnd(EndingTR: TFIBTransaction; Action: TFIBTransactionAction; Force: Boolean);
+    procedure trReadQTimeout(Sender: TObject);
+    procedure trReadQBeforeStart(Sender: TObject);
   private
     { Private declarations }
     fLicRec: Integer;
@@ -106,6 +114,7 @@ type
     FUserFIO: String;
     FDBAlias: String;
     FInStrictMode: Boolean;
+    FLastSql: String;
     procedure Company2MemDS(aDS: TDataSet);
     procedure GetRightsFromDB;
     procedure SetCurrentMonth(Value: TDateTime);
@@ -125,6 +134,7 @@ type
     function GetCompanyName: String;
     procedure GetCompany;
     procedure CheckFirebirdVersion;
+    function GetFirebirdVersion: Integer;
     function CheckAdminUser: Boolean;
     function FrSHA256(const Str: String): string;
   public
@@ -172,6 +182,7 @@ type
     property CompanyCountry: string read GetCompanyCountry;
     property CompanyName: string read GetCompanyName;
     property InStrictMode: Boolean read FInStrictMode;
+    property FirebirdVersion: Integer read GetFirebirdVersion;
     property CurrentMonth: TDateTime read fCurrentMonth write SetCurrentMonth;
     function GetRecordsCount(const aTableName, aWhereStr: String): Integer;
     function GetSettingsValue(const aSettingName: string): Variant;
@@ -213,6 +224,8 @@ type
     procedure ProceedTask(const EventName: String);
     function IpInfo(const ip: String; const vlan_id: Integer = -1): String;
     procedure RefreshCompanyData;
+    function GetTransactionForRead: TFIBTransaction;
+    function GetTransactionForWrite: TFIBTransaction;
   end;
 
 var
@@ -222,7 +235,7 @@ implementation
 
 uses
   System.StrUtils, System.Rtti, System.NetEncoding, System.Hash,
-  pFIBProps, AtrStrUtils, RxStrUtils, pFIBExtract, LibMoney, httpsend, synautil, ZLibExGZ,
+  FIBProps, AtrStrUtils, RxStrUtils, FIBExtract, LibMoney, httpsend, synautil, ZLibExGZ,
   JsonDataObjects, mormot.crypt.core, synacode,
   SelectOneForma, MAIN;
 
@@ -573,6 +586,46 @@ begin
   fSuperMode := Value;
 end;
 
+procedure TdmMain.trReadQAfterEnd(EndingTR: TFIBTransaction; Action: TFIBTransactionAction; Force: Boolean);
+begin
+  FLastSql := '';
+end;
+
+procedure TdmMain.trReadQAfterFirstFetch(Query: TComponent; SQLType: TFIBSQLTypes);
+begin
+  FLastSql := '';
+end;
+
+procedure TdmMain.trReadQAfterSQLExecute(Query: TComponent; SQLType: TFIBSQLTypes);
+begin
+  FLastSql := '';
+end;
+
+procedure TdmMain.trReadQAfterStart(Sender: TObject);
+var
+  i: Integer;
+begin
+  FLastSql := '';
+  for i := 0 to (Sender as TFIBTransaction).FIBQueryCount - 1 do
+    FLastSql := FLastSql + '-- Query ' + (Sender as TFIBTransaction).FIBQueries[0].Name + #13#10 +
+      ((Sender as TFIBTransaction).FIBQueries[0] as TFIBQuery).SQL.text + #13#10;
+
+  for i := 0 to (Sender as TFIBTransaction).FIBDataSetsCount - 1 do
+    FLastSql := FLastSql + '-- DataSet' + (Sender as TFIBTransaction).FIBDataSets[0].Name + #13#10 +
+      ((Sender as TFIBTransaction).FIBDataSets[0] as TFIBDataSet).SelectSQL.text + #13#10;
+end;
+
+procedure TdmMain.trReadQBeforeStart(Sender: TObject);
+begin
+  if (Sender as TFIBTransaction).InTransaction and (not FLastSql.IsEmpty) then
+    ShowMessage('Ошибка в запросе ' + FLastSql);
+end;
+
+procedure TdmMain.trReadQTimeout(Sender: TObject);
+begin
+  FLastSql := '';
+end;
+
 procedure TdmMain.SetCurrentMonth(Value: TDateTime);
 begin
   fCurrentMonth := Value;
@@ -583,7 +636,7 @@ var
   s: string;
 begin
   s := '';
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dbTV;
       Transaction := trReadQ;
@@ -611,7 +664,7 @@ begin
   // Если юзер блокирован. выйдем из системы
   if GetUser.ToUpper <> 'SYSDBA' then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         Database := dbTV;
@@ -648,7 +701,7 @@ begin
     Halt;
   end;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dbTV;
@@ -679,7 +732,7 @@ begin
   end;
 
   FUserGroups.Clear;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dbTV;
@@ -762,7 +815,7 @@ end;
 
 function TdmMain.GetRecordsCount(const aTableName, aWhereStr: String): Integer;
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dbTV;
       Transaction := trReadQ;
@@ -780,10 +833,10 @@ end;
 function TdmMain.GetCustomerFine(const aCUSTOMER_ID: Integer; const aPayDate: TDateTime): Extended;
 begin
   Result := 0;
-  with TpFIBQuery.Create(self) do
+  with TFIBQuery.Create(self) do
     try
-      Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Database := dbTV;
+      Transaction := trReadQ;
       SQL.text := 'select sum(fine_sum) as FINE_SUMMA from calculate_fine(' + IntToStr(aCUSTOMER_ID) + ',''' +
         FormatDateTime('yyyy-mm-dd', aPayDate) + ''')';
       Transaction.StartTransaction;
@@ -847,7 +900,7 @@ begin
   FA4onList.Values[aSettingName] := aValue;
 end;
 
-procedure TdmMain.FibErrorHandlerFIBErrorEvent(Sender: TObject; ErrorValue: EFIBError; KindIBError: TKindIBError;
+procedure TdmMain.FibErrorHandlerFIBErrorEvent(Sender: TObject; ErrorValue: EFIBError; KindIBError: TFIBErrorKind;
   var DoRaise: Boolean);
 var
   s: string;
@@ -964,7 +1017,7 @@ begin
   dbTV.RegisterBlobFilter(-15, @PackBuffer, @UnpackBuffer);
   fUserAreas := 'NOT SET';
   FCanViewCustomers := 0;
-  FTaskLastTimeCheck := now();
+  FTaskLastTimeCheck := Now();
 end;
 
 procedure TdmMain.DataModuleDestroy(Sender: TObject);
@@ -1193,15 +1246,16 @@ var
 begin
   Result := '';
   FLD := 'SELECT IP FROM GET_FREE_IP(''' + mask + ''')';
-  with TpFIBQuery.Create(self) do
+  with TFIBQuery.Create(self) do
     try
-      Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Database := dbTV;
+      Transaction := trReadQ;
       SQL.text := FLD;
       Transaction.StartTransaction;
       ExecQuery;
       if not FieldByName('IP').IsNull then
         Result := FieldByName('IP').Value;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -1218,17 +1272,18 @@ begin
   else
     FLD := 'select IP from GET_FREE_VLAN_IP((select e.vlan_id from equipment e where e.eid = :id))';
 
-  with TpFIBQuery.Create(self) do
+  with TFIBQuery.Create(self) do
   begin
     try
-      Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Database := dbTV;
+      Transaction := trReadQ;
       SQL.text := FLD;
       ParamByName('id').AsInteger := id;
       Transaction.StartTransaction;
       ExecQuery;
       if not FieldByName('IP').IsNull then
         Result := FieldByName('IP').Value;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -1293,7 +1348,7 @@ function TdmMain.GetUserAreas: String;
 begin
   if fUserAreas = 'NOT SET' then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         fUserAreas := '';
         Database := dbTV;
@@ -1328,7 +1383,7 @@ var
   HOUSE_ID: Integer;
   Flat: string;
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dbTV;
       Transaction := trReadQ;
@@ -1366,7 +1421,7 @@ function TdmMain.GenerateDogNumberFromFormat(const FORMAT: string; const HOUSE_I
   const SRV_ID: Integer): string;
 begin
   Result := '';
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dbTV;
@@ -1636,14 +1691,14 @@ end;
 function TdmMain.GetScriptForUpdateDB(const FileName: string): Integer;
 var
   sc: TStrings;
-  extr: TpFIBExtract;
+  extr: TFIBExtract;
   l: string;
   srcStream, dstStream: TStream;
   fs: TFileStream;
   BufSize: int64;
 begin
   sc := TStringList.Create;
-  extr := TpFIBExtract.Create(self);
+  extr := TFIBExtract.Create(self);
   srcStream := TMemoryStream.Create;
   dstStream := TMemoryStream.Create;
   fs := TFileStream.Create(FileName, fmCreate or fmOpenWrite);
@@ -1654,12 +1709,15 @@ begin
       Exceptions, Procedures, Triggers];
     extr.IncludeSetTerm := true;
     extr.ExtractObject(eoDatabase);
+    if trReadQ.InTransaction then
+      trReadQ.Commit;
+
     sc.AddStrings(extr.Items);
 
-    with TpFIBQuery.Create(self) do
+    with TFIBQuery.Create(self) do
       try
-        Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Database := dbTV;
+        Transaction := trReadQ;
         l := 'SELECT BL_BODY FROM BLOB_TBL WHERE BL_ID = 0';
         SQL.text := l;
         Transaction.StartTransaction;
@@ -1680,6 +1738,7 @@ begin
         ExecQuery;
         if not FieldByName('fld_text').IsNull then
           sc.Insert(0, '-- ' + FieldByName('fld_text').AsString);
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -1735,7 +1794,7 @@ var
   fHTTP: THTTPSend;
   fError: string;
   json: TJsonObject;
-  action: string;
+  Action: string;
 begin
   Str := dmMain.GetSettingsValue('A4LOGIN');
   if Str = '' then
@@ -1744,7 +1803,7 @@ begin
   if System.SysUtils.FileExists(FileName) then
     System.SysUtils.DeleteFile(FileName);
 
-  action := 'day';
+  Action := 'day';
   // action := 'channels';
   json := TJsonObject.Create;
   json.s['login'] := Str;
@@ -1765,7 +1824,7 @@ begin
     fHTTP.MimeType := 'application/x-www-form-urlencoded';
     fHTTP.Headers.Add('Accept-Encoding: gzip');
     fHTTP.Document.LoadFromStream(strmData);
-    fHTTP.HTTPMethod('post', API_URL + action + '/');
+    fHTTP.HTTPMethod('post', API_URL + Action + '/');
     strmData.Clear;
     HeadersToList(fHTTP.Headers);
     if Trim(fHTTP.Headers.Values['Content-Encoding']) = 'gzip' then
@@ -1790,13 +1849,13 @@ var
   fHTTP: THTTPSend;
   fError: string;
   json: TJsonObject;
-  action: string;
+  Action: string;
   proxy_url: string;
 begin
   if System.SysUtils.FileExists(FileName) then
     System.SysUtils.DeleteFile(FileName);
 
-  action := 'week';
+  Action := 'week';
   json := TJsonObject.Create;
   json.s['login'] := dmMain.GetSettingsValue('A4LOGIN');
   json.s['password'] := dmMain.GetSettingsValue('A4APIKEY');
@@ -1819,13 +1878,13 @@ begin
     if (proxy_url = '') then
     begin
       fHTTP.TargetHost := 'a4on.tv';
-      fHTTP.HTTPMethod('post', API_URL + action + '/');
+      fHTTP.HTTPMethod('post', API_URL + Action + '/');
     end
     else
     begin
       fHTTP.TargetHost := 'api.a4on.net';
       proxy_url := proxy_url.TrimRight(['/']) + '/';
-      fHTTP.HTTPMethod('post', proxy_url + action + '/');
+      fHTTP.HTTPMethod('post', proxy_url + Action + '/');
     end;
 
     strmData.Clear;
@@ -1845,7 +1904,7 @@ end;
 function TdmMain.GetSingleSqlResult(const vSql: string): Variant;
 begin
   Result := null;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dbTV;
       Transaction := trReadQ;
@@ -1854,7 +1913,6 @@ begin
       ExecQuery;
       if not Eof then
         Result := Fields[0].Value;
-
       Close;
       Transaction.Commit;
     finally
@@ -1941,7 +1999,7 @@ begin
   if FTaskProceed then
     exit;
 
-  if trReadQ.InTransaction then
+  if trReadQTasks.InTransaction then
     exit;
 
   try
@@ -1957,72 +2015,73 @@ begin
 
   FTaskProceed := true;
 
-  qRead.SQL.Clear;
-  qRead.SQL.Add('select first 10');
-  qRead.SQL.Add('  t.Id, coalesce(t.Title, '''') Title ');
-  qRead.SQL.Add('  , coalesce(t.Notice, '''') Notice ');
-  qRead.SQL.Add('  , coalesce(t.COLOR, '''')  COLOR ');
-  qRead.SQL.Add('  , t.Edit_On, t.PLAN_DATE ');
-  qRead.SQL.Add('  , (select first 1 coalesce(w.Surname, m.Added_By)||'': ''||m.Text ');
-  qRead.SQL.Add('      from Taskmsg m left outer join worker w on (m.Added_By = w.Ibname) ');
-  qRead.SQL.Add('      where m.Task_Id = t.Id order by m.Added_On desc) LM ');
-  qRead.SQL.Add(' from Tasklist t  ');
-  qRead.SQL.Add(' where t.Deleted = 0 and (t.EXEC_DATE is null) ');
-  qRead.SQL.Add('   and (t.Added_By = CURRENT_USER ');
-  qRead.SQL.Add('         or exists(select u.Task_Id from Taskuser u where u.Task_Id = t.Id ');
-  qRead.SQL.Add('                    and (u.Foruser = CURRENT_USER or u.Foruser = ''ALL'')))');
-
-  if (EventName = 'START_A4ON') then
+  with qReadTasks do
   begin
-    // проверка при запуске приложения. покажем все события на сегодня
-    qRead.SQL.Add(' and (t.PLAN_DATE < ''TOMORROW'' or t.PLAN_DATE is null) ');
-  end
-  else
-  begin
-    // проверка событий по таймеру. покажем новые и у которых время плана подошло
-    qRead.SQL.Add
-      (' and ((t.Edit_On >= :CHECK_TIME or ( t.PLAN_DATE between :CHECK_TIME and CURRENT_TIME)) and (t.Edit_By <> CURRENT_USER)) ');
-    qRead.ParamByName('CHECK_TIME').AsDateTime := FTaskLastTimeCheck;
-  end;
+    SQL.Clear;
+    SQL.Add('select first 10');
+    SQL.Add('  t.Id, coalesce(t.Title, '''') Title ');
+    SQL.Add('  , coalesce(t.Notice, '''') Notice ');
+    SQL.Add('  , coalesce(t.COLOR, '''')  COLOR ');
+    SQL.Add('  , t.Edit_On, t.PLAN_DATE ');
+    SQL.Add('  , (select first 1 coalesce(w.Surname, m.Added_By)||'': ''||m.Text ');
+    SQL.Add('      from Taskmsg m left outer join worker w on (m.Added_By = w.Ibname) ');
+    SQL.Add('      where m.Task_Id = t.Id order by m.Added_On desc) LM ');
+    SQL.Add(' from Tasklist t  ');
+    SQL.Add(' where t.Deleted = 0 and (t.EXEC_DATE is null) ');
+    SQL.Add('   and (t.Added_By = CURRENT_USER ');
+    SQL.Add('         or exists(select u.Task_Id from Taskuser u where u.Task_Id = t.Id ');
+    SQL.Add('                    and (u.Foruser = CURRENT_USER or u.Foruser = ''ALL'')))');
 
-  qRead.SQL.Add(' order by t.id');
-
-  qRead.Transaction.StartTransaction;
-  qRead.ExecQuery;
-  while (not qRead.Eof) do
-  begin
-    Alert.title := rsTask + ' ' + qRead.FN('Title').AsString;
-    Alert.text := qRead.FN('Notice').AsString;
-    Alert.color := qRead.FN('Color').AsString;
-    Alert.FrameColor := '';
-    if (not qRead.FN('PLAN_DATE').IsNull) then
+    if (EventName = 'START_A4ON') then
     begin
-      if (qRead.FN('PLAN_DATE').AsDateTime < FTaskLastTimeCheck) then
+      // проверка при запуске приложения. покажем все события на сегодня
+      SQL.Add(' and (t.PLAN_DATE < ''TOMORROW'' or t.PLAN_DATE is null) ');
+    end
+    else
+    begin
+      // проверка событий по таймеру. покажем новые и у которых время плана подошло
+      SQL.Add(' and ((t.Edit_On >= :CHECK_TIME or ( t.PLAN_DATE between :CHECK_TIME and CURRENT_TIME)) and (t.Edit_By <> CURRENT_USER)) ');
+      ParamByName('CHECK_TIME').AsDateTime := FTaskLastTimeCheck;
+    end;
+
+    SQL.Add(' order by t.id');
+
+    Transaction.StartTransaction;
+    ExecQuery;
+    while (not Eof) do
+    begin
+      Alert.title := rsTask + ' ' + FN('Title').AsString;
+      Alert.text := FN('Notice').AsString;
+      Alert.color := FN('Color').AsString;
+      Alert.FrameColor := '';
+      if (not FN('PLAN_DATE').IsNull) then
       begin
-        Alert.title := '! ' + Alert.title;
-        Alert.FrameColor := FclOverdue;
-      end
-      else if (qRead.FN('PLAN_DATE').AsDateTime > date()) then
-        Alert.FrameColor := FclSoon;
-    end;
+        if (FN('PLAN_DATE').AsDateTime < FTaskLastTimeCheck) then
+        begin
+          Alert.title := '! ' + Alert.title;
+          Alert.FrameColor := FclOverdue;
+        end
+        else if (FN('PLAN_DATE').AsDateTime > date()) then
+          Alert.FrameColor := FclSoon;
+      end;
 
-    if (not qRead.FN('Edit_On').IsNull) and (qRead.FN('Edit_On').AsDateTime < FTaskLastTimeCheck) and
-      (not qRead.FN('LM').IsNull) then
-    begin
-      Alert.title := '* ' + Alert.title;
-      Alert.text := qRead.FN('LM').AsString + #13#10 + ' ' + Alert.text;
-    end;
+      if (not FN('Edit_On').IsNull) and (FN('Edit_On').AsDateTime < FTaskLastTimeCheck) and (not FN('LM').IsNull) then
+      begin
+        Alert.title := '* ' + Alert.title;
+        Alert.text := FN('LM').AsString + #13#10 + ' ' + Alert.text;
+      end;
 
-    Alert.Tag := qRead.FN('ID').AsInteger;
-    A4MainForm.AddAlert(Alert);
-    qRead.Next;
+      Alert.Tag := FN('ID').AsInteger;
+      A4MainForm.AddAlert(Alert);
+      Next;
+    end;
+    Close;
+    Transaction.Commit;
+    SQL.Clear;
   end;
-  qRead.Close;
-  qRead.Transaction.Commit;
-  qRead.SQL.Clear;
 
   FTaskProceed := False;
-  FTaskLastTimeCheck := now();
+  FTaskLastTimeCheck := Now();
 end;
 
 function TdmMain.IpInfo(const ip: String; const vlan_id: Integer = -1): String;
@@ -2031,11 +2090,11 @@ begin
   if ip = '' then
     exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := GetTransactionForRead;
       SQL.text := 'select';
       SQL.Add('  ''Абонент ''||c.Account_No||coalesce('' MAC ''||t.Mac, '''')||coalesce('' VLAN ''||v.Name, '''') IP_INFO');
       SQL.Add('  from Tv_Lan t');
@@ -2065,6 +2124,8 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if Assigned(Transaction) then
+        Transaction.Free;
       Free;
     end;
   end;
@@ -2073,6 +2134,20 @@ end;
 function TdmMain.GetCompanyCountry: String;
 begin
   Result := UpperCase(GetSettingsValue('FORMATN'));
+end;
+
+function TdmMain.GetFirebirdVersion: Integer;
+begin
+  if (dbTV.Version.Contains('Firebird 3.')) then
+    Result := 3
+  else if (dbTV.Version.Contains('Firebird 4.')) then
+    Result := 4
+  else if (dbTV.Version.Contains('Firebird 5.')) then
+    Result := 5
+  else if (dbTV.Version.Contains('Firebird 6.')) then
+    Result := 6
+  else
+    Result := 2;
 end;
 
 function TdmMain.GetCompanyName: String;
@@ -2097,9 +2172,10 @@ end;
 
 procedure TdmMain.CheckFirebirdVersion;
 begin
-  if (not dbTV.Version.Contains('Firebird 4.')) then
-    exit;
   {
+    неактуально с FIBplus v8
+    if (not dbTV.Version.Contains('Firebird 4.')) and (not dbTV.Version.Contains('Firebird 5.')) then
+    exit;
     SELECT RDB$GET_CONTEXT('SYSTEM', 'ENGINE_VERSION') AS ENGINE_VERSION FROM RDB$DATABASE
 
     DataTypeCompatibility = 3.0 in databases.conf
@@ -2111,11 +2187,12 @@ begin
     SET BIND OF NUMERIC(38) TO LEGACY;
 
     after connecting to Firebird 4 database.
+
+    dbTV.Execute('SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;');
+    dbTV.Execute('SET BIND OF TIME WITH TIME ZONE TO LEGACY;');
+    dbTV.Execute('SET BIND OF DECFLOAT TO LEGACY;');
+    dbTV.Execute('SET BIND OF NUMERIC(38) TO LEGACY;');
   }
-  dbTV.Execute('SET BIND OF TIMESTAMP WITH TIME ZONE TO LEGACY;');
-  dbTV.Execute('SET BIND OF TIME WITH TIME ZONE TO LEGACY;');
-  dbTV.Execute('SET BIND OF DECFLOAT TO LEGACY;');
-  dbTV.Execute('SET BIND OF NUMERIC(38) TO LEGACY;');
 end;
 
 procedure TdmMain.RefreshCompanyData;
@@ -2137,6 +2214,52 @@ end;
 function TdmMain.CheckAdminUser: Boolean;
 begin
   Result := (GetUser.ToUpper = 'SYSDBA');
+end;
+
+function TdmMain.GetTransactionForRead: TFIBTransaction;
+var
+  trName: string;
+begin
+  trName := 'trRead';
+  while Assigned(self.FindComponent(trName)) do
+    trName := trName + Random(10).ToString;
+
+  Result := TFIBTransaction.Create(self);
+  with Result do
+  begin
+    Name := trName;
+    DefaultDatabase := dbTV;
+    Timeout := 36000000;
+    TRParams.Clear;
+    TRParams.Add('read');
+    TRParams.Add('nowait');
+    TRParams.Add('rec_version');
+    TRParams.Add('read_committed');
+    TPBMode := tpbDefault;
+  end;
+end;
+
+function TdmMain.GetTransactionForWrite: TFIBTransaction;
+var
+  trName: string;
+begin
+  trName := 'trWrite';
+  while Assigned(self.FindComponent(trName)) do
+    trName := trName + Random(10).ToString;
+
+  Result := TFIBTransaction.Create(self);
+  with Result do
+  begin
+    Name := trName;
+    DefaultDatabase := dbTV;
+    Timeout := 0;
+    TRParams.Clear;
+    TRParams.Add('write');
+    TRParams.Add('nowait');
+    TRParams.Add('rec_version');
+    TRParams.Add('read_committed');
+    TPBMode := tpbDefault;
+  end;
 end;
 
 end.

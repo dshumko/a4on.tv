@@ -9,19 +9,18 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.ComCtrls, Vcl.ToolWin,
   GridForma, ToolCtrlsEh, DBGridEhToolCtrls, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, FIBDataSet,
-  pFIBDataSet,
-  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, amSplitter,
+  frxClass, DBGridEhGrouping, DynVarsEh, FIBDatabase, MemTableDataEh, MemTableEh, amSplitter,
   PrnDbgeh, CnClasses;
 
 type
   TWireForm = class(TGridForm)
-    dsWire: TpFIBDataSet;
+    dsWire: TFIBDataSet;
     btn1: TToolButton;
     btnPrint: TToolButton;
     actPrint: TAction;
     frxReport: TfrxReport;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pmFilter: TPopupMenu;
     N31: TMenuItem;
     N53: TMenuItem;
@@ -41,7 +40,7 @@ type
     pnlPorts: TPanel;
     spl1: TSplitter;
     dbgWireLink: TDBGridEh;
-    dsPorts: TpFIBDataSet;
+    dsPorts: TFIBDataSet;
     srcPorts: TDataSource;
     pnlButtons: TPanel;
     btnDel: TSpeedButton;
@@ -65,7 +64,7 @@ type
     actPointAdd: TAction;
     actPointEdit: TAction;
     actPointDel: TAction;
-    dsPoint: TpFIBDataSet;
+    dsPoint: TFIBDataSet;
     srcPoint: TDataSource;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
@@ -110,7 +109,7 @@ var
 implementation
 
 uses
-  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma, WireLinkForma, WirePointForma, WireFilter, FIBQuery, pFIBQuery,
+  MAIN, DM, A4onTypeUnit, PrjConst, NodeLinkForma, WireLinkForma, WirePointForma, WireFilter, FIBQuery,
   AtrCommon,
   AtrStrUtils;
 
@@ -199,13 +198,13 @@ var
 begin
   inherited;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Clear;
-      SQL.Add('execute block (WID D_INTEGER = :WID) returns ( CWHAT  D_Varchar10,  CCOUNT d_INTEGER) as ');
+      SQL.Add('execute block (WID D_INTEGER = :WID) returns ( CWHAT  D_Varchar10, CCOUNT d_INTEGER) as ');
       SQL.Add('begin ');
       SQL.Add('  ccount = 0; ');
       SQL.Add('  CWHAT = ''''; ');
@@ -225,6 +224,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
   end;
@@ -283,7 +283,7 @@ end;
 procedure TWireForm.actEnableFilterExecute(Sender: TObject);
 begin
   inherited;
-  if srcDataSource.DataSet is TpFIBDataSet then
+  if srcDataSource.DataSet is TFIBDataSet then
   begin
     actEnableFilter.Checked := not actEnableFilter.Checked;
     dsWire.ParamByName('Filter').Value := GenerateFilter;
@@ -298,7 +298,7 @@ var
   filter: string;
 begin
   inherited;
-  if not(srcDataSource.DataSet is TpFIBDataSet) then
+  if not(srcDataSource.DataSet is TFIBDataSet) then
     exit;
 
   filter := '';
@@ -405,7 +405,7 @@ begin
     PWideChar(rsDeleteCaption), MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
     exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
@@ -415,6 +415,7 @@ begin
       ParamByName('Node_Id').AsInteger := dsPoint['Node_Id'];
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -452,7 +453,7 @@ begin
     MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
     exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
@@ -466,6 +467,7 @@ begin
       ParamByName('WID').AsInteger := dsPorts['WID'];
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       Free;

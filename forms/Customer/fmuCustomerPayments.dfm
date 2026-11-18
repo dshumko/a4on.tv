@@ -379,7 +379,7 @@ object apgCustomerPayments: TapgCustomerPayments
       Flat = True
     end
   end
-  object dsPayment: TpFIBDataSet
+  object dsPayment: TFIBDataSet
     UpdateSQL.Strings = (
       'update payment set Rq_Id = :Rq_Id where Payment_Id = :PAYMENT_ID')
     RefreshSQL.Strings = (
@@ -567,7 +567,7 @@ object apgCustomerPayments: TapgCustomerPayments
       OnExecute = actMarkReqExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -579,7 +579,7 @@ object apgCustomerPayments: TapgCustomerPayments
     Left = 496
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

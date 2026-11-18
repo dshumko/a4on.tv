@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
-  DBCtrlsEh, GridsEh, DBGridEh, FIBDatabase, FIBQuery, pFIBQuery, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
+  DBCtrlsEh, GridsEh, DBGridEh, FIBDatabase, FIBQuery, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh,
   DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
@@ -18,7 +18,7 @@ type
     btn1: TButton;
     btn2: TButton;
     mmo1: TDBMemoEh;
-    qry: TpFIBQuery;
+    qry: TFIBQuery;
     dsStructure: TMemTableEh;
     procedure btn1Click(Sender: TObject);
     procedure dsStructureNewRecord(DataSet: TDataSet);

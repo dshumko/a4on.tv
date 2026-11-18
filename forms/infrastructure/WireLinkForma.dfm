@@ -13,13 +13,11 @@ object WireLinkForm: TWireLinkForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
   OnKeyUp = FormKeyUp
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   inline OkCancelFrame: TOkCancelFrame
     Left = 0
@@ -30,10 +28,12 @@ object WireLinkForm: TWireLinkForm
     TabOrder = 0
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -534,7 +534,7 @@ object WireLinkForm: TWireLinkForm
     Left = 32
     Top = 46
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -546,7 +546,7 @@ object WireLinkForm: TWireLinkForm
     Left = 123
     Top = 74
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -577,7 +577,7 @@ object WireLinkForm: TWireLinkForm
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100'.'#1080#1079#1084#1077#1085#1080#1090#1100' '#1083#1080#1085#1080#1102' '#1089#1074#1103#1079#1080
     end
   end
-  object dsEqS: TpFIBDataSet
+  object dsEqS: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -623,7 +623,7 @@ object WireLinkForm: TWireLinkForm
     Left = 200
     Top = 120
   end
-  object dsPortS: TpFIBDataSet
+  object dsPortS: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -640,8 +640,8 @@ object WireLinkForm: TWireLinkForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'
@@ -687,8 +687,8 @@ object WireLinkForm: TWireLinkForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'
@@ -746,7 +746,7 @@ object WireLinkForm: TWireLinkForm
     Left = 256
     Top = 112
   end
-  object dsEqE: TpFIBDataSet
+  object dsEqE: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -787,7 +787,7 @@ object WireLinkForm: TWireLinkForm
     Top = 112
     oFetchAll = True
   end
-  object dsPortE: TpFIBDataSet
+  object dsPortE: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -804,8 +804,8 @@ object WireLinkForm: TWireLinkForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'
@@ -851,8 +851,8 @@ object WireLinkForm: TWireLinkForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'

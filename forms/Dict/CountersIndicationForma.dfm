@@ -445,7 +445,7 @@ object CountersIndicationForm: TCountersIndicationForm
       end
     end
   end
-  object dsElectroPoint: TpFIBDataSet
+  object dsElectroPoint: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 76, :O_ID, :O_Name, :O_Descript' +
@@ -487,7 +487,7 @@ object CountersIndicationForm: TCountersIndicationForm
     Left = 80
     Top = 288
   end
-  object qrySet: TpFIBQuery
+  object qrySet: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

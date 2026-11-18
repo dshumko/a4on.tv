@@ -429,7 +429,7 @@ object apgNodeRequests: TapgNodeRequests
         7F00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00FF00}
     end
   end
-  object dsRequests: TpFIBDataSet
+  object dsRequests: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST'
       'SET '
@@ -638,7 +638,7 @@ object apgNodeRequests: TapgNodeRequests
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -650,7 +650,7 @@ object apgNodeRequests: TapgNodeRequests
     Left = 172
     Top = 130
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -662,7 +662,7 @@ object apgNodeRequests: TapgNodeRequests
     Left = 216
     Top = 130
   end
-  object dsPhotos: TpFIBDataSet
+  object dsPhotos: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST_PHOTOS'
       'SET '

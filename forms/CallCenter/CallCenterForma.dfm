@@ -775,7 +775,7 @@ object CallCenterForm: TCallCenterForm
       OnExecute = actRecourseExecute
     end
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'
@@ -792,7 +792,7 @@ object CallCenterForm: TCallCenterForm
     Left = 448
     Top = 176
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    si.*'
@@ -845,7 +845,7 @@ object CallCenterForm: TCallCenterForm
     Left = 392
     Top = 176
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    aH.*'
@@ -901,7 +901,7 @@ object CallCenterForm: TCallCenterForm
     Left = 272
     Top = 184
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -913,7 +913,7 @@ object CallCenterForm: TCallCenterForm
     Left = 672
     Top = 120
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -924,7 +924,7 @@ object CallCenterForm: TCallCenterForm
     Left = 672
     Top = 176
   end
-  object dsFlats: TpFIBDataSet
+  object dsFlats: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE HOUSEFLATS'
       'SET '
@@ -1032,7 +1032,7 @@ object CallCenterForm: TCallCenterForm
     Left = 208
     Top = 176
   end
-  object dsContacts: TpFIBDataSet
+  object dsContacts: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    cc.CC_VALUE'
@@ -1064,7 +1064,7 @@ object CallCenterForm: TCallCenterForm
     Left = 512
     Top = 176
   end
-  object dsRecourses: TpFIBDataSet
+  object dsRecourses: TFIBDataSet
     RefreshSQL.Strings = (
       'select'
       '  rt.name'

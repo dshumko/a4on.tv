@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Buttons,
   DBCtrlsEh, GridsEh, DBLookupEh, DBGridEh, PropFilerEh, PropStorageEh,
-  FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase,
+  FIBDataSet, FIBQuery, FIBDatabase,
   CnErrorProvider;
 
 type
   TDiscountForm = class(TForm)
     srcService: TDataSource;
-    dsluService: TpFIBDataSet;
+    dsluService: TFIBDataSet;
     mmoNotice: TDBMemoEh;
     Label2: TLabel;
     Label3: TLabel;
@@ -28,18 +28,18 @@ type
     cnErrors: TCnErrorProvider;
     lbl1: TLabel;
     lcbSrvType: TDBLookupComboboxEh;
-    dsSrvType: TpFIBDataSet;
+    dsSrvType: TFIBDataSet;
     srcSrvType: TDataSource;
     pnlSrvType: TPanel;
-    qDiscount: TpFIBQuery;
-    trRead: TpFIBTransaction;
-    trReadQ: TpFIBTransaction;
-    trWriteQ: TpFIBTransaction;
+    qDiscount: TFIBQuery;
+    trRead: TFIBTransaction;
+    trReadQ: TFIBTransaction;
+    trWriteQ: TFIBTransaction;
     PropStorageEh: TPropStorageEh;
     pnlPromo: TPanel;
     lcbPromo: TDBLookupComboboxEh;
     btnPromo: TButton;
-    dsPromo: TpFIBDataSet;
+    dsPromo: TFIBDataSet;
     srcPromo: TDataSource;
     pnlService: TPanel;
     Label1: TLabel;

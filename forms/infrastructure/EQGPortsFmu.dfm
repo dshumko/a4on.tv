@@ -291,7 +291,7 @@ object apgEQGPort: TapgEQGPort
       Caption = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -303,7 +303,7 @@ object apgEQGPort: TapgEQGPort
     Left = 276
     Top = 98
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -321,7 +321,7 @@ object apgEQGPort: TapgEQGPort
     Left = 74
     Top = 153
   end
-  object dsData: TpFIBDataSet
+  object dsData: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    PORT'

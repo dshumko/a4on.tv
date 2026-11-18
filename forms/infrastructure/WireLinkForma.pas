@@ -7,17 +7,18 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types, System.StrUtils, System.Actions,
   Data.DB,
   Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  FIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
-  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh;
+  FIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh,
+  CnClasses;
 
 type
 
   TWireLinkForm = class(TForm)
     OkCancelFrame: TOkCancelFrame;
     CnErrors: TCnErrorProvider;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlSecond: TPanel;
     actlst1: TActionList;
     actFind: TAction;
@@ -33,14 +34,14 @@ type
     dbleEqpmntE: TDBLookupComboboxEh;
     Label4: TLabel;
     lcbPortE: TDBLookupComboboxEh;
-    dsEqS: TpFIBDataSet;
+    dsEqS: TFIBDataSet;
     srcEqS: TDataSource;
-    dsPortS: TpFIBDataSet;
+    dsPortS: TFIBDataSet;
     srcPortS: TDataSource;
     srcPortE: TDataSource;
     srcEqE: TDataSource;
-    dsEqE: TpFIBDataSet;
-    dsPortE: TpFIBDataSet;
+    dsEqE: TFIBDataSet;
+    dsPortE: TFIBDataSet;
     cbLABELS: TDBComboBoxEh;
     lblLabel: TLabel;
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
@@ -74,7 +75,7 @@ function WireLink(const aWid: Integer; const aLabels: string; const aPoint_S: In
 implementation
 
 uses
-  DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
+  DM, EQPort, NodeLinkForma, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -264,7 +265,7 @@ end;
 
 procedure TWireLinkForm.SaveEndpoint(const eid: Integer; const port: string);
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;

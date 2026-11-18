@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.StrUtils,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  DBCtrlsEh, FIBQuery, pFIBQuery, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh, A4onTypeUnit,
+  DBCtrlsEh, FIBQuery, DBLookupEh, FIBDataSet, DBGridEh, A4onTypeUnit,
   CustomerInfoFrame;
 
 type
@@ -26,7 +26,7 @@ type
     lPaymentSrv: TLabel;
     luPaymentSrv: TDBLookupComboboxEh;
     srcPaymentSRV: TDataSource;
-    dsPaymentSRV: TpFIBDataSet;
+    dsPaymentSRV: TFIBDataSet;
     bbOk: TBitBtn;
     bbCancel: TBitBtn;
     pnlFine: TPanel;
@@ -36,7 +36,7 @@ type
     Label3: TLabel;
     cbbPayTypeStr: TDBLookupComboboxEh;
     srcPT: TDataSource;
-    dsPT: TpFIBDataSet;
+    dsPT: TFIBDataSet;
     ednItogo: TDBNumberEditEh;
     lbl2: TLabel;
     pnlLCPS: TPanel;
@@ -168,11 +168,11 @@ end;
 procedure TPaymentEditFrm.SetPayID(Value: Integer);
 begin
   FPayment_id := Value;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       SQL.Text := 'select PAYMENT_SRV, PAY_TYPE_STR, LCPS from PAYMENT where payment_id = :payment_id';
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       ParamByName('PAYMENT_ID').AsInt64 := FPayment_id;
       Transaction.StartTransaction;
       ExecQuery;
@@ -182,9 +182,10 @@ begin
         cbbPayTypeStr.Value := FldByName['PAY_TYPE_STR'].AsString;
       if FShowLCPS and (not FldByName['LCPS'].IsNull) then
         ednLCPS.Value := FldByName['LCPS'].AsCurrency;
-      Transaction.Commit;
       Close;
+      Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
 end;
@@ -227,7 +228,7 @@ begin
   Result := false;
   if (not dmMain.AllowedAction(rght_Pays_full)) then
     exit; // полный доступ
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -273,8 +274,8 @@ begin
 
       Transaction.StartTransaction;
       ExecQuery;
-      Transaction.Commit;
       Close;
+      Transaction.Commit;
       Result := true;
     finally
       Free;

@@ -8,12 +8,12 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, PrnDbgeh, CnClasses;
 
 type
   TOrganForm = class(TGridForm)
-    dsOrgan: TpFIBDataSet;
+    dsOrgan: TFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure srcDataSourceStateChange(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
@@ -121,7 +121,7 @@ begin
   actEdit.Visible      := actNew.Visible;
   tbOk.Visible         := actNew.Visible;
   tbCancel.Visible     := actNew.Visible;
-  dbGrid.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,       'Organizations',          [crpColIndexEh,crpColWidthsEh,crpColVisibleEh,crpSortMarkerEh]);
+  dbGrid.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,      'Organizations',         [crpColIndexEh,crpColWidthsEh,crpColVisibleEh,crpSortMarkerEh]);
 end;
 
 procedure TOrganForm.srcDataSourceDataChange(Sender: TObject;

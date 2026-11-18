@@ -27,19 +27,13 @@ object NodeLinkForm: TNodeLinkForm
     Align = alBottom
     TabOrder = 2
     TabStop = True
-    ExplicitTop = 302
-    ExplicitWidth = 534
     inherited Label2: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited Label1: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -47,12 +41,9 @@ object NodeLinkForm: TNodeLinkForm
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 67
-      ExplicitWidth = 378
     end
     inherited bbCancel: TBitBtn
       Left = 451
-      ExplicitLeft = 451
     end
   end
   object pnlMain: TPanel
@@ -112,6 +103,7 @@ object NodeLinkForm: TNodeLinkForm
         end>
       DropDownBox.ListSource = srcMain
       DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
       DropDownBox.AutoDrop = True
@@ -277,6 +269,7 @@ object NodeLinkForm: TNodeLinkForm
         end>
       DropDownBox.ListSource = srcType
       DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
@@ -336,6 +329,7 @@ object NodeLinkForm: TNodeLinkForm
         end>
       DropDownBox.ListSource = srcNodes
       DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.Options = [dlgColumnResizeEh, dlgColLinesEh]
       DropDownBox.AutoDrop = True
@@ -434,6 +428,7 @@ object NodeLinkForm: TNodeLinkForm
         end>
       DropDownBox.ListSource = srcLabel
       DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
       DropDownBox.ListSourceAutoFilterAllColumns = True
       DropDownBox.AutoDrop = True
       DropDownBox.Sizable = True
@@ -454,7 +449,7 @@ object NodeLinkForm: TNodeLinkForm
     Left = 214
     Top = 70
   end
-  object dsLink: TpFIBDataSet
+  object dsLink: TFIBDataSet
     UpdateSQL.Strings = (
       
         'update or insert into Wire (WID, WTYPE, Name, Meters, Stock, Poi' +
@@ -492,7 +487,7 @@ object NodeLinkForm: TNodeLinkForm
     Left = 256
     Top = 22
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -517,7 +512,7 @@ object NodeLinkForm: TNodeLinkForm
     Left = 188
     Top = 254
   end
-  object dsNodes: TpFIBDataSet
+  object dsNodes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    N.Node_Id'
@@ -562,7 +557,7 @@ object NodeLinkForm: TNodeLinkForm
     Left = 300
     Top = 254
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -574,7 +569,7 @@ object NodeLinkForm: TNodeLinkForm
     Left = 107
     Top = 210
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -592,7 +587,7 @@ object NodeLinkForm: TNodeLinkForm
     Left = 356
     Top = 54
   end
-  object dsMat: TpFIBDataSet
+  object dsMat: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.M_ID'
@@ -626,7 +621,7 @@ object NodeLinkForm: TNodeLinkForm
     Left = 356
     Top = 254
   end
-  object dsLabel: TpFIBDataSet
+  object dsLabel: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       'o.O_Name NAME, coalesce(o.O_Charfield, '#39#39') LABELS'

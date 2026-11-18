@@ -9,14 +9,14 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider,
-  DBCtrlsEh, EhLibVCL, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, DBGridEhGrouping, DynVarsEh,
+  DBCtrlsEh, EhLibVCL, FIBQuery, FIBDatabase, DBGridEhGrouping, DynVarsEh,
   PrnDbgeh, CnClasses;
 
 type
   TFreqPlanForm = class(TGridForm)
-    dsFreqPlan: TpFIBDataSet;
+    dsFreqPlan: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
@@ -34,9 +34,9 @@ type
     lbl1: TLabel;
     lbl4: TLabel;
     lbl6: TLabel;
-    qryOIRT: TpFIBQuery;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    qryOIRT: TFIBQuery;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
     procedure actDeleteExecute(Sender: TObject);

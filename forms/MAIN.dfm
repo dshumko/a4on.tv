@@ -15,6 +15,7 @@ object A4MainForm: TA4MainForm
   FormStyle = fsMDIForm
   KeyPreview = True
   Menu = MainMenu
+  OldCreateOrder = True
   Position = poDesigned
   ShowHint = True
   WindowState = wsMaximized
@@ -22,6 +23,7 @@ object A4MainForm: TA4MainForm
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
+  PixelsPerInch = 96
   TextHeight = 13
   object mdchldbr1: TMDIChildBar
     Left = 0
@@ -69,7 +71,7 @@ object A4MainForm: TA4MainForm
       Align = alLeft
       BorderWidth = 1
       ButtonHeight = 21
-      ButtonWidth = 122
+      ButtonWidth = 117
       GradientEndColor = clBtnFace
       GradientStartColor = clBtnFace
       HotTrackColor = clBtnFace
@@ -85,7 +87,7 @@ object A4MainForm: TA4MainForm
       end
       object spP: TToolButton
         Tag = 2
-        Left = 127
+        Left = 122
         Top = 0
         Width = 4
         Caption = 'spP'
@@ -94,13 +96,13 @@ object A4MainForm: TA4MainForm
       end
       object btnP: TToolButton
         Tag = 2
-        Left = 131
+        Left = 126
         Top = 0
         Action = OpenPaymentsDoc
       end
       object spR: TToolButton
         Tag = 4
-        Left = 253
+        Left = 243
         Top = 0
         Width = 4
         Caption = 'spR'
@@ -109,13 +111,13 @@ object A4MainForm: TA4MainForm
       end
       object btnR: TToolButton
         Tag = 4
-        Left = 257
+        Left = 247
         Top = 0
         Action = ActRequest
       end
       object spE: TToolButton
         Tag = 8
-        Left = 379
+        Left = 364
         Top = 0
         Width = 4
         Caption = 'spE'
@@ -124,12 +126,12 @@ object A4MainForm: TA4MainForm
       end
       object btnE: TToolButton
         Tag = 8
-        Left = 383
+        Left = 368
         Top = 0
         Action = actEquipment
       end
       object spN: TToolButton
-        Left = 505
+        Left = 485
         Top = 0
         Width = 6
         Caption = 'spN'
@@ -138,12 +140,12 @@ object A4MainForm: TA4MainForm
       end
       object btnN: TToolButton
         Tag = 16
-        Left = 511
+        Left = 491
         Top = 0
         Action = actNodes
       end
       object spT: TToolButton
-        Left = 633
+        Left = 608
         Top = 0
         Width = 6
         Caption = 'spT'
@@ -152,7 +154,7 @@ object A4MainForm: TA4MainForm
       end
       object btnT: TToolButton
         Tag = 32
-        Left = 639
+        Left = 614
         Top = 0
         Action = actTaskList
       end

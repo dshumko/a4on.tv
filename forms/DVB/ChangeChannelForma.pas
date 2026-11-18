@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh, FIBQuery, pFIBQuery;
+  DBCtrlsEh, FIBDataSet, DBLookupEh, DBGridEh, FIBQuery;
 
 type
   TfrmChangeChannelForm = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
     Panel2: TPanel;
-    dsChannels: TpFIBDataSet;
+    dsChannels: TFIBDataSet;
     srcChannels: TDataSource;
     lcbSlave: TDBLookupComboboxEh;
     bbOk: TBitBtn;
@@ -24,7 +24,7 @@ type
     chkAnalog: TDBCheckBoxEh;
     lbl2: TLabel;
     chkDVB: TDBCheckBoxEh;
-    qryChange: TpFIBQuery;
+    qryChange: TFIBQuery;
     chkReplace: TDBCheckBoxEh;
     procedure FormCreate(Sender: TObject);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

@@ -471,7 +471,7 @@ object IPTVGroupForm: TIPTVGroupForm
       TabOrder = 3
     end
   end
-  object dsIGC: TpFIBDataSet
+  object dsIGC: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE IPTV_GROUP_CHANNELS'
       'SET '
@@ -545,7 +545,7 @@ object IPTVGroupForm: TIPTVGroupForm
     Left = 250
     Top = 309
   end
-  object dsC: TpFIBDataSet
+  object dsC: TFIBDataSet
     SelectSQL.Strings = (
       'select c.Ch_Id, c.Ch_Name, c.Definition, c.CH_NOTICE'
       'FROM Channels c'
@@ -568,7 +568,7 @@ object IPTVGroupForm: TIPTVGroupForm
     Left = 642
     Top = 338
   end
-  object dsIPTVGroup: TpFIBDataSet
+  object dsIPTVGroup: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE IPTV_GROUP'
       'SET '
@@ -601,7 +601,7 @@ object IPTVGroupForm: TIPTVGroupForm
       '    :NAME,'
       '    :CODE,'
       '    :URL,'
-      '    :Disabled,    '
+      '    :Disabled,   '
       '    :NOTICE'
       ')')
     RefreshSQL.Strings = (
@@ -622,7 +622,7 @@ object IPTVGroupForm: TIPTVGroupForm
     Left = 87
     Top = 210
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -634,7 +634,7 @@ object IPTVGroupForm: TIPTVGroupForm
     Left = 78
     Top = 339
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

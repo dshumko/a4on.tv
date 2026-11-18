@@ -9,21 +9,21 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   CnErrorProvider, amSplitter,
-  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
   PrnDbgeh, PropFilerEh, PropStorageEh, CnClasses;
 
 type
   TElectroRecipientForm = class(TGridForm)
-    dsElectroRecipient: TpFIBDataSet;
+    dsElectroRecipient: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
     dbmmoO_DESCRIPTION: TDBMemoEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsHistory: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsHistory: TFIBDataSet;
     srcHistory: TDataSource;
     pgcInfo: TPageControl;
     tsCoverage: TTabSheet;
@@ -38,7 +38,7 @@ type
     actDelP: TAction;
     PropStorage: TPropStorageEh;
     tsEP: TTabSheet;
-    dsElectroPoint: TpFIBDataSet;
+    dsElectroPoint: TFIBDataSet;
     dbgEP: TDBGridEh;
     srcElectroPoint: TDataSource;
     actLockPeriod: TAction;
@@ -181,7 +181,7 @@ begin
   AValues[3] := '';
   AValues[4] := '';
 
-  if InputQuery('Оплата', ['Дата платежа (д.м.г)', 'За месяц (1.м.г)',  'Оплачено кВт', 'Сумма оплаты', 'Примечание'], AValues,
+  if InputQuery('Оплата', ['Дата платежа (д.м.г)', 'За месяц (1.м.г)', 'Оплачено кВт', 'Сумма оплаты', 'Примечание'], AValues,
     function(const Values: array of string): Boolean
     var
       v: Double;

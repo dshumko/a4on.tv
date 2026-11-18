@@ -387,7 +387,7 @@ object TaskFilterForm: TTaskFilterForm
       end
     end
   end
-  object dsExecutor: TpFIBDataSet
+  object dsExecutor: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    w.Surname || coalesce('#39' '#39'||w.Firstname, '#39#39') FIO'

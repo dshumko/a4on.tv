@@ -322,7 +322,7 @@ inherited BonusesForm: TBonusesForm
     Left = 152
     Top = 296
   end
-  object dsBonuses: TpFIBDataSet
+  object dsBonuses: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Bonus_Rate_Upd(:OLD_ID, :BT_ID, :Date_From, :D' +
@@ -362,7 +362,7 @@ inherited BonusesForm: TBonusesForm
     Left = 216
     Top = 296
   end
-  object dsBT: TpFIBDataSet
+  object dsBT: TFIBDataSet
     SelectSQL.Strings = (
       
         'Select o.O_Id, o.O_Name||coalesce('#39' '#39'||o.O_Description, '#39#39') O_Na' +

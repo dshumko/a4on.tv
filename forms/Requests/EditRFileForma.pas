@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
-  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, pFIBQuery, CnClasses;
+  FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, CnClasses;
 
 type
   TEditRFileForm = class(TForm)
@@ -19,7 +19,7 @@ type
     edtFILE: TDBEditEh;
     lblFileCh: TLabel;
     dlgOpen: TOpenDialog;
-    qryFile: TpFIBQuery;
+    qryFile: TFIBQuery;
     procedure btnOkClick(Sender: TObject);
     procedure edtFILEEditButtons0Click(Sender: TObject; var Handled: Boolean);
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

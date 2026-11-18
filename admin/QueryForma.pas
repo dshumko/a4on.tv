@@ -7,8 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Buttons, Vcl.Menus,
-  GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit,
-  pFIBScripter, SynEditMiscClasses, SynEditSearch, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  GridsEh, DBGridEh, FIBDatabase, FIBDataSet, SynEditHighlighter, SynHighlighterSQL, SynEdit,
+  FIBScripter, SynEditMiscClasses, SynEditSearch, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
 
@@ -17,12 +17,12 @@ type
     Panel5: TPanel;
     SpeedButton1: TSpeedButton;
     SynSQLSyn1: TSynSQLSyn;
-    transaction: TpFIBTransaction;
+    transaction: TFIBTransaction;
     SpeedButton2: TSpeedButton;
     OpenDialog1: TOpenDialog;
     SpeedButton3: TSpeedButton;
     SaveDialog1: TSaveDialog;
-    FIBScript: TpFIBScripter;
+    FIBScript: TFIBScripter;
     pc: TPageControl;
     tsResultScript: TTabSheet;
     seScript: TSynEdit;
@@ -31,7 +31,7 @@ type
     Splitter1: TSplitter;
     DBGridEh1: TDBGridEh;
     source: TDataSource;
-    DataSet: TpFIBDataSet;
+    DataSet: TFIBDataSet;
     gridPopUp: TPopupMenu;
     ppmCopy: TMenuItem;
     ppmSelectAll: TMenuItem;
@@ -43,7 +43,7 @@ type
     miactCnPrefixWizard: TMenuItem;
     miactCnPrefixWizard1: TMenuItem;
     SelectAll1: TMenuItem;
-    trMetaData: TpFIBTransaction;
+    trMetaData: TFIBTransaction;
     procedure SpeedButton1Click(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure SpeedButton2Click(Sender: TObject);

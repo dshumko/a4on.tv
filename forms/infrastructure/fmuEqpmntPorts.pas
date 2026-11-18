@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Controls, Vcl.ComCtrls, Vcl.StdCtrls, Vcl.Graphics, Vcl.Forms, Vcl.Menus,
   Vcl.ToolWin, Vcl.Dialogs,
-  FIBDataSet, pFIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, pFIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
+  FIBDataSet, DBGridEh, DynVarsEh, FIBDatabase, DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls,
   DBAxisGridsEh, GridsEh, EhLibVCL, DM, PrjConst, AtrPages, A4onTypeUnit, DBVertGridsEh, PropFilerEh, PropStorageEh,
   amSplitter;
@@ -23,10 +23,10 @@ type
     btnDel: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnEdit: TSpeedButton;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     srcData: TDataSource;
-    dsData: TpFIBDataSet;
+    dsData: TFIBDataSet;
     dbgCustomer: TDBGridEh;
     actFindCustomer: TAction;
     actCmd: TAction;
@@ -475,13 +475,13 @@ var
   s: string;
   Grid: TCustomDBGridEh;
   id: String;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   Grid := TCustomDBGridEh(Sender);
-  FIBDS := Grid.DataSource.DataSet as TpFIBDataSet;
+  FIBDS := Grid.DataSource.DataSet as TFIBDataSet;
   id := '';
   if Sender is TCustomDBGridEh then
   begin

@@ -7,7 +7,7 @@ interface
 
 uses
   System.SysUtils, System.Classes,
-  fib, IB_Services;
+  fib, FIBServices;
 
 type
   TServerSettings = record
@@ -16,45 +16,45 @@ type
     UserPass: string;
   end;
 
-  TFBServiceClass = class of TpFIBCustomService;
+  TFBServiceClass = class of TFIBCustomService;
 
   TFirebirdServer = class
   private
     FServerName: string;
     FUserName: string;
     FUserPass: string;
-    FOnTextNotify: TServiceGetTextNotify;
-    FProtocol: TProtocol;
+    FOnTextNotify: TFIBServiceGetTextEvent;
+    FProtocol: TFIBProtocol;
     FClientLib: string;
-    function CreateServiceWitAuth(ServiceClass: TFBServiceClass): TpFIBCustomService;
+    function CreateServiceWitAuth(ServiceClass: TFBServiceClass): TFIBCustomService;
   public
     constructor Create;
     destructor Destroy; override;
-    class function Instance(const SrvName, UserName, password: string; Protocol: TProtocol = TCP;
+    class function Instance(const SrvName, UserName, password: string; Protocol: TFIBProtocol = TCP;
       const ClientLib: string = 'fbclient.dll'): TFirebirdServer;
 
-    function BackupDB(const DBName, BkName: string; Optns: TBackupOptions = [NoGarbageCollection]): Boolean;
+    function BackupDB(const DBName, BkName: string; Optns: TFIBBackupOptions = [NoGarbageCollection]): Boolean;
 
-    function RestoreDB(const BkName, DBName: string; Optns: TRestoreOptions = [CreateNewDB];
+    function RestoreDB(const BkName, DBName: string; Optns: TFIBRestoreOptions = [CreateNewDB];
       APageSize: Integer = 8192): Boolean;
 
-    function ShutdownDB(const DBName: string; Mode: TShutdownMode = Forced; Timeout: Integer = 0): Boolean;
+    function ShutdownDB(const DBName: string; Mode: TFIBShutdownMode = Forced; Timeout: Integer = 0): Boolean;
 
     function OnlineDB(const DBName: string): Boolean;
 
-    function GetDBStat(const DBName: string; Optns: TStatOptions = [HeaderPages]): Boolean;
+    function GetDBStat(const DBName: string; Optns: TFIBStatisticsOptions = [HeaderPages]): Boolean;
 
     // LimboTransactions, CheckDB, IgnoreChecksum, KillShadows, MendDB, SweepDB, ValidateDB, ValidateFull
-    function ValidateDatabase(const DBName: string; Optns: TValidateOptions = []): Boolean;
+    function ValidateDatabase(const DBName: string; Optns: TFIBValidateOptions = []): Boolean;
     function CheckDatabase(const DBName: string): Boolean;
     function SweepDatabase(const DBName: string): Boolean;
     function MendDatabase(const DBName: string): Boolean;
 
-    function GetServerPropeties(Optns: TPropertyOptions = [Version, Database]): TpFIBServerProperties;
+    function GetServerPropeties(Optns: TFIBServerPropertyOptions = [Version, Database]): TFIBServerProperties;
 
     procedure GetServerLog;
 
-    function GetSecurityService: TpFIBSecurityService;
+    function GetSecurityService: TFIBSecurityService;
 
     procedure SetupSweepInterval(ASweepInterval: Integer);
     procedure SetupSQLDialect(ASQLDialect: Integer);
@@ -67,17 +67,17 @@ type
     property ServerName: string read FServerName write FServerName;
     property UserName: string read FUserName write FUserName;
     property UserPass: string read FUserPass write FUserPass;
-    property Protocol: TProtocol read FProtocol write FProtocol;
+    property Protocol: TFIBProtocol read FProtocol write FProtocol;
     property ClientLib: string read FClientLib write FClientLib;
 
-    property OnFbTextNotify: TServiceGetTextNotify read FOnTextNotify write FOnTextNotify;
+    property OnFbTextNotify: TFIBServiceGetTextEvent read FOnTextNotify write FOnTextNotify;
   end;
 
 implementation
 
 { TFirebirdServer }
 
-function TFirebirdServer.BackupDB(const DBName, BkName: string; Optns: TBackupOptions): Boolean;
+function TFirebirdServer.BackupDB(const DBName, BkName: string; Optns: TFIBBackupOptions): Boolean;
 var
   ErrorFound: Boolean;
   LogStr: string;
@@ -96,7 +96,7 @@ begin
     DB := DBName;
   end;
 
-  with TpFIBBackupService(CreateServiceWitAuth(TpFIBBackupService)) do
+  with TFIBBackupService(CreateServiceWitAuth(TFIBBackupService)) do
     try
       DatabaseName := DB;
       BackupFile.Add(BkName);
@@ -126,7 +126,7 @@ begin
     end;
 end;
 
-function TFirebirdServer.CreateServiceWitAuth(ServiceClass: TFBServiceClass): TpFIBCustomService;
+function TFirebirdServer.CreateServiceWitAuth(ServiceClass: TFBServiceClass): TFIBCustomService;
 begin
   Result := ServiceClass.Create(nil);
   Result.ServerName := AnsiString(ServerName);
@@ -138,12 +138,12 @@ begin
   // Result.LibraryName := 'fbclient.dll';
 end;
 
-function TFirebirdServer.RestoreDB(const BkName, DBName: string; Optns: TRestoreOptions; APageSize: Integer): Boolean;
+function TFirebirdServer.RestoreDB(const BkName, DBName: string; Optns: TFIBRestoreOptions; APageSize: Integer): Boolean;
 var
   ErrorFound: Boolean;
   LogStr: string;
 begin
-  with TpFIBRestoreService(CreateServiceWitAuth(TpFIBRestoreService)) do
+  with TFIBRestoreService(CreateServiceWitAuth(TFIBRestoreService)) do
     try
       DatabaseName.Add(DBName);
       BackupFile.Add(BkName);
@@ -169,9 +169,9 @@ begin
     end;
 end;
 
-function TFirebirdServer.ShutdownDB(const DBName: string; Mode: TShutdownMode; Timeout: Integer): Boolean;
+function TFirebirdServer.ShutdownDB(const DBName: string; Mode: TFIBShutdownMode; Timeout: Integer): Boolean;
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       DatabaseName := DBName;
       Attach;
@@ -186,7 +186,7 @@ end;
 
 function TFirebirdServer.OnlineDB(const DBName: string): Boolean;
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       DatabaseName := DBName;
       Attach;
@@ -199,11 +199,11 @@ begin
     end;
 end;
 
-function TFirebirdServer.GetDBStat(const DBName: string; Optns: TStatOptions): Boolean;
+function TFirebirdServer.GetDBStat(const DBName: string; Optns: TFIBStatisticsOptions): Boolean;
 var
   LogStr: String;
 begin
-  with TpFIBStatisticalService(CreateServiceWitAuth(TpFIBStatisticalService)) do
+  with TFIBStatisticalService(CreateServiceWitAuth(TFIBStatisticalService)) do
     try
       DatabaseName := DBName;
       Options := Optns;
@@ -220,12 +220,12 @@ begin
     end;
 end;
 
-function TFirebirdServer.GetServerPropeties(Optns: TPropertyOptions): TpFIBServerProperties;
+function TFirebirdServer.GetServerPropeties(Optns: TFIBServerPropertyOptions): TFIBServerProperties;
 var
-  srvc: TpFIBCustomService;
+  srvc: TFIBCustomService;
 begin
-  srvc := CreateServiceWitAuth(TpFIBServerProperties);
-  Result := TpFIBServerProperties(srvc);
+  srvc := CreateServiceWitAuth(TFIBServerProperties);
+  Result := TFIBServerProperties(srvc);
   with Result do
     try
       Options := Optns;
@@ -238,7 +238,7 @@ end;
 
 procedure TFirebirdServer.GetServerLog;
 begin
-  with TpFIBLogService(CreateServiceWitAuth(TpFIBLogService)) do
+  with TFIBLogService(CreateServiceWitAuth(TFIBLogService)) do
     try
       OnTextNotify := FOnTextNotify;
       Attach;
@@ -250,9 +250,9 @@ begin
     end;
 end;
 
-function TFirebirdServer.GetSecurityService: TpFIBSecurityService;
+function TFirebirdServer.GetSecurityService: TFIBSecurityService;
 begin
-  Result := TpFIBSecurityService(CreateServiceWitAuth(TpFIBSecurityService));
+  Result := TFIBSecurityService(CreateServiceWitAuth(TFIBSecurityService));
   with Result do
     try
       Attach;
@@ -265,7 +265,7 @@ end;
 var
   FBServerList: TStringList;
 
-class function TFirebirdServer.Instance(const SrvName, UserName, password: string; Protocol: TProtocol;
+class function TFirebirdServer.Instance(const SrvName, UserName, password: string; Protocol: TFIBProtocol;
   const ClientLib: string): TFirebirdServer;
 var
   KeyStr: string;
@@ -302,7 +302,7 @@ end;
 
 procedure TFirebirdServer.SetupSweepInterval(ASweepInterval: Integer);
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       Attach;
       SetSweepInterval(ASweepInterval);
@@ -313,7 +313,7 @@ end;
 
 procedure TFirebirdServer.SetupSQLDialect(ASQLDialect: Integer);
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       Attach;
       SetDBSqlDialect(ASQLDialect);
@@ -324,7 +324,7 @@ end;
 
 procedure TFirebirdServer.SetupPageBuffers(APageBuffers: Integer);
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       Attach;
       SetPageBuffers(APageBuffers);
@@ -335,7 +335,7 @@ end;
 
 procedure TFirebirdServer.ExecActivateShadow;
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       Attach;
       ActivateShadow;
@@ -346,7 +346,7 @@ end;
 
 procedure TFirebirdServer.SetupReserveSpace(AReserveSpace: Boolean);
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       Attach;
       SetReserveSpace(AReserveSpace);
@@ -357,7 +357,7 @@ end;
 
 procedure TFirebirdServer.SetupAsyncMode(AsyncMode: Boolean);
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       Attach;
       SetAsyncMode(AsyncMode);
@@ -368,7 +368,7 @@ end;
 
 procedure TFirebirdServer.SetupReadOnly(AReadOnly: Boolean);
 begin
-  with TpFIBConfigService(CreateServiceWitAuth(TpFIBConfigService)) do
+  with TFIBConfigService(CreateServiceWitAuth(TFIBConfigService)) do
     try
       Attach;
       SetReadOnly(AReadOnly);
@@ -377,11 +377,11 @@ begin
     end;
 end;
 
-function TFirebirdServer.ValidateDatabase(const DBName: string; Optns: TValidateOptions): Boolean;
+function TFirebirdServer.ValidateDatabase(const DBName: string; Optns: TFIBValidateOptions): Boolean;
 var
   cnt: Integer;
 begin
-  with TpFIBValidationService(CreateServiceWitAuth(TpFIBValidationService)) do
+  with TFIBValidationService(CreateServiceWitAuth(TFIBValidationService)) do
     try
       Options := Optns;
       DatabaseName := DBName;

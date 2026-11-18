@@ -10,12 +10,12 @@ uses
   Vcl.ExtCtrls,
   ToolCtrlsEh, GridsEh, DBGridEh, AtrPages, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping,
   DynVarsEh,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, Vcl.Menus;
+  FIBDatabase, FIBDataSet, Vcl.Menus;
 
 type
   TapgCustomerPayments = class(TA4onPage)
     dbgCustPayment: TDBGridEh;
-    dsPayment: TpFIBDataSet;
+    dsPayment: TFIBDataSet;
     srcPayment: TDataSource;
     ActListCustomers: TActionList;
     ActAddPayment: TAction;
@@ -24,8 +24,8 @@ type
     btnDel: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     btnCheck: TSpeedButton;
     actCheckUrl: TAction;
     pmDblClick: TPopupMenu;
@@ -76,7 +76,7 @@ type
 implementation
 
 uses
-  System.StrUtils, DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN, HtmlForma, RequestForma;
+  System.StrUtils, DM, FIBQuery, PaymentForma, PaymentDocForma, MAIN, HtmlForma, RequestForma;
 
 {$R *.dfm}
 
@@ -316,7 +316,7 @@ begin
 
   if not s.IsEmpty then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -324,8 +324,8 @@ begin
         ParamByName('PAYMENT_ID').Value := dsPayment['PAYMENT_ID'];
         Transaction.StartTransaction;
         ExecQuery;
-        Transaction.Commit;
         Close;
+        Transaction.Commit;
       finally
         free;
       end;
@@ -365,7 +365,7 @@ begin
   begin
     if TryStrToFloat(s, v) then
     begin
-      with TpFIBQuery.Create(Self) do
+      with TFIBQuery.Create(Self) do
         try
           Database := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
@@ -374,8 +374,8 @@ begin
           ParamByName('Customer_Id').Value := FDataSource.DataSet.FieldByName('customer_id').AsInteger;
           Transaction.StartTransaction;
           ExecQuery;
-          Transaction.Commit;
           Close;
+          Transaction.Commit;
           FDataSource.DataSet.Refresh;
           dsPayment.CloseOpen(True);
         finally
@@ -419,7 +419,7 @@ begin
     if MessageBoxW(Handle, PWideChar(WideFormat('Удалить обещанный платеж на сумму ' + dsPayment.FieldByName('VIEW_SUM')
       .AsString, [])), 'Удалить обещанный платеж', MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDYES then
     begin
-      with TpFIBQuery.Create(Self) do
+      with TFIBQuery.Create(Self) do
       begin
         try
           Database := dmMain.dbTV;
@@ -432,8 +432,8 @@ begin
           ParamByName('Customer_Id').Value := dsPayment['CUSTOMER_ID'];
           Transaction.StartTransaction;
           ExecQuery;
-          Transaction.Commit;
           Close;
+          Transaction.Commit;
         finally
           free;
         end;
@@ -545,13 +545,13 @@ var
   s: string;
   Grid: TCustomDBGridEh;
   id, i, j: Integer;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   Grid := TCustomDBGridEh(Sender);
-  FIBDS := Grid.DataSource.DataSet as TpFIBDataSet;
+  FIBDS := Grid.DataSource.DataSet as TFIBDataSet;
   id := -1;
   if Sender is TCustomDBGridEh then
   begin
@@ -607,11 +607,11 @@ Begin
   end
   else
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         sql.text := 'select r.RQ_ID from request r where r.RECEIPT = :RECEIPT';
         ParamByName('RECEIPT').Value := dsPayment.FieldByName('PAYMENT_ID').AsString;
         Transaction.StartTransaction;
@@ -624,6 +624,7 @@ Begin
         Close;
         Transaction.Commit;
       finally
+        if assigned(Transaction) then Transaction.Free;
         free;
       end;
     end;

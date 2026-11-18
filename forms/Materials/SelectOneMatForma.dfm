@@ -113,7 +113,7 @@ object SelectMaterialForm: TSelectMaterialForm
     Left = 137
     Top = 9
   end
-  object dsMaterial: TpFIBDataSet
+  object dsMaterial: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    APPLIANCE'

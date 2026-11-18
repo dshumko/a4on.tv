@@ -351,7 +351,7 @@ object ReqMaterialsForm: TReqMaterialsForm
     Left = 339
     Top = 157
   end
-  object dsReqMaterials: TpFIBDataSet
+  object dsReqMaterials: TFIBDataSet
     UpdateSQL.Strings = (
       'select'
       'RET_RM_ID Rm_Id'
@@ -442,7 +442,7 @@ object ReqMaterialsForm: TReqMaterialsForm
     Left = 505
     Top = 97
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -454,7 +454,7 @@ object ReqMaterialsForm: TReqMaterialsForm
     Left = 424
     Top = 262
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -476,7 +476,7 @@ object ReqMaterialsForm: TReqMaterialsForm
     Left = 120
     Top = 128
   end
-  object drvFibGroups: TpFIBDataDriverEh
+  object drvFibGroups: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (

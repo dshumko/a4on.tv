@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, GridsEh, DBGridEh, MemTableDataEh, FIBDataSet, MemTableEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh,
+  GridForma, GridsEh, DBGridEh, MemTableDataEh, FIBDataSet, MemTableEh, DataDriverEh, FIBDataDriverEh, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, DBGridEhGrouping, DynVarsEh, CnErrorProvider, EhLibVCL,
   PrnDbgeh;
 
 type
   TSubDivForm = class(TGridForm)
-    pfbdtdrvrh1: TpFIBDataDriverEh;
+    pfbdtdrvrh1: TFIBDataDriverEh;
     mtSUBDIV: TMemTableEh;
     procedure FormShow(Sender: TObject);
   private

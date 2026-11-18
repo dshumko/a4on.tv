@@ -11,7 +11,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
   Vcl.StdCtrls,
   DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, MemTableDataEh, PropFilerEh, CnErrorProvider,
-  PropStorageEh, CustomerInfoFrame, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableEh, DBCtrlsEh,
+  PropStorageEh, CustomerInfoFrame, FIBDatabase, FIBDataSet, MemTableEh, DBCtrlsEh,
   DBLookupEh,
   EhLibVCL, GridsEh, DBAxisGridsEh, OkCancel_frame, PrjConst, DM, A4onTypeUnit,
   CnClasses;
@@ -38,22 +38,22 @@ type
     frmOkCancel: TOkCancelFrame;
     dsWorks: TMemTableEh;
     srcWorks: TDataSource;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHouse: TpFIBDataSet;
+    dsHouse: TFIBDataSet;
     srcHouse: TDataSource;
     srcRequestType: TDataSource;
-    dsRequestType: TpFIBDataSet;
+    dsRequestType: TFIBDataSet;
     actlst: TActionList;
     actFindCustomer: TAction;
     actReqForAdres: TAction;
     actSave: TAction;
-    dsErrors: TpFIBDataSet;
+    dsErrors: TFIBDataSet;
     srcErrors: TDataSource;
-    dsDefaultWorks: TpFIBDataSet;
+    dsDefaultWorks: TFIBDataSet;
     actAddWork: TAction;
     actDelWork: TAction;
-    trQuery: TpFIBTransaction;
+    trQuery: TFIBTransaction;
     actDateSelect: TAction;
     pnl1: TPanel;
     pnlRType: TPanel;
@@ -64,7 +64,7 @@ type
     btnDelWork: TButton;
     pnlInfo: TPanel;
     srcSame: TDataSource;
-    dsSame: TpFIBDataSet;
+    dsSame: TFIBDataSet;
     pnlTime: TPanel;
     dbgSame: TDBGridEh;
     rgShowAs: TRadioGroup;
@@ -98,7 +98,7 @@ type
     lbl5: TLabel;
     edPhone: TDBEditEh;
     cbContact: TDBComboBoxEh;
-    dsAllWorks: TpFIBDataSet;
+    dsAllWorks: TFIBDataSet;
     procedure FormCreate(Sender: TObject);
     procedure edPhoneExit(Sender: TObject);
     procedure EdFloorExit(Sender: TObject);
@@ -213,7 +213,7 @@ implementation
 
 uses
   System.StrUtils, System.DateUtils, System.MaskUtils, JsonDataObjects,
-  SelectDateForma, pFIBQuery, ReqAddWorkForma, MAIN, FIBQuery, pFIBProps,
+  SelectDateForma, ReqAddWorkForma, MAIN, FIBQuery, FIBProps,
   AtrStrUtils, AtrCommon, HouseForma, StreetEditForma, CF,
   RequestForma, ReqTypeForma, ReqTemplateForma, ContactForma, AtrEhLibAddons;
 
@@ -356,7 +356,7 @@ begin
   if (rc_id = -1) or (RQ_ID = -1) then
     exit;
 
-  with TpFIBQuery.Create(Application) do
+  with TFIBQuery.Create(Application) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -479,7 +479,7 @@ var
   i: Integer;
 begin
   i := Value;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := trQuery;
@@ -783,7 +783,7 @@ var
   CE, FA, CC, CG: Boolean;
   i: Integer;
   Stream: TStream;
-  innerQuery: TpFIBQuery;
+  innerQuery: TFIBQuery;
   vOpen: Boolean;
   ExistsError: Boolean;
 begin
@@ -847,7 +847,7 @@ begin
   if ExistsError then
     exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -969,10 +969,10 @@ begin
 
       if (p = 1) then
       begin
-        innerQuery := TpFIBQuery.Create(Nil);
+        innerQuery := TFIBQuery.Create(Nil);
         try
           innerQuery.DataBase := dmMain.dbTV;
-          innerQuery.Transaction := dmMain.trReadQ;
+          innerQuery.Transaction := dmMain.GetTransactionForRead;
           innerQuery.SQL.Text := 'select coalesce(rt.rt_printform,'''') as printform ' +
             'from request_types rt inner join request r on (rt.rt_id = r.rq_type) where r.rq_id = :RQ_ID';
           innerQuery.ParamByName('RQ_ID').AsInteger := fRQ_ID;
@@ -982,6 +982,7 @@ begin
           innerQuery.Close;
           innerQuery.Transaction.Commit;
         finally
+          if assigned(innerQuery.Transaction) then innerQuery.Transaction.Free;
           innerQuery.Free;
         end;
 
@@ -1089,10 +1090,10 @@ begin
 
   if ((FLastFlat <> edFLAT_NO.Text) or (EdPorch.Text = '') or (EdFloor.Text = '')) and VarIsNumeric(LupHOUSE.Value) then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         SQL.Text := 'select PORCH_N, FLOOR_N from HOUSEFLATS where HOUSE_ID = :HOUSE_ID and FLAT_NO = :FLAT_NO';
         ParamByName('flat_no').AsString := edFLAT_NO.Text;
         ParamByName('house_id').AsInteger := LupHOUSE.Value;
@@ -1105,6 +1106,7 @@ begin
         Close;
         Transaction.Commit;
       finally
+        if assigned(Transaction) then Transaction.Free;
         Free;
       end;
   end;
@@ -1136,7 +1138,7 @@ begin
 
   if NeedSave and (FCustomerInfo.HOUSE_ID > 0) then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
@@ -1739,7 +1741,7 @@ begin
   if varIsNull(LupHOUSE.Value) then
     exit;
   isSet := False;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := trQuery;
@@ -1830,7 +1832,7 @@ begin
   Contact.CustID := FCustomerInfo.Customer_id;
   if EditContact(Contact) then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;

@@ -75,7 +75,7 @@ inherited PaymentTypeForm: TPaymentTypeForm
       OnExecute = actEditExecute
     end
   end
-  object dsPaymentType: TpFIBDataSet
+  object dsPaymentType: TFIBDataSet
     UpdateSQL.Strings = (
       
         'EXECUTE PROCEDURE PAYMENTTYPE_IUD(:O_ID, :O_NAME, :O_DESCRIPTION' +

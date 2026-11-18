@@ -1423,7 +1423,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 515
     Top = 156
   end
-  object dsOrg: TpFIBDataSet
+  object dsOrg: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -1484,7 +1484,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 594
     Top = 411
   end
-  object dsVATG: TpFIBDataSet
+  object dsVATG: TFIBDataSet
     SelectSQL.Strings = (
       'select o.o_name, o.O_id'
       'from objects o'
@@ -1507,7 +1507,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 694
     Top = 324
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -1520,7 +1520,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 654
     Top = 364
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    o.o_name,'
@@ -1546,7 +1546,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 725
     Top = 241
   end
-  object dsHouses: TpFIBDataSet
+  object dsHouses: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    H.HOUSE_ID'
@@ -1575,7 +1575,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 842
     Top = 366
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1601,7 +1601,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 776
     Top = 237
   end
-  object dsExecutor: TpFIBDataSet
+  object dsExecutor: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       
@@ -2193,7 +2193,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 352
     Top = 176
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -2205,7 +2205,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 680
     Top = 58
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -2217,7 +2217,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 636
     Top = 58
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -2229,7 +2229,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 636
     Top = 140
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -2270,7 +2270,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 744
     Top = 470
   end
-  object dsBANKS: TpFIBDataSet
+  object dsBANKS: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -2287,7 +2287,7 @@ object apgCustomerNew: TapgCustomerNew
     Left = 753
     Top = 517
   end
-  object dsDocType: TpFIBDataSet
+  object dsDocType: TFIBDataSet
     SelectSQL.Strings = (
       'select o.o_name, o.O_id, o.O_CHECK'
       'from objects o'

@@ -256,17 +256,17 @@ object EPGImportForm: TEPGImportForm
     Left = 127
     Top = 194
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 218
     Top = 144
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 214
     Top = 255
   end
-  object dsSources: TpFIBDataSet
+  object dsSources: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '  s.id, '
@@ -293,7 +293,7 @@ object EPGImportForm: TEPGImportForm
     Left = 432
     Top = 146
   end
-  object dsSrcChennals: TpFIBDataSet
+  object dsSrcChennals: TFIBDataSet
     SelectSQL.Strings = (
       'select c.ch_name, c.ch_notice, m.epg_code, c.ch_id'
       'from epg_mapping m '
@@ -312,7 +312,7 @@ object EPGImportForm: TEPGImportForm
     Left = 125
     Top = 317
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trWrite
     Database = dmMain.dbTV
     Left = 214

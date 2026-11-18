@@ -7,15 +7,15 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, DBGridEh,
-  CnErrorProvider;
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, DBLookupEh, PrjConst, DBGridEh,
+  CnErrorProvider, CnClasses;
 
 type
   TfmCardPayGenerate = class(TForm)
     lbl1: TLabel;
     lupSerials: TDBLookupComboboxEh;
     srcCardSerial: TDataSource;
-    dsCardSerial: TpFIBDataSet;
+    dsCardSerial: TFIBDataSet;
     lbl2: TLabel;
     lbl3: TLabel;
     lbl4: TLabel;
@@ -39,14 +39,13 @@ function GenerateCardPay(): Boolean;
 implementation
 
 uses
-  System.DateUtils,
-  DM, CardSerialForma, pFIBQuery;
+  System.DateUtils, DM, CardSerialForma, FIBQuery;
 
 {$R *.dfm}
 
 function GenerateCardPay(): Boolean;
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   result := False;
   with TfmCardPayGenerate.Create(Application) do
@@ -60,7 +59,7 @@ begin
             = mrYes) then
           begin
             screen.cursor := crSQLWait;
-            fq := TpFIBQuery.Create(dmMain);
+            fq := TFIBQuery.Create(dmMain);
             try
               fq.Database := dmMain.dbTV;
               fq.Transaction := dmMain.trWriteQ;

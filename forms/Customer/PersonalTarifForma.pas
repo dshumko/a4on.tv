@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  DBCtrlsEh, FIBQuery, pFIBQuery, PrjConst, CnErrorProvider;
+  DBCtrlsEh, FIBQuery, PrjConst, CnErrorProvider, CnClasses, FIBDatabase;
 
 type
   TPersonalTarifForm = class(TForm)
@@ -14,14 +14,15 @@ type
     Label1: TLabel;
     deDate_from: TDBDateTimeEditEh;
     Label2: TLabel;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
     lbl1: TLabel;
     deDate_to: TDBDateTimeEditEh;
     dbmNotice: TDBMemoEh;
     CnErrors: TCnErrorProvider;
-    qSelect: TpFIBQuery;
+    qSelect: TFIBQuery;
+    trReadQ: TFIBTransaction;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure btnOkClick(Sender: TObject);
     procedure FormCreate(Sender: TObject);

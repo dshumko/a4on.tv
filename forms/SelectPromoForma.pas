@@ -7,13 +7,13 @@ uses
   System.SysUtils, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh;
+  DBCtrlsEh, FIBDataSet, DBLookupEh, DBGridEh;
 
 type
   TfmSelectPromo = class(TForm)
     Panel1: TPanel;
     Panel2: TPanel;
-    dsPromo: TpFIBDataSet;
+    dsPromo: TFIBDataSet;
     srcPromo: TDataSource;
     cbPromo: TDBLookupComboboxEh;
     bbOk: TBitBtn;

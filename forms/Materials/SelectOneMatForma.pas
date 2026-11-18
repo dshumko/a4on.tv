@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, PropFilerEh, Data.DB, FIBDataSet, pFIBDataSet,
+  Vcl.ExtCtrls, PropFilerEh, Data.DB, FIBDataSet,
   PropStorageEh, DBGridEh, DBCtrlsEh, Vcl.Mask, DBLookupEh,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL,
   GridsEh, DBAxisGridsEh, CnErrorProvider, A4onTypeUnit, CnClasses;
@@ -16,7 +16,7 @@ type
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
     PropStorage: TPropStorageEh;
-    dsMaterial: TpFIBDataSet;
+    dsMaterial: TFIBDataSet;
     srcMaterial: TDataSource;
     CnErrors: TCnErrorProvider;
     lblDim: TLabel;

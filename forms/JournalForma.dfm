@@ -11,14 +11,12 @@ object JournalForm: TJournalForm
   Font.Name = 'Tahoma'
   Font.Style = []
   FormStyle = fsMDIChild
-  OldCreateOrder = False
   ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgrdJournal: TDBGridEh
     Left = 0
@@ -130,7 +128,7 @@ object JournalForm: TJournalForm
     Left = 104
     Top = 152
   end
-  object dsJournal: TpFIBDataSet
+  object dsJournal: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    Log_Id'
@@ -150,7 +148,7 @@ object JournalForm: TJournalForm
     Left = 199
     Top = 146
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (

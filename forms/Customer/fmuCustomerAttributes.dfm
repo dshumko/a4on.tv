@@ -100,7 +100,7 @@ object apgCustomerAttributes: TapgCustomerAttributes
       Flat = True
     end
   end
-  object dsCustAttributes: TpFIBDataSet
+  object dsCustAttributes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_ATTRIBUTES'
       'SET '
@@ -176,7 +176,7 @@ object apgCustomerAttributes: TapgCustomerAttributes
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -188,7 +188,7 @@ object apgCustomerAttributes: TapgCustomerAttributes
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

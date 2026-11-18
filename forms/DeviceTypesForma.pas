@@ -8,12 +8,12 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter, PrnDbgeh;
 
 type
   TDeviceTypesForm = class(TGridForm)
-    dsTypes: TpFIBDataSet;
+    dsTypes: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
@@ -22,7 +22,7 @@ type
     edtO_NAME: TDBEditEh;
     pnlBottom: TPanel;
     dbgLayout: TDBGridEh;
-    dsDevices: TpFIBDataSet;
+    dsDevices: TFIBDataSet;
     srcDevices: TDataSource;
     spl1: TSplitter;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

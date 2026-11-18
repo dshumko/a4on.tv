@@ -7,13 +7,13 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, FIBQuery;
 
 type
   TapgNodeFiles = class(TA4onPage)
-    dsFiles: TpFIBDataSet;
+    dsFiles: TFIBDataSet;
     srcFiles: TDataSource;
     dbgNodeFiles: TDBGridEh;
     tbAttributes: TToolBar;
@@ -24,12 +24,13 @@ type
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    qRead: TpFIBQuery;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    qRead: TFIBQuery;
     btnView: TToolButton;
     btn1: TToolButton;
     actView: TAction;
+    trReadQ: TFIBTransaction;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);

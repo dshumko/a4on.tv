@@ -162,7 +162,7 @@ object apgNodeLayout: TapgNodeLayout
       Flat = True
     end
   end
-  object dsLayout: TpFIBDataSet
+  object dsLayout: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    NODE_LAYOUT'
@@ -225,7 +225,7 @@ object apgNodeLayout: TapgNodeLayout
       OnExecute = actRepairExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -237,7 +237,7 @@ object apgNodeLayout: TapgNodeLayout
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

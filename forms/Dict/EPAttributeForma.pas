@@ -7,13 +7,13 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst;
+  OkCancel_frame, FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst;
 
 type
   TEPAttributForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
     srcAttributes: TDataSource;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     dbluAttribute: TDBLookupComboboxEh;
     memNotice: TDBMemoEh;
     Label1: TLabel;
@@ -21,7 +21,7 @@ type
     Label2: TLabel;
     edtNA_VALUE: TDBEditEh;
     CnErrors: TCnErrorProvider;
-    dsNodeAttribute: TpFIBDataSet;
+    dsNodeAttribute: TFIBDataSet;
     srcNodeAttribute: TDataSource;
     cbbList: TDBComboBoxEh;
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
@@ -146,7 +146,7 @@ var
   errors: Boolean;
   s: string;
   reg: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   errors := false;
   if (dbluAttribute.Text = '') then begin
@@ -168,10 +168,10 @@ begin
   end;
 
   if (dsAttributes['O_UNIQ'] = 1) then begin
-    fq := TpFIBQuery.Create(Self);
+    fq := TFIBQuery.Create(Self);
     try
       fq.Database := dmMain.dbTV;
-      fq.Transaction := dmMain.trReadQ;
+      fq.Transaction := dmMain.GetTransactionForRead;
       with fq.sql do begin
         Clear;
         add('select first 1 c.Name as who');
@@ -189,9 +189,10 @@ begin
       s := '';
       if not fq.FieldByName('who').IsNull then
         s := fq.FieldByName('who').AsString;
-      fq.Transaction.Commit;
       fq.Close;
+      fq.Transaction.Commit;
     finally
+      if assigned(fq.Transaction) then fq.Transaction.Free;
       fq.free;
     end;
     if s <> '' then begin

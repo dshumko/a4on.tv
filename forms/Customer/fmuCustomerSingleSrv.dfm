@@ -256,7 +256,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object dsSingleService: TpFIBDataSet
+  object dsSingleService: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -550,7 +550,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
       Action = actEditNotice
     end
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -562,7 +562,7 @@ object apgCustomerSingleSrv: TapgCustomerSingleSrv
     Left = 552
     Top = 74
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

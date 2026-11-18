@@ -7,15 +7,15 @@ uses
   System.Classes, System.SysUtils, System.Variants,
   Data.DB,
   Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.Mask, Vcl.Buttons, Vcl.StdCtrls, Vcl.Forms,
-  CnErrorProvider, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, OkCancel_frame, DBCtrlsEh,
+  CnErrorProvider, FIBDataSet, FIBDatabase, OkCancel_frame, DBCtrlsEh,
   CnClasses;
 
 type
   TBillEditForm = class(TForm)
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     srcBill: TDataSource;
-    dsBill: TpFIBDataSet;
+    dsBill: TFIBDataSet;
     lbl1: TLabel;
     edtInetIP: TDBEditEh;
     Label3: TLabel;
@@ -55,7 +55,7 @@ function EditBillInfo(const aBILL_ID: Int64; const CUSTOMER_ID: Integer; const A
 implementation
 
 uses
-  System.NetEncoding, DM, AtrStrUtils, AtrCommon, RxStrUtils, pFIBQuery, PrjConst;
+  System.NetEncoding, DM, AtrStrUtils, AtrCommon, RxStrUtils, FIBQuery, PrjConst;
 
 {$R *.dfm}
 
@@ -185,11 +185,11 @@ begin
   ifind := False;
   QRY := 'select Ip from Get_Free_Inet_Ip_Customer(:Customer_Id)';
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := QRY;
       ParamByName('CUSTOMER_ID').AsInteger := CUSTOMER_ID;
       Transaction.StartTransaction;
@@ -208,8 +208,10 @@ begin
         end;
         Next;
       end;
+      Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -239,18 +241,20 @@ var
 begin
   QRY := 'select Secret from customer where customer_id = :Customer_Id';
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := QRY;
       ParamByName('CUSTOMER_ID').AsInteger := CUSTOMER_ID;
       Transaction.StartTransaction;
       ExecQuery;
       if not FieldByName('SECRET').IsNull then
         edtSecret.Text := FieldByName('SECRET').AsString;
+      Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
 

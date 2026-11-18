@@ -441,7 +441,7 @@ object apgNodeLink: TapgNodeLink
         F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FFF0F0F0FF}
     end
   end
-  object dsLink: TpFIBDataSet
+  object dsLink: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    WIRE'
@@ -603,7 +603,7 @@ object apgNodeLink: TapgNodeLink
       OnExecute = actWireLinkExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -612,10 +612,10 @@ object apgNodeLink: TapgNodeLink
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 339
+    Left = 363
     Top = 170
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -627,15 +627,15 @@ object apgNodeLink: TapgNodeLink
     Left = 419
     Top = 154
   end
-  object qRead: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qRead: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Content from node_Files where NF_Id = :NF_Id')
     Left = 296
     Top = 120
   end
-  object dsEQ: TpFIBDataSet
+  object dsEQ: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    *'
@@ -687,5 +687,17 @@ object apgNodeLink: TapgNodeLink
       Action = actWireLink
       Caption = #1055#1086#1076#1082#1083#1102#1095#1080#1090#1100' '#1083#1080#1085#1080#1102
     end
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 584
+    Top = 167
   end
 end

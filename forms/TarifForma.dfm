@@ -148,7 +148,7 @@ object TarifForm: TTarifForm
     Visible = True
     OnChange = deTarifChange
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -159,7 +159,7 @@ object TarifForm: TTarifForm
     Left = 29
     Top = 91
   end
-  object qryChannel: TpFIBQuery
+  object qryChannel: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

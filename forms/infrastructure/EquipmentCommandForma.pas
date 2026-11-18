@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Menus, Vcl.ExtCtrls,
-  SynEditHighlighter, OkCancel_frame, DBCtrlsEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBLookupEh,
+  SynEditHighlighter, OkCancel_frame, DBCtrlsEh, FIBDatabase, FIBDataSet, DBLookupEh,
   PrjConst,
   DBGridEh;
 
@@ -18,9 +18,9 @@ type
     lbl2: TLabel;
     dbm1: TDBMemoEh;
     srcGroup: TDataSource;
-    dsGroup: TpFIBDataSet;
-    dsGC: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
+    dsGroup: TFIBDataSet;
+    dsGC: TFIBDataSet;
+    trWrite: TFIBTransaction;
     pmMemo: TPopupMenu;
     pnlMain: TPanel;
     lbl4: TLabel;

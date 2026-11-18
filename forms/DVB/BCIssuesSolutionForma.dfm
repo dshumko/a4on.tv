@@ -151,7 +151,7 @@ inherited BCIssuesSolutionForm: TBCIssuesSolutionForm
       OnExecute = actEditExecute
     end
   end
-  object dsData: TpFIBDataSet
+  object dsData: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 54, :O_ID, :O_Name, :O_Descript' +

@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.ActnList,
-  DBCtrlsEh, MemTableEh, DBLookupEh, FIBDataSet, pFIBDataSet, pFIBQuery, PrjConst, frxDesgnCtrls,
+  DBCtrlsEh, MemTableEh, DBLookupEh, FIBDataSet,  PrjConst, frxDesgnCtrls,
   DBGridEh;
 
 type
@@ -38,7 +38,7 @@ type
     chkinversion: TDBCheckBoxEh;
     btnAND: TButton;
     btnOR: TButton;
-    dsOTPTypes: TpFIBDataSet;
+    dsOTPTypes: TFIBDataSet;
     srcOTPTypes: TDataSource;
     lbl1: TLabel;
     cbDT: TDBComboBoxEh;

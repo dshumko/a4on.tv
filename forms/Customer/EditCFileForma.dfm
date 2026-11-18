@@ -1291,7 +1291,7 @@ object EditCFileForm: TEditCFileForm
     Left = 108
     Top = 133
   end
-  object dsFileTypes: TpFIBDataSet
+  object dsFileTypes: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_CHARFIELD, O_DI' +
@@ -1310,7 +1310,7 @@ object EditCFileForm: TEditCFileForm
     Left = 59
     Top = 344
   end
-  object dsCustFile: TpFIBDataSet
+  object dsCustFile: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_FILES'
       'SET '
@@ -1343,7 +1343,7 @@ object EditCFileForm: TEditCFileForm
       '    :NOTICE,'
       '    :CUSTOMER_ID,'
       '    :Filename,'
-      '    :addons,    '
+      '    :addons,   '
       '    :Content'
       ')')
     SelectSQL.Strings = (
@@ -1385,7 +1385,7 @@ object EditCFileForm: TEditCFileForm
     Left = 440
     Top = 64
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1404,7 +1404,7 @@ object EditCFileForm: TEditCFileForm
     Left = 178
     Top = 15
   end
-  object dsService: TpFIBDataSet
+  object dsService: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.Service_Id'
@@ -1448,7 +1448,7 @@ object EditCFileForm: TEditCFileForm
     Left = 110
     Top = 19
   end
-  object dsOnOffService: TpFIBDataSet
+  object dsOnOffService: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    ID'
@@ -1499,7 +1499,7 @@ object EditCFileForm: TEditCFileForm
     Left = 112
     Top = 81
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1519,7 +1519,7 @@ object EditCFileForm: TEditCFileForm
     Left = 36
     Top = 190
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.street_id'
@@ -1541,7 +1541,7 @@ object EditCFileForm: TEditCFileForm
     Left = 306
     Top = 18
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    H.HOUSE_ID'
@@ -1563,7 +1563,7 @@ object EditCFileForm: TEditCFileForm
     Left = 306
     Top = 61
   end
-  object dsFLAT: TpFIBDataSet
+  object dsFLAT: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    iif(FLAT_NO <> '#39#39', FLAT_NO, '#39'-'#39') FLAT_NO'
@@ -1590,7 +1590,7 @@ object EditCFileForm: TEditCFileForm
       OnClick = miFileClearClick
     end
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1600,7 +1600,7 @@ object EditCFileForm: TEditCFileForm
     Left = 401
     Top = 128
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1612,7 +1612,7 @@ object EditCFileForm: TEditCFileForm
     Left = 400
     Top = 184
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1624,7 +1624,7 @@ object EditCFileForm: TEditCFileForm
     Left = 472
     Top = 134
   end
-  object dsPayment: TpFIBDataSet
+  object dsPayment: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    @@M_TOP%@'
@@ -1656,7 +1656,7 @@ object EditCFileForm: TEditCFileForm
     Left = 354
     Top = 476
   end
-  object dsServiceFrom: TpFIBDataSet
+  object dsServiceFrom: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.Service_Id'
@@ -1700,7 +1700,7 @@ object EditCFileForm: TEditCFileForm
     Left = 22
     Top = 355
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    a.Name'

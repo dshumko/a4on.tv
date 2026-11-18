@@ -480,13 +480,13 @@ object OnOffServiceForm: TOnOffServiceForm
     Left = 222
     Top = 213
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     Left = 84
     Top = 216
   end
-  object dsVATG: TpFIBDataSet
+  object dsVATG: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -542,7 +542,7 @@ object OnOffServiceForm: TOnOffServiceForm
     Left = 69
     Top = 276
   end
-  object dsCustomer: TpFIBDataSet
+  object dsCustomer: TFIBDataSet
     SelectSQL.Strings = (
       'select c.juridical, c.vatg_id '
       'from Customer c where c.customer_id = :Customer_id')
@@ -557,7 +557,7 @@ object OnOffServiceForm: TOnOffServiceForm
     Left = 362
     Top = 227
   end
-  object dsSwitchTo: TpFIBDataSet
+  object dsSwitchTo: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       
@@ -578,7 +578,7 @@ object OnOffServiceForm: TOnOffServiceForm
     Left = 363
     Top = 237
   end
-  object dsService: TpFIBDataSet
+  object dsService: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    S.Service_Id'
@@ -611,7 +611,7 @@ object OnOffServiceForm: TOnOffServiceForm
     Left = 246
     Top = 219
   end
-  object dsOnOffService: TpFIBDataSet
+  object dsOnOffService: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    ID, DESCRIPTION, SERVICE_TYPE, s.Name || coalesce('#39' / '#39' ||'
@@ -644,7 +644,7 @@ object OnOffServiceForm: TOnOffServiceForm
     Left = 16
     Top = 296
   end
-  object dsWorker: TpFIBDataSet
+  object dsWorker: TFIBDataSet
     SelectSQL.Strings = (
       'Select'
       

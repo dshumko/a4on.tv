@@ -113,6 +113,9 @@ object RequestMaterialReturn: TRequestMaterialReturn
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = ''
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1052#1072#1090#1077#1088#1080#1072#1083
     EditButtons = <>
     TabOrder = 0
@@ -140,6 +143,9 @@ object RequestMaterialReturn: TRequestMaterialReturn
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = ''
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1042#1077#1088#1085#1091#1090#1100' '#1085#1072' '#1089#1082#1083#1072#1076
     EditButtons = <>
     KeyField = 'O_ID'
@@ -161,7 +167,7 @@ object RequestMaterialReturn: TRequestMaterialReturn
     TabOrder = 2
     Visible = True
   end
-  object dsAppliance: TpFIBDataSet
+  object dsAppliance: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    APPLIANCE'
@@ -208,7 +214,7 @@ object RequestMaterialReturn: TRequestMaterialReturn
     Left = 70
     Top = 160
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -220,7 +226,7 @@ object RequestMaterialReturn: TRequestMaterialReturn
     Left = 116
     Top = 178
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -232,7 +238,7 @@ object RequestMaterialReturn: TRequestMaterialReturn
     Left = 160
     Top = 178
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'

@@ -8,8 +8,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls,
   Vcl.Mask, Vcl.Buttons,
-  DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider,
-  FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, CnClasses;
+  DBLookupEh, DBCtrlsEh, FIBDataSet, DBGridEh, CnErrorProvider,
+  FIBDatabase, FIBQuery, CnClasses;
 
 type
   TMaterialForm = class(TForm)
@@ -20,7 +20,7 @@ type
     dblMatGroup: TDBLookupComboboxEh;
     DBMemo1: TDBMemoEh;
     DBEdit1: TDBEditEh;
-    dsMGropups: TpFIBDataSet;
+    dsMGropups: TFIBDataSet;
     srcMGropups: TDataSource;
     DBEdit2: TDBEditEh;
     lbl1: TLabel;
@@ -33,35 +33,35 @@ type
     lcbShippers: TDBLookupComboboxEh;
     lbl3: TLabel;
     edtCOST1: TDBNumberEditEh;
-    dsShippers: TpFIBDataSet;
+    dsShippers: TFIBDataSet;
     srcShippers: TDataSource;
     CnErrors: TCnErrorProvider;
-    Query: TpFIBQuery;
-    trReadQ: TpFIBTransaction;
+    Query: TFIBQuery;
+    trReadQ: TFIBTransaction;
     chkItsEquipment: TDBCheckBoxEh;
     chkIsDigit: TDBCheckBoxEh;
     chkIsNet: TDBCheckBoxEh;
     lbl4: TLabel;
     lcbGR_ID: TDBLookupComboboxEh;
-    dsDevType: TpFIBDataSet;
+    dsDevType: TFIBDataSet;
     srcDevType: TDataSource;
     edtFILE: TDBEditEh;
     btnScaner: TButton;
     btnOpenFile: TButton;
     lbl5: TLabel;
     dlgOpen: TOpenDialog;
-    qReqFile: TpFIBQuery;
-    qSaveFile: TpFIBQuery;
-    dsDoc: TpFIBDataSet;
+    qReqFile: TFIBQuery;
+    qSaveFile: TFIBQuery;
+    dsDoc: TFIBDataSet;
     lbl41: TLabel;
     lbl42: TLabel;
-    dsServices: TpFIBDataSet;
+    dsServices: TFIBDataSet;
     srcServices: TDataSource;
     lcbRENT: TDBLookupComboboxEh;
     lcbLAON: TDBLookupComboboxEh;
     lblSold: TLabel;
     lcbSOLD: TDBLookupComboboxEh;
-    dsSoldSRV: TpFIBDataSet;
+    dsSoldSRV: TFIBDataSet;
     srcSoldSRV: TDataSource;
     lblPCE: TLabel;
     ednPCE: TDBNumberEditEh;
@@ -297,7 +297,7 @@ begin
   qReqFile.ExecQuery;
   qReqFile.FieldByname('Bl_Body').SaveToFile(FileName);
   qReqFile.Close;
-  qReqFile.Transaction.Rollback;
+  qReqFile.Transaction.Commit;
   ShellExecute(Handle, 'open', PWideChar(FileName), nil, nil, SW_SHOWNORMAL);
 end;
 

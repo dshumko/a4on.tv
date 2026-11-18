@@ -9,7 +9,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ActnList, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.Menus,
-  AtrPages, FIBDatabase, pFIBDataSet, FIBDataSet, FIBQuery, pFIBQuery, pFIBDatabase, ToolCtrlsEh, GridsEh,
+  AtrPages, FIBDatabase, FIBDataSet, FIBQuery, ToolCtrlsEh, GridsEh,
   DBGridEhToolCtrls,
   DBAxisGridsEh, DBLookupEh, DBCtrlsEh, DBGridEh, MemTableDataEh, MemTableEh, CnErrorProvider, EhLibVCL,
   DBGridEhGrouping,
@@ -28,19 +28,19 @@ type
     ds: TDataSource;
     pnlNotice: TPanel;
     GroupBox2: TGroupBox;
-    dsOrg: TpFIBDataSet;
+    dsOrg: TFIBDataSet;
     srcOrg: TDataSource;
-    dsVATG: TpFIBDataSet;
+    dsVATG: TFIBDataSet;
     srcVATG: TDataSource;
     srcStreet: TDataSource;
-    dsStreets: TpFIBDataSet;
-    dsAttributes: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
+    dsAttributes: TFIBDataSet;
     srcAttributes: TDataSource;
-    dsHouses: TpFIBDataSet;
+    dsHouses: TFIBDataSet;
     srcHouse: TDataSource;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     srcExecutor: TDataSource;
-    dsExecutor: TpFIBDataSet;
+    dsExecutor: TFIBDataSet;
     DataSource1: TDataSource;
     Panel1: TPanel;
     chkJURIDICAL: TDBCheckBoxEh;
@@ -113,10 +113,10 @@ type
     btn1: TSpeedButton;
     chkHAND: TDBCheckBoxEh;
     mmoNOTICE: TDBMemoEh;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    trReadQ: TpFIBTransaction;
-    trWriteQ: TpFIBTransaction;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
+    trReadQ: TFIBTransaction;
+    trWriteQ: TFIBTransaction;
     Label11: TLabel;
     edtExtId: TDBEditEh;
     lbl8: TLabel;
@@ -136,13 +136,13 @@ type
     lcbBANK: TDBLookupComboboxEh;
     Label15: TLabel;
     srcBanks: TDataSource;
-    dsBANKS: TpFIBDataSet;
+    dsBANKS: TFIBDataSet;
     pnlWarningInfo: TPanel;
     btnCloseWarningInfo: TButton;
     mmoWarning: TDBMemoEh;
     lcbDT: TDBLookupComboboxEh;
     lblDT: TLabel;
-    dsDocType: TpFIBDataSet;
+    dsDocType: TFIBDataSet;
     srcDocType: TDataSource;
     spl1: TSplitter;
     splMemo: TSplitter;
@@ -901,7 +901,7 @@ var
   cust_id: Integer;
   s_insert: string;
   s_values: string;
-  qry: TpFIBQuery;
+  qry: TFIBQuery;
   fldList: TStrings;
 
   function GenInsertSQL(const ds: TDataSet): Boolean;
@@ -942,7 +942,7 @@ var
   function InsertQuery(const ds: TDataSet; const inTbl: string; const stmnt: string = 'insert into';
     const stend: string = ''): Boolean;
   begin
-    qry := TpFIBQuery.Create(Nil);
+    qry := TFIBQuery.Create(Nil);
     with qry do
       try
         DataBase := dmMain.dbTV;
@@ -960,7 +960,7 @@ var
 
   function InsertProc(const ds: TDataSet; const inProc: string): Boolean;
   begin
-    qry := TpFIBQuery.Create(Nil);
+    qry := TFIBQuery.Create(Nil);
     with qry do
       try
         DataBase := dmMain.dbTV;
@@ -1484,12 +1484,11 @@ var
   errors: Boolean;
   answer: string;
   pValid: Integer;
-  ePERSONAL_N, ePASSPORT_NUMBER: string;
   DocType: Integer;
   Client: TMvdApiClient;
   Req: TMvdRequest;
   Resp: TMvdResult;
-  qry: TpFIBQuery;
+  qry: TFIBQuery;
 
   function HasInvalidChar(const s: string): Boolean;
   var
@@ -1547,11 +1546,11 @@ begin
   else
     CnErrors.Dispose(edtPASSPORT_NUMBER);
 
-
   if (lcbDT.Text.IsEmpty) then
   begin
     errors := True;
     CnErrors.SetError(lcbDT, rsEmptyOrIncorrect, iaTopCenter, bsNeverBlink);
+    DocType := 0;
   end
   else begin
     CnErrors.Dispose(lcbDT);
@@ -1614,7 +1613,7 @@ begin
       dsCustomerMEM.Post;
   end;
 
-  qry := TpFIBQuery.Create(Nil);
+  qry := TFIBQuery.Create(Nil);
   try
     qry.DataBase := dmMain.dbTV;
     qry.Transaction := dmMain.trWriteQ;

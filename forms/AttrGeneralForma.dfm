@@ -12,7 +12,6 @@ object AttrGeneralForm: TAttrGeneralForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
@@ -20,7 +19,6 @@ object AttrGeneralForm: TAttrGeneralForm
   DesignSize = (
     470
     311)
-  PixelsPerInch = 96
   TextHeight = 13
   object lblNotice: TLabel
     Left = 8
@@ -52,6 +50,9 @@ object AttrGeneralForm: TAttrGeneralForm
     DynProps = <>
     DataField = 'AID'
     DataSource = srcAttr
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EditButtons = <>
     KeyField = 'O_ID'
     ListField = 'O_NAME'
@@ -155,7 +156,7 @@ object AttrGeneralForm: TAttrGeneralForm
     Left = 228
     Top = 84
   end
-  object dsAttributesList: TpFIBDataSet
+  object dsAttributesList: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -190,7 +191,7 @@ object AttrGeneralForm: TAttrGeneralForm
     Left = 178
     Top = 66
   end
-  object dsAttr: TpFIBDataSet
+  object dsAttr: TFIBDataSet
     UpdateSQL.Strings = (
       'update Attribute'
       'set Avalue = :Avalue,'
@@ -240,7 +241,7 @@ object AttrGeneralForm: TAttrGeneralForm
     Left = 123
     Top = 62
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -252,7 +253,7 @@ object AttrGeneralForm: TAttrGeneralForm
     Left = 300
     Top = 74
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

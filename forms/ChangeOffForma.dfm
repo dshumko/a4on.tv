@@ -169,7 +169,7 @@ object ChangeOffForm: TChangeOffForm
     Left = 16
     Top = 8
   end
-  object dsServiceOff: TpFIBDataSet
+  object dsServiceOff: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    s.SERVICE_ID, s.Srv_Type_Id, s.Name || coalesce('#39' / '#39' ||'

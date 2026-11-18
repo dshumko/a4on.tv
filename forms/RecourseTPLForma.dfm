@@ -623,7 +623,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
       OnExecute = actDelResExecute
     end
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '
@@ -704,7 +704,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     Top = 157
     dcForceOpen = True
   end
-  object dsTPL: TpFIBDataSet
+  object dsTPL: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE RECOURSE_TEMPLATES'
       'SET '
@@ -769,7 +769,7 @@ inherited RecoursesTPLForm: TRecoursesTPLForm
     Left = 117
     Top = 355
   end
-  object dsResult: TpFIBDataSet
+  object dsResult: TFIBDataSet
     DeleteSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '

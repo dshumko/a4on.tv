@@ -597,7 +597,7 @@ object WireFilterForm: TWireFilterForm
     Left = 405
     Top = 64
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -616,7 +616,7 @@ object WireFilterForm: TWireFilterForm
     Left = 465
     Top = 70
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT HOUSE_ID, STREET_ID, HOUSE_NO, Q_FLAT'
       'FROM HOUSE H'
@@ -635,7 +635,7 @@ object WireFilterForm: TWireFilterForm
     Left = 238
     Top = 72
   end
-  object dsSubArea: TpFIBDataSet
+  object dsSubArea: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.subarea_id, s.subarea_name, a.area_name'
       'FROM subarea s left outer join area a on (a.area_id = s.area_id)'
@@ -678,7 +678,7 @@ object WireFilterForm: TWireFilterForm
       OnExecute = actClearExecute
     end
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'
@@ -696,7 +696,7 @@ object WireFilterForm: TWireFilterForm
     Left = 318
     Top = 69
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -714,7 +714,7 @@ object WireFilterForm: TWireFilterForm
     Left = 344
     Top = 190
   end
-  object dsMat: TpFIBDataSet
+  object dsMat: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.M_ID'

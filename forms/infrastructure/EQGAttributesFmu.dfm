@@ -10,8 +10,6 @@ object apgEQGAttributes: TapgEQGAttributes
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgCustAttr: TDBGridEh
     Left = 26
@@ -102,7 +100,7 @@ object apgEQGAttributes: TapgEQGAttributes
       Flat = True
     end
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     DeleteSQL.Strings = (
       'update'
       '    ATTRIBUTE'
@@ -124,7 +122,7 @@ object apgEQGAttributes: TapgEQGAttributes
       ''
       '    ')
     SelectSQL.Strings = (
-      'SELECT A.O_NAME, CA.Object_Id O_ID,  CA.*'
+      'SELECT A.O_NAME, CA.Object_Id O_ID, CA.*'
       'FROM attribute CA'
       
         '   INNER JOIN OBJECTS A ON (A.O_ID = CA.Aid and a.O_Type = ca.Ty' +
@@ -164,7 +162,7 @@ object apgEQGAttributes: TapgEQGAttributes
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -176,7 +174,7 @@ object apgEQGAttributes: TapgEQGAttributes
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

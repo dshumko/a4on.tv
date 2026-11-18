@@ -99,13 +99,13 @@ object CardsPaySettingsForm: TCardsPaySettingsForm
       Visible = True
     end
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     Left = 72
     Top = 120
   end
-  object select: TpFIBDataSet
+  object select: TFIBDataSet
     SelectSQL.Strings = (
       'select VAR_NAME, VAR_VALUE'
       'from SETTINGS')

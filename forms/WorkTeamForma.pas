@@ -8,15 +8,15 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls, Vcl.Menus,
   Vcl.StdCtrls, Vcl.Buttons,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, FIBQuery, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter, PrnDbgeh;
 
 type
   TWorkTeamForm = class(TGridForm)
-    dsAreas: TpFIBDataSet;
+    dsAreas: TFIBDataSet;
     Splitter1: TSplitter;
     srcWORKGROUPS: TDataSource;
-    dsWORKGROUPS: TpFIBDataSet;
+    dsWORKGROUPS: TFIBDataSet;
     actSubNew: TAction;
     actSubDelete: TAction;
     actSubEdit: TAction;
@@ -33,11 +33,11 @@ type
     Panel1: TPanel;
     dbSubArea: TDBGridEh;
     dbgrdHouses: TDBGridEh;
-    dsHouses: TpFIBDataSet;
+    dsHouses: TFIBDataSet;
     srcHouses: TDataSource;
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     tsLimit: TTabSheet;
-    dsLimit: TpFIBDataSet;
+    dsLimit: TFIBDataSet;
     srcLimit: TDataSource;
     dbg1: TDBGridEh;
     tlb2: TToolBar;

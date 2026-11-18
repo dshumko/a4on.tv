@@ -10,10 +10,10 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.ToolWin,
   Vcl.DBCtrls, Vcl.Menus, Vcl.ActnList,
-  MemTableDataEh, GridsEh, DBGridEh, MemTableEh, DBCtrlsEh, RxToolEdit, FIBDataSet, pFIBDataSet, OkCancel_frame,
+  MemTableDataEh, GridsEh, DBGridEh, MemTableEh, DBCtrlsEh, RxToolEdit, FIBDataSet, OkCancel_frame,
   ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  FIBDatabase, pFIBDatabase;
+  FIBDatabase, Vcl.Buttons;
 
 type
   TExportSettingsForm = class(TForm)
@@ -48,7 +48,7 @@ type
     btnCancel: TToolButton;
     srcTypes: TDataSource;
     srcDBF: TDataSource;
-    dsTypes: TpFIBDataSet;
+    dsTypes: TFIBDataSet;
     dbmmoBody: TDBMemoEh;
     dbmmoHead: TDBMemoEh;
     dbmmofooter: TDBMemoEh;
@@ -69,8 +69,8 @@ type
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     procedure FormShow(Sender: TObject);
     procedure miClick(Sender: TObject);
     procedure srcTypesDataChange(Sender: TObject; Field: TField);

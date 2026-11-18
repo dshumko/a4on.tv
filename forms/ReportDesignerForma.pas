@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin,
-  MemTableDataEh, GridsEh, DBGridEh, MemTableEh, DataDriverEh, pFIBDataDriverEh, FIBDataSet, pFIBDataSet, DM,
+  MemTableDataEh, GridsEh, DBGridEh, MemTableEh, DataDriverEh, FIBDataDriverEh, FIBDataSet, DM,
 {$IFDEF MSWINDOWS}
   Vcl.FileCtrl,
 {$ENDIF}

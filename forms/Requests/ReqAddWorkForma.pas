@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, DBGridEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, OkCancel_frame, DBGridEh;
 
 type
   TReqAddWork = class(TForm)
     frmOk: TOkCancelFrame;
-    dsRTWorks: TpFIBDataSet;
+    dsRTWorks: TFIBDataSet;
     srcRTWorks: TDataSource;
     luWork: TDBLookupComboboxEh;
     edQuant: TDBNumberEditEh;

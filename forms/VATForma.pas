@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls,
   Vcl.ToolWin, Vcl.Buttons, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
+  GridForma, GridsEh, DBGridEh, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
   DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
@@ -19,8 +19,8 @@ type
     tlbTarif: TToolBar;
     btnTarifAdd: TToolButton;
     btnTarifDel: TToolButton;
-    dsVATs: TpFIBDataSet;
-    dsTarif: TpFIBDataSet;
+    dsVATs: TFIBDataSet;
+    dsTarif: TFIBDataSet;
     srcTarif: TDataSource;
     actTarifADD: TAction;
     actTarifDEL: TAction;

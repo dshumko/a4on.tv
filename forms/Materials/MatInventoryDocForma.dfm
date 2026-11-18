@@ -115,6 +115,9 @@ object MatInventoryDocForm: TMatInventoryDocForm
       DynProps = <>
       DataField = 'WH_ID'
       DataSource = srcDoc
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1048#1085#1074#1077#1085#1090#1072#1088#1080#1079#1072#1094#1080#1103' '#1089#1082#1083#1072#1076#1072
       EditButtons = <>
       KeyField = 'O_ID'
@@ -481,7 +484,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
       end
     end
   end
-  object dsDoc: TpFIBDataSet
+  object dsDoc: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIAL_DOCS'
       'SET '
@@ -543,7 +546,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
     Left = 24
     Top = 288
   end
-  object dsDocMat: TpFIBDataSet
+  object dsDocMat: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIALS_IN_DOC'
       'SET '
@@ -568,7 +571,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
       '    M_ID,'
       '    M_COST,'
       '    M_QUANT,'
-      '    B_QUANT,    '
+      '    B_QUANT,   '
       '    M_NOTICE,'
       '    DOC_ID'
       ')'
@@ -577,7 +580,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
       '    :M_ID,'
       '    :M_COST,'
       '    :M_QUANT,'
-      '    :B_QUANT,        '
+      '    :B_QUANT,       '
       '    :M_NOTICE,'
       '    :DOC_ID'
       ')')
@@ -655,14 +658,14 @@ object MatInventoryDocForm: TMatInventoryDocForm
     Left = 168
     Top = 288
   end
-  object dsFindMat: TpFIBDataSet
+  object dsFindMat: TFIBDataSet
     Transaction = dmMain.trRead
     Database = dmMain.dbTV
     UpdateTransaction = dmMain.trWrite
     Left = 288
     Top = 265
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.*'
@@ -688,7 +691,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
     Left = 376
     Top = 288
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -705,7 +708,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
     Left = 398
     Top = 70
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
@@ -736,7 +739,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
     Left = 264
     Top = 353
   end
-  object qCloseDoc: TpFIBQuery
+  object qCloseDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -744,7 +747,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
     Left = 209
     Top = 70
   end
-  object qOpenDoc: TpFIBQuery
+  object qOpenDoc: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -791,7 +794,7 @@ object MatInventoryDocForm: TMatInventoryDocForm
       OnExecute = actUNITSExecute
     end
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

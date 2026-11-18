@@ -11,14 +11,14 @@ uses
   Vcl.ExtCtrls, Vcl.ToolWin, Vcl.Controls, Vcl.Graphics,
   GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, MemTableDataEh, PropFilerEh,
   PropStorageEh,
-  DataDriverEh, pFIBDataDriverEh, MemTableEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL,
+  DataDriverEh, FIBDataDriverEh, MemTableEh, FIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL,
   GridsEh,
   DBAxisGridsEh, EhLibFIB, EhLibMTE, FIBQuery, PrjConst, A4onTypeUnit, AtrPages, amSplitter,
   PrnDbgeh, CnClasses;
 
 type
   TEquipmentForm = class(TGridForm)
-    dsEquipments: TpFIBDataSet;
+    dsEquipments: TFIBDataSet;
     actCoverAdd: TAction;
     actCoverEdit: TAction;
     actCoverDelete: TAction;
@@ -164,7 +164,7 @@ implementation
 uses
   System.StrUtils,
   DM, MAIN, AtrCommon, AtrStrUtils, fs_iinterpreter, EquipAttributesForma, EquipCoverage, atrCmdUtils, RequestForma,
-  EquipEditForma, TelnetForma, HtmlForma, pFIBQuery, CF, CustomerLanForma, EQPort, fmuEqpmntPorts, fmuEqpmntAttributes,
+  EquipEditForma, TelnetForma, HtmlForma, CF, CustomerLanForma, EQPort, fmuEqpmntPorts, fmuEqpmntAttributes,
   fmuEqpmntRequests, fmuEqpmntRegion, fmuEqpmntInfo, EquipFilter;
 
 {$R *.dfm}
@@ -417,7 +417,7 @@ var
 begin
   inherited;
   {
-    if not(srcDataSource.DataSet is TpFIBDataSet) then
+    if not(srcDataSource.DataSet is TFIBDataSet) then
     Exit;
 
     if FInTreeView then
@@ -453,7 +453,7 @@ var
 begin
   inherited;
 
-  if not(srcDataSource.DataSet is TpFIBDataSet) then
+  if not(srcDataSource.DataSet is TFIBDataSet) then
     Exit;
 
   filter := '';
@@ -517,7 +517,7 @@ var
  i : Integer;
 begin
   inherited;
-  i := Pos(': ',  GroupRowText);
+  i := Pos(': ', GroupRowText);
   if i>0 then
     GroupRowText := copy(GroupRowText, i+2, 255);
 end;
@@ -539,7 +539,7 @@ var
   s: string;
   i, J: Integer;
   Grid: TCustomDBGridEh;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
   fn: string;
   id: Integer;
@@ -560,7 +560,7 @@ begin
     if (not FInTreeView) and (not FinGroupView) then
     begin
       // Работаем с Firebird
-      FIBDS := TpFIBDataSet(Grid.DataSource.DataSet);
+      FIBDS := TFIBDataSet(Grid.DataSource.DataSet);
       beOpened := FIBDS.Active;
       if beOpened then
         FIBDS.Close;

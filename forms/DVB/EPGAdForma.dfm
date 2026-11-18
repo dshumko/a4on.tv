@@ -1,5 +1,4 @@
 object EPGAdForm: TEPGAdForm
-  ShowHint = True
   Left = 0
   Top = 0
   ActiveControl = dbgEPGAd
@@ -14,14 +13,13 @@ object EPGAdForm: TEPGAdForm
   Font.Style = []
   FormStyle = fsMDIChild
   KeyPreview = True
-  OldCreateOrder = False
+  ShowHint = True
   Visible = True
   WindowState = wsMaximized
   OnClose = FormClose
   OnCreate = FormCreate
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlEvents: TPanel
     Left = 0
@@ -34,7 +32,7 @@ object EPGAdForm: TEPGAdForm
     object Label1: TLabel
       Left = 0
       Top = 164
-      Width = 152
+      Width = 664
       Height = 13
       Align = alTop
       Caption = #1054#1073#1098#1103#1074#1083#1077#1085#1080#1103' '#1074' '#1090#1077#1083#1077#1087#1088#1086#1075#1088#1072#1084#1084#1077
@@ -46,11 +44,9 @@ object EPGAdForm: TEPGAdForm
       Height = 385
       Align = alClient
       AllowedOperations = []
-      AutoFitColWidths = False
       DataSource = srcEPGAd
       DynProps = <>
       Flat = True
-      IndicatorOptions = [gioShowRowIndicatorEh, gioShowRecNoEh]
       EmptyDataInfo.Text = #1053#1077#1090' '#1087#1088#1086#1075#1088#1072#1084#1084#1099' '#1087#1077#1088#1077#1076#1072#1095' '#1085#1072' '#1101#1090#1086#1090' '#1082#1072#1085#1072#1083
       OptionsEh = [dghFixed3D, dghHighlightFocus, dghClearSelection, dghAutoSortMarking, dghDialogFind, dghColumnResize, dghColumnMove, dghAutoFitRowHeight, dghExtendVertLines]
       STFilter.Local = True
@@ -61,6 +57,7 @@ object EPGAdForm: TEPGAdForm
       Columns = <
         item
           AutoFitColWidth = False
+          CellButtons = <>
           DynProps = <>
           EditButtons = <>
           FieldName = 'START_TIME'
@@ -71,6 +68,7 @@ object EPGAdForm: TEPGAdForm
         end
         item
           AutoFitColWidth = False
+          CellButtons = <>
           DynProps = <>
           EditButtons = <>
           FieldName = 'STOP_TIME'
@@ -80,6 +78,7 @@ object EPGAdForm: TEPGAdForm
           Width = 92
         end
         item
+          CellButtons = <>
           DynProps = <>
           EditButtons = <>
           FieldName = 'AD_TITLE'
@@ -89,6 +88,7 @@ object EPGAdForm: TEPGAdForm
           Width = 175
         end
         item
+          CellButtons = <>
           DynProps = <>
           EditButtons = <>
           FieldName = 'AD_DESCRIPTION'
@@ -99,6 +99,7 @@ object EPGAdForm: TEPGAdForm
         end
         item
           AutoFitColWidth = False
+          CellButtons = <>
           Checkboxes = True
           DynProps = <>
           EditButtons = <>
@@ -212,6 +213,7 @@ object EPGAdForm: TEPGAdForm
         DynProps = <>
         EditButton.Visible = False
         EditButtons = <>
+        ShowHint = True
         TabOrder = 3
         Visible = True
         EditFormat = 'HH:NN'
@@ -226,6 +228,7 @@ object EPGAdForm: TEPGAdForm
         DynProps = <>
         EditButtons = <>
         Kind = dtkDateEh
+        ShowHint = True
         TabOrder = 2
         Visible = True
       end
@@ -242,6 +245,7 @@ object EPGAdForm: TEPGAdForm
         EmptyDataInfo.Text = 
           #1058#1077#1082#1089#1090' '#1086#1073#1098#1103#1074#1083#1077#1085#1080#1103' '#1074'  '#1079#1072#1075#1086#1083#1086#1074#1086#1082#1077'. '#1047#1072#1084#1077#1085#1103#1077#1090' '#1079#1072#1075#1086#1083#1086#1074#1086#1082'. '#1057#1072#1084' '#1079#1072#1075#1086#1083#1086#1074#1082 +
           ' '#1073#1091#1076#1077#1090#1074' '#1076#1086#1087'. '#1080#1085#1092#1086#1088#1084#1072#1094#1080#1080
+        ShowHint = True
         TabOrder = 6
         Visible = True
       end
@@ -254,6 +258,7 @@ object EPGAdForm: TEPGAdForm
         DataSource = srcEPGAd
         DynProps = <>
         EditButtons = <>
+        ShowHint = True
         TabOrder = 0
         Visible = True
         OnChange = deSTART_DATEChange
@@ -271,6 +276,7 @@ object EPGAdForm: TEPGAdForm
         DynProps = <>
         EditButtons = <>
         EmptyDataInfo.Text = #1058#1077#1082#1089#1090' '#1086#1073#1098#1103#1074#1083#1077#1085#1080#1103' '#1074' '#1086#1087#1080#1089#1072#1085#1080#1080
+        ShowHint = True
         TabOrder = 7
         Visible = True
         WantReturns = True
@@ -327,6 +333,7 @@ object EPGAdForm: TEPGAdForm
         DynProps = <>
         EditButton.Visible = False
         EditButtons = <>
+        ShowHint = True
         TabOrder = 1
         Visible = True
         EditFormat = 'HH:NN'
@@ -356,7 +363,7 @@ object EPGAdForm: TEPGAdForm
     object lbl1: TLabel
       Left = 0
       Top = 0
-      Width = 213
+      Width = 282
       Height = 13
       Align = alTop
       Caption = #1059#1082#1072#1078#1080#1090#1077' '#1089#1087#1080#1089#1086#1082' '#1082#1072#1085#1072#1083#1086#1074' '#1076#1083#1103' '#1086#1073#1098#1103#1074#1083#1077#1085#1080#1103
@@ -382,6 +389,7 @@ object EPGAdForm: TEPGAdForm
       Columns = <
         item
           AutoFitColWidth = False
+          CellButtons = <>
           Checkboxes = True
           DynProps = <>
           EditButtons = <>
@@ -393,6 +401,7 @@ object EPGAdForm: TEPGAdForm
         end
         item
           AutoFitColWidth = False
+          CellButtons = <>
           DynProps = <>
           EditButtons = <>
           FieldName = 'CH_NAME'
@@ -403,6 +412,7 @@ object EPGAdForm: TEPGAdForm
         end
         item
           AutoFitColWidth = False
+          CellButtons = <>
           DynProps = <>
           EditButtons = <>
           FieldName = 'CH_NOTICE'
@@ -426,7 +436,7 @@ object EPGAdForm: TEPGAdForm
     Left = 310
     Top = 418
   end
-  object dsEPGAd: TpFIBDataSet
+  object dsEPGAd: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EPG_AD'
       'SET '
@@ -489,7 +499,7 @@ object EPGAdForm: TEPGAdForm
     Left = 310
     Top = 354
   end
-  object dsChennals: TpFIBDataSet
+  object dsChennals: TFIBDataSet
     UpdateSQL.Strings = (
       'execute block ('
       '    CH_ID      UID = :CH_ID,'
@@ -537,23 +547,23 @@ object EPGAdForm: TEPGAdForm
     Left = 76
     Top = 442
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 378
     Top = 392
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 482
     Top = 392
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     Left = 427
     Top = 389
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Left = 520
     Top = 396
@@ -579,15 +589,5 @@ object EPGAdForm: TEPGAdForm
       ImageIndex = 3
       OnExecute = actDelAdExecute
     end
-  end
-  object pFIBTransaction1: TpFIBTransaction
-    DefaultDatabase = dmMain.dbTV
-    Left = 669
-    Top = 379
-  end
-  object pFIBTransaction2: TpFIBTransaction
-    DefaultDatabase = dmMain.dbTV
-    Left = 688
-    Top = 451
   end
 end

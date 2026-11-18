@@ -9,31 +9,31 @@ uses
   Data.DB,
   Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask,
   Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
+  FIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery,
   PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
-  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh,
-  DBVertGridsEh;
+  FIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh,
+  DBVertGridsEh, CnClasses;
 
 type
 
   TWirePointForm = class(TForm)
     OkCancelFrame: TOkCancelFrame;
     CnErrors: TCnErrorProvider;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlSecond: TPanel;
     pnlFind: TPanel;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreets: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHomes: TDataSource;
     Label2: TLabel;
     dblHouseNo: TDBLookupComboboxEh;
     dblStreet: TDBLookupComboboxEh;
     Label1: TLabel;
     srcNodes: TDataSource;
-    dsNodes: TpFIBDataSet;
+    dsNodes: TFIBDataSet;
     lbl1: TLabel;
     lcbNode: TDBLookupComboboxEh;
     mmoNotice: TDBMemoEh;
@@ -63,7 +63,7 @@ function WirePoint(const aWid: Integer): Boolean;
 implementation
 
 uses
-  DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
+  DM, EQPort, NodeLinkForma, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -148,7 +148,7 @@ end;
 
 procedure TWirePointForm.SavePoint;
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;

@@ -4,23 +4,23 @@ interface
 
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
-  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FIBDatabase, pFIBDatabase, Data.DB,
-  FIBDataSet, pFIBDataSet, Vcl.StdCtrls, DBGridEh, DBCtrlsEh, DBLookupEh,
+  Vcl.Controls, Vcl.Forms, Vcl.Dialogs, FIBDatabase, Data.DB,
+  FIBDataSet, Vcl.StdCtrls, DBGridEh, DBCtrlsEh, DBLookupEh,
   Vcl.Mask;
 
 type
   TRequestMaterialReturn = class(TForm)
     btnOk: TButton;
     btnCancel: TButton;
-    dsAppliance: TpFIBDataSet;
+    dsAppliance: TFIBDataSet;
     srcAppliance: TDataSource;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     ednCOST: TDBNumberEditEh;
     cbProp: TDBComboBoxEh;
     lcb1: TDBLookupComboboxEh;
     mmoNotice: TDBMemoEh;
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     srcWH: TDataSource;
     lcbWH: TDBLookupComboboxEh;
     lbl2: TLabel;
@@ -50,8 +50,6 @@ uses
 {$R *.dfm}
 
 function RequestMaterialReturn(const aRequest: Integer; const aReadOnly: Boolean = True): Boolean;
-var
-  FWHOwner: Boolean;
 begin
   result := false;
   with TRequestMaterialReturn.Create(Application) do

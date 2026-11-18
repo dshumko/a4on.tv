@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons,
-  OkCancel_frame, DBCtrlsEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet;
+  OkCancel_frame, DBCtrlsEh, FIBDatabase, FIBDataSet;
 
 type
   TEPGEditEvent = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
-    dsProgramma: TpFIBDataSet;
+    dsProgramma: TFIBDataSet;
     srcProgramma: TDataSource;
     Label1: TLabel;
     Label2: TLabel;
@@ -25,8 +25,8 @@ type
     Label9: TLabel;
     Label10: TLabel;
     Label11: TLabel;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     DBEditEh1: TDBEditEh;
     edStartDate: TDBDateTimeEditEh;
     edStopDate: TDBDateTimeEditEh;

@@ -123,7 +123,7 @@ object AreaViewForm: TAreaViewForm
     Visible = True
     WantReturns = True
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -134,7 +134,7 @@ object AreaViewForm: TAreaViewForm
     Left = 320
     Top = 56
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -146,7 +146,7 @@ object AreaViewForm: TAreaViewForm
     Left = 320
     Top = 104
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE AREA'
       'SET '

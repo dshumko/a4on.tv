@@ -19,7 +19,7 @@ uses
   Vcl.StdCtrls, Vcl.DBCtrls,
   ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, DBAxisGridsEh, DropDownFormEh, DataDriverEh, DBVertGridsEh, DynVarsEh,
   EhLibVCL,
-  FIBDatabase, FIBDataSet, DBGridEhGrouping, pFIBDataDriverEh;
+  FIBDatabase, FIBDataSet, DBGridEhGrouping, FIBDataDriverEh;
 
 type
   TMaterialsInvSelect = class(TCustomDropDownFormEh)

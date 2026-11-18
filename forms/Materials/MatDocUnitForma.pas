@@ -10,7 +10,7 @@ uses
   Vcl.ExtCtrls,
   DBGridEhGrouping, DynVarsEh, DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, DBLookupEh, EhLibVCL, DBCtrlsEh, PrjConst,
-  Vcl.Mask, FIBDatabase, pFIBDatabase, pFIBDataSet, MemTableDataEh,
+  Vcl.Mask, FIBDatabase, MemTableDataEh,
   MemTableEh, amSplitter, CnClasses;
 
 type
@@ -34,9 +34,9 @@ type
     lbl41: TLabel;
     edtSERIAL: TDBEditEh;
     edtMAC: TDBEditEh;
-    dsDMUnits: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsDMUnits: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     edCount: TDBNumberEditEh;
     actGenerate: TAction;
     pnlBtn: TPanel;
@@ -92,7 +92,7 @@ function InputUnits(const aDocID: Integer; const aMatID: Integer; const aRowID: 
 implementation
 
 uses
-  DM, MAIN, AtrStrUtils, CnBigNumber, FIBQuery, pFIBQuery,
+  DM, MAIN, AtrStrUtils, CnBigNumber, FIBQuery,
   System.StrUtils, System.Math, Vcl.Clipbrd, Vcl.Dialogs;
 
 {$R *.dfm}
@@ -304,22 +304,22 @@ end;
 function TMatDocUnitForm.CheckUnitsInDB(): String;
 var
   answer: string;
-  q: TpFIBQuery;
+  q: TFIBQuery;
 begin
   if (FItsInvenoty) or (not mtUnits.Active) then
     exit;
 
   mtUnits.DisableControls;
   mtUnits.First;
-  q := TpFIBQuery.Create(Nil);
+  q := TFIBQuery.Create(Nil);
   try
     q.Database := dmMain.dbTV;
-    q.Transaction := dmMain.trReadQ;
+    q.Transaction := dmMain.GetTransactionForRead;
     q.sql.Text := 'select Notice from Get_Doc_Unit_Income(:M_Id, :Serial)';
-    q.Transaction.StartTransaction;
 
     while not mtUnits.EOF do
     begin
+      q.Transaction.StartTransaction;
       q.ParamByName('M_ID').AsInteger := FMaterialID;
       q.ParamByName('Serial').AsString := mtUnits['Serial'];
       q.ExecQuery;
@@ -332,10 +332,11 @@ begin
         mtUnits.Post;
       end;
       q.Close;
+      q.Transaction.Commit;
       mtUnits.Next;
     end;
-    q.Transaction.Commit;
   finally
+    if assigned(q.Transaction) then q.Transaction.Free;
     q.free;
     mtUnits.EnableControls;
   end;

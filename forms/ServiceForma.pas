@@ -9,8 +9,8 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Buttons,
   Vcl.ComCtrls,
-  DBCtrlsEh, OkCancel_frame, FIBDataSet, pFIBDataSet, DBLookupEh, PrjConst, FIBDatabase, pFIBDatabase, DBGridEh,
-  CnErrorProvider;
+  DBCtrlsEh, OkCancel_frame, FIBDataSet, DBLookupEh, PrjConst, FIBDatabase, DBGridEh,
+  CnErrorProvider, CnClasses;
 
 type
   TServiceForm = class(TForm)
@@ -23,9 +23,9 @@ type
     edName: TDBEditEh;
     edShortName: TDBEditEh;
     edDim: TDBEditEh;
-    dsPaymentType: TpFIBDataSet;
+    dsPaymentType: TFIBDataSet;
     srcPaymentType: TDataSource;
-    dsService: TpFIBDataSet;
+    dsService: TFIBDataSet;
     srcService: TDataSource;
     gbInet: TGroupBox;
     cbItsInet: TDBCheckBoxEh;
@@ -59,8 +59,8 @@ type
     pnlAUTO: TPanel;
     lbl5: TLabel;
     edtPRIORITY: TDBNumberEditEh;
-    trSWrite: TpFIBTransaction;
-    trSRead: TpFIBTransaction;
+    trSWrite: TFIBTransaction;
+    trSRead: TFIBTransaction;
     cnError: TCnErrorProvider;
     chkOnlyOne: TDBCheckBoxEh;
     pnlBottom: TPanel;
@@ -108,8 +108,7 @@ function ViewService(const aServ_ID, aType_ID: int64): int64;
 implementation
 
 uses
-  System.StrUtils, System.Math,
-  DM, AtrCommon, AtrStrUtils, pFIBQuery;
+  System.StrUtils, System.Math, DM, AtrCommon, AtrStrUtils, FIBQuery;
 
 {$R *.dfm}
 
@@ -199,10 +198,10 @@ begin
     Exit;
 
   s := '';
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select IP from GET_FREE_INET_IP(' + dsService.FieldByName('SERVICE_ID').AsString + ')';
       Transaction.StartTransaction;
       ExecQuery;
@@ -212,6 +211,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   ShowMessage('IP: ' + s);
@@ -373,11 +373,11 @@ begin
   if dsService.FieldByName('SERVICE_ID').IsNull then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select count(*) cnt from subscr_serv s where s.Serv_Id = :SID';
       ParamByName('SID').AsInteger := dsService['SERVICE_ID'];
       Transaction.StartTransaction;
@@ -387,6 +387,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;

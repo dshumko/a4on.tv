@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh;
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, DBLookupEh, DBGridEh;
 
 type
   TDVBEqEditForm = class(TForm)
@@ -19,12 +19,12 @@ type
     mmoNotice: TDBMemoEh;
     lbl2: TLabel;
     srcMAN: TDataSource;
-    dsMan: TpFIBDataSet;
+    dsMan: TFIBDataSet;
     cbMAN: TDBLookupComboboxEh;
     Label1: TLabel;
     lbl3: TLabel;
     lcbType: TDBLookupComboboxEh;
-    dsType: TpFIBDataSet;
+    dsType: TFIBDataSet;
     srcType: TDataSource;
     lbl5: TLabel;
     cbEncode: TDBComboBoxEh;
@@ -43,7 +43,7 @@ implementation
 
 uses
   System.DateUtils,
-  DM, pFIBQuery, FIBQuery, PrjConst;
+  DM, FIBQuery, PrjConst;
 
 {$R *.dfm}
 
@@ -62,10 +62,10 @@ begin
       if dmMain.AllowedAction(rght_Dictionary_DigitEQP) then
       begin
         edtNumber.Text := EQ_N;
-        with TpFIBQuery.Create(Nil) do
+        with TFIBQuery.Create(Nil) do
           try
             DataBase := dmMain.dbTV;
-            Transaction := dmMain.trReadQ;
+            Transaction := dmMain.GetTransactionForRead;
             SQL.Text := 'select * from EQUIPMENT_DVB where EQ_TYPE = :EQ_TYPE and EQ_N = :EQ_N ';
             ParamByName('EQ_N').AsString := EQ_N;
             ParamByName('EQ_TYPE').AsInteger := EQ_TYPE;
@@ -92,6 +92,7 @@ begin
             Close;
             Transaction.Commit;
           finally
+            if assigned(Transaction) then Transaction.Free;
             Free;
           end;
       end;
@@ -100,7 +101,7 @@ begin
         if ShowModal = mrOk then
         begin
           try
-            with TpFIBQuery.Create(dmMain) do
+            with TFIBQuery.Create(dmMain) do
               try
                 DataBase := dmMain.dbTV;
                 Transaction := dmMain.trWriteQ;
@@ -121,6 +122,7 @@ begin
 
                 Transaction.StartTransaction;
                 ExecQuery;
+                Close;
                 Transaction.Commit;
               finally
                 Free;

@@ -10,7 +10,7 @@ uses
   Vcl.ToolWin, Vcl.DBCtrls, Vcl.Buttons,
   DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBCtrlsEh,
   DBLookupEh,
-  FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh,
+  FIBDatabase, FIBDataSet, MemTableDataEh, MemTableEh, PropFilerEh, PropStorageEh,
   amSplitter;
 
 type
@@ -27,15 +27,15 @@ type
     dbgFlats: TDBGridEh;
     actlstFlats: TActionList;
     actAdresFilter: TAction;
-    dsArea: TpFIBDataSet;
+    dsArea: TFIBDataSet;
     srcArea: TDataSource;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsFlats: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsFlats: TFIBDataSet;
     srcFlats: TDataSource;
     tlbFlats: TToolBar;
     btnQuickFilter: TToolButton;
@@ -46,7 +46,7 @@ type
     PropStorage: TPropStorageEh;
     actQuickFilter: TAction;
     srcContacts: TDataSource;
-    dsContacts: TpFIBDataSet;
+    dsContacts: TFIBDataSet;
     actCallCustomer: TAction;
     actRecourse: TAction;
     btn1: TToolButton;
@@ -78,7 +78,7 @@ type
     dbgRec: TDBGridEh;
     spl3: TSplitter;
     srcRecourses: TDataSource;
-    dsRecourses: TpFIBDataSet;
+    dsRecourses: TFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormShow(Sender: TObject);
     procedure actAdresFilterExecute(Sender: TObject);
@@ -105,7 +105,7 @@ var
 implementation
 
 uses
-  DM, MAIN, pFIBProps, EhLibFIB, RecourseForma, RecoursesForma;
+  DM, MAIN, FIBProps, EhLibFIB, RecourseForma, RecoursesForma;
 
 {$R *.dfm}
 

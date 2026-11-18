@@ -805,7 +805,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 32
     Top = 232
   end
-  object dsLAN: TpFIBDataSet
+  object dsLAN: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE TV_LAN'
       'SET '
@@ -911,7 +911,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 96
     Top = 232
   end
-  object dsVlans: TpFIBDataSet
+  object dsVlans: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -967,7 +967,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 160
     Top = 232
   end
-  object dsEQ: TpFIBDataSet
+  object dsEQ: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -1058,7 +1058,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 352
     Top = 112
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1070,7 +1070,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 216
     Top = 112
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1114,7 +1114,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 344
     Top = 232
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short street_na' +
@@ -1131,7 +1131,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 288
     Top = 232
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '    H.HOUSE_ID,'
@@ -1154,7 +1154,7 @@ object CustomerLanForm: TCustomerLanForm
     Left = 216
     Top = 232
   end
-  object dsPort: TpFIBDataSet
+  object dsPort: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -1171,8 +1171,8 @@ object CustomerLanForm: TCustomerLanForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'
@@ -1218,8 +1218,8 @@ object CustomerLanForm: TCustomerLanForm
       '  , p.CON'
       '  , p.P_STATE'
       
-        '  , p.Port ||coalesce('#39' / '#39'||p.Speed,  '#39#39')||coalesce('#39' / '#39'||o.O_' +
-        'Name,  '#39#39') NAME'
+        '  , p.Port ||coalesce('#39' / '#39'||p.Speed, '#39#39')||coalesce('#39' / '#39'||o.O_N' +
+        'ame, '#39#39') NAME'
       '  , p.VLAN_ID'
       '  , v.Name V_NAME'
       '  , case p.Con'

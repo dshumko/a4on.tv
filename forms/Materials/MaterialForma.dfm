@@ -266,6 +266,9 @@ object MaterialForm: TMaterialForm
     DynProps = <>
     DataField = 'BEST_SHIPPER_ID'
     DataSource = MaterialsForm.srcDataSource
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1055#1086#1089#1090#1072#1074#1097#1080#1082' '#1089' '#1083#1091#1095#1096#1077#1081' '#1094#1077#1085#1086#1081' ('#1089#1087#1088#1072#1074#1086#1095#1085#1086')'
     EditButtons = <>
     KeyField = 'O_ID'
@@ -529,7 +532,7 @@ object MaterialForm: TMaterialForm
     TabOrder = 18
     Visible = True
   end
-  object dsMGropups: TpFIBDataSet
+  object dsMGropups: TFIBDataSet
     SelectSQL.Strings = (
       'select * from ('
       'with recursive GroupsTree'
@@ -566,7 +569,7 @@ object MaterialForm: TMaterialForm
     Left = 208
     Top = 208
   end
-  object dsShippers: TpFIBDataSet
+  object dsShippers: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID, O_NAME, O_DESCRIPTION'
@@ -590,7 +593,7 @@ object MaterialForm: TMaterialForm
     Left = 416
     Top = 136
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -610,7 +613,7 @@ object MaterialForm: TMaterialForm
     Left = 37
     Top = 182
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -620,9 +623,9 @@ object MaterialForm: TMaterialForm
       'read_committed')
     TPBMode = tpbDefault
     Left = 53
-    Top = 220
+    Top = 236
   end
-  object dsDevType: TpFIBDataSet
+  object dsDevType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -651,15 +654,15 @@ object MaterialForm: TMaterialForm
     Left = 128
     Top = 256
   end
-  object qReqFile: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qReqFile: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select b.Bl_Body from Blob_Tbl b where b.Bl_Id = :Bl_Id')
     Left = 205
     Top = 256
   end
-  object qSaveFile: TpFIBQuery
+  object qSaveFile: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -669,7 +672,7 @@ object MaterialForm: TMaterialForm
     Left = 269
     Top = 256
   end
-  object dsDoc: TpFIBDataSet
+  object dsDoc: TFIBDataSet
     SelectSQL.Strings = (
       'select first 1'
       '    b.Bl_Id'
@@ -689,7 +692,7 @@ object MaterialForm: TMaterialForm
     Left = 16
     Top = 157
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.Service_Id'
@@ -720,7 +723,7 @@ object MaterialForm: TMaterialForm
     Left = 389
     Top = 261
   end
-  object dsSoldSRV: TpFIBDataSet
+  object dsSoldSRV: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.Service_Id'

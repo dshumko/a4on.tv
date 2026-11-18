@@ -106,10 +106,10 @@ object frmReqWorks: TfrmReqWorks
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object dsReqWorks: TpFIBDataSet
+  object dsReqWorks: TFIBDataSet
     SelectSQL.Strings = (
       
-        'SELECT w.w_id, w.name, w.notice, m.w_time, m.w_cost,  m.w_quant,' +
+        'SELECT w.w_id, w.name, w.notice, m.w_time, m.w_cost, m.w_quant,' +
         ' round(m.w_time * m.w_quant,2) total,'
       'coalesce(m.w_cost * m.w_quant, 0) T_COST'
       ''

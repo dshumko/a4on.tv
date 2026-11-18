@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, DBGridEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, DBGridEh;
 
 type
   TChangeOffForm = class(TForm)
@@ -15,7 +15,7 @@ type
     bbOk: TBitBtn;
     bbCancel: TBitBtn;
     srcServiceOff: TDataSource;
-    dsServiceOff: TpFIBDataSet;
+    dsServiceOff: TFIBDataSet;
     pnlQUANT: TPanel;
     Label5: TLabel;
     lblDimension: TDBText;

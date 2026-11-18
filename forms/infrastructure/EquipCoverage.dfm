@@ -11,7 +11,6 @@ object EquipCoverageForm: TEquipCoverageForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -21,7 +20,6 @@ object EquipCoverageForm: TEquipCoverageForm
   DesignSize = (
     350
     212)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label6: TLabel
     Left = 8
@@ -163,6 +161,14 @@ object EquipCoverageForm: TEquipCoverageForm
     Align = alBottom
     TabOrder = 3
     TabStop = True
+    inherited Label2: TLabel
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
+    end
+    inherited Label1: TLabel
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
+    end
     inherited bbOk: TBitBtn
       Left = 104
       Top = 6
@@ -174,7 +180,7 @@ object EquipCoverageForm: TEquipCoverageForm
       Top = 6
     end
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.street_id'
@@ -190,7 +196,7 @@ object EquipCoverageForm: TEquipCoverageForm
     Left = 164
     Top = 74
   end
-  object dsHouses: TpFIBDataSet
+  object dsHouses: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    H.HOUSE_ID'
@@ -222,8 +228,8 @@ object EquipCoverageForm: TEquipCoverageForm
     Left = 226
     Top = 125
   end
-  object Query: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object Query: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select'
@@ -231,15 +237,15 @@ object EquipCoverageForm: TEquipCoverageForm
       'FROM CUSTOMER C'
       '@filter'
       '')
-    Left = 122
-    Top = 93
+    Left = 290
+    Top = 133
   end
   object srcCoverage: TDataSource
     DataSet = dsCoverage
     Left = 48
     Top = 104
   end
-  object dsCoverage: TpFIBDataSet
+  object dsCoverage: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EQUIPMENT_COVERAGE'
       'SET '
@@ -304,5 +310,17 @@ object EquipCoverageForm: TEquipCoverageForm
     AutoCommit = True
     Left = 56
     Top = 112
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 284
+    Top = 80
   end
 end

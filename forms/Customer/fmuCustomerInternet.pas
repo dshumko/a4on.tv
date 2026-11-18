@@ -8,9 +8,9 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls,
   Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, DBCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, ibase, DBGridEhToolCtrls, DBAxisGridsEh,
+  AtrPages, ToolCtrlsEh, DBCtrlsEh, GridsEh, DBGridEh, FIBDataSet, ibase, DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase,
   Vcl.Buttons;
 
 type
@@ -21,15 +21,15 @@ type
 
   TapgCustomerInternet = class(TA4onPage)
     srcInternet: TDataSource;
-    dsInternet: TpFIBDataSet;
+    dsInternet: TFIBDataSet;
     dbgrdBill: TDBGridEh;
     ActListCustomers: TActionList;
     actEdit: TAction;
     actAdd: TAction;
     actDelete: TAction;
     actUnblock: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;

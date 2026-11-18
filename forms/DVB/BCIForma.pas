@@ -8,9 +8,9 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
   PropFilerEh, CnErrorProvider, PropStorageEh, DBGridEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
-  EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet, pFIBDataSet, DBCtrlsEh,
+  EhLibJPegImage, EhLibGIFImage, EhLibPNGImage, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDataSet, DBCtrlsEh,
   DBLookupEh,
-  FIBDatabase, pFIBDatabase, MemTableDataEh, MemTableEh, FIBQuery, pFIBQuery, amSplitter, CnClasses;
+  FIBDatabase, MemTableDataEh, MemTableEh, FIBQuery, amSplitter, CnClasses;
 
 type
   TBCIForm = class(TForm)
@@ -22,10 +22,10 @@ type
     cnError: TCnErrorProvider;
     ActionList1: TActionList;
     actSave: TAction;
-    dsChannels: TpFIBDataSet;
+    dsChannels: TFIBDataSet;
     srcChnlsAll: TDataSource;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     pnlIssue: TPanel;
     lblAttribute: TLabel;
     lcbBI_TYPE: TDBLookupComboboxEh;
@@ -39,14 +39,14 @@ type
     chkALTER_CONFIG: TDBCheckBoxEh;
     mmoRESULT_TEXT: TDBMemoEh;
     lcbRESULT_CODE: TDBLookupComboboxEh;
-    trIW: TpFIBTransaction;
-    trIR: TpFIBTransaction;
-    dsIssue: TpFIBDataSet;
+    trIW: TFIBTransaction;
+    trIR: TFIBTransaction;
+    dsIssue: TFIBDataSet;
     srcIssue: TDataSource;
-    dsIType: TpFIBDataSet;
+    dsIType: TFIBDataSet;
     srcIType: TDataSource;
-    trRIT: TpFIBTransaction;
-    dsSolution: TpFIBDataSet;
+    trRIT: TFIBTransaction;
+    dsSolution: TFIBDataSet;
     srcSolution: TDataSource;
     pnlChls: TPanel;
     pnlChnlAll: TPanel;
@@ -63,7 +63,7 @@ type
     btnDel: TSpeedButton;
     spl1: TSplitter;
     spl2: TSplitter;
-    qrySave: TpFIBQuery;
+    qrySave: TFIBQuery;
     procedure actSaveExecute(Sender: TObject);
     procedure dsChannelsBeforePost(DataSet: TDataSet);
     procedure dsIssueNewRecord(DataSet: TDataSet);

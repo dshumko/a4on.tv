@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh;
+  DBCtrlsEh, FIBDataSet, DBLookupEh, DBGridEh;
 
 type
   TfrmSelectFilter = class(TForm)
     Panel1: TPanel;
     Label1: TLabel;
     Panel2: TPanel;
-    dsFilter: TpFIBDataSet;
+    dsFilter: TFIBDataSet;
     srcFilter: TDataSource;
     cbFilter: TDBLookupComboboxEh;
     bbOk: TBitBtn;

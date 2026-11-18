@@ -8,15 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
-  FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, CnClasses;
+  FIBDataSet, FIBDatabase, CnErrorProvider, FIBQuery, DBGridEhGrouping, CnClasses;
 
 type
   TMatOutDocForm = class(TForm)
     pnlHead: TPanel;
     pnlMat: TPanel;
-    dsDoc: TpFIBDataSet;
-    dsDocMat: TpFIBDataSet;
+    dsDoc: TFIBDataSet;
+    dsDocMat: TFIBDataSet;
     srcDoc: TDataSource;
     srcDocMat: TDataSource;
     dbgDocMat: TDBGridEh;
@@ -28,7 +27,7 @@ type
     Label1: TLabel;
     lbl2: TLabel;
     Label2: TLabel;
-    dsFindMat: TpFIBDataSet;
+    dsFindMat: TFIBDataSet;
     edtMaterial: TDBEditEh;
     edtQuant: TDBNumberEditEh;
     memNotice: TDBMemoEh;
@@ -38,19 +37,19 @@ type
     lblDem: TLabel;
     btnSave: TButton;
     btnClose: TButton;
-    dsMaterials: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsMaterials: TFIBDataSet;
+    trRead: TFIBTransaction;
     lbl4: TLabel;
     edtCost: TDBNumberEditEh;
     CnErrors: TCnErrorProvider;
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     srcWH: TDataSource;
-    qCloseDoc: TpFIBQuery;
+    qCloseDoc: TFIBQuery;
     dbmhD_NOTICE: TDBMemoEh;
     btnOpen: TButton;
-    qOpenDoc: TpFIBQuery;
-    trWrite: TpFIBTransaction;
-    qCheckCount: TpFIBQuery;
+    qOpenDoc: TFIBQuery;
+    trWrite: TFIBTransaction;
+    qCheckCount: TFIBQuery;
     btnDel: TBitBtn;
     lbl41: TLabel;
     ednShipCost: TDBNumberEditEh;
@@ -485,6 +484,7 @@ begin
       qCloseDoc.ParamByName('DOC_ID').AsInteger := dsDoc['DOC_ID'];
       qCloseDoc.Transaction.StartTransaction;
       qCloseDoc.ExecQuery;
+      qCloseDoc.Close;
       qCloseDoc.Transaction.Commit;
       dsDoc.Refresh;
       SetReadOnlyMode(true);
@@ -515,6 +515,7 @@ begin
     qOpenDoc.ParamByName('DOC_ID').AsInteger := dsDoc['DOC_ID'];
     qOpenDoc.Transaction.StartTransaction;
     qOpenDoc.ExecQuery;
+    qOpenDoc.Close;
     qOpenDoc.Transaction.Commit;
     dsDoc.Refresh;
     SetReadOnlyMode(false);

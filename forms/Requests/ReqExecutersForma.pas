@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
-  FIBDataSet, pFIBDataSet, DBGridEh, OkCancel_frame, GridsEh, EhLibFIB, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, RxPlacemnt,
+  FIBDataSet, DBGridEh, OkCancel_frame, GridsEh, EhLibFIB, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, RxPlacemnt,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter;
 
 type
   TReqExecutorsForm = class(TForm)
     Panel2: TPanel;
     srcDataSource: TDataSource;
-    dsReqExecutors: TpFIBDataSet;
+    dsReqExecutors: TFIBDataSet;
     OkCancelFrame1: TOkCancelFrame;
     pnlWork: TPanel;
     Panel3: TPanel;
@@ -24,11 +24,11 @@ type
     lbl1: TLabel;
     dbgSame: TDBGridEh;
     srcSame: TDataSource;
-    dsSame: TpFIBDataSet;
-    dsRqst: TpFIBDataSet;
+    dsSame: TFIBDataSet;
+    dsRqst: TFIBDataSet;
     srcRqst: TDataSource;
     srcTeams: TDataSource;
-    dsTeams: TpFIBDataSet;
+    dsTeams: TFIBDataSet;
     dbgrdTeam: TDBGridEh;
     spl2: TSplitter;
     frmStore: TFormStorage;

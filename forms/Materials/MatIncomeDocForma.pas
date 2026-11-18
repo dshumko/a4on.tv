@@ -10,15 +10,14 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.Menus,
   Vcl.ActnList,
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
-  FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, amSplitter, CnClasses;
+  FIBDataSet, FIBDatabase, CnErrorProvider, FIBQuery, DBGridEhGrouping, amSplitter, CnClasses;
 
 type
   TMatIncomeDocForm = class(TForm)
     pnlHead: TPanel;
     pnlMat: TPanel;
-    dsDoc: TpFIBDataSet;
-    dsDocMat: TpFIBDataSet;
+    dsDoc: TFIBDataSet;
+    dsDocMat: TFIBDataSet;
     srcDoc: TDataSource;
     srcDocMat: TDataSource;
     pnlMatAdd: TPanel;
@@ -30,7 +29,7 @@ type
     Label1: TLabel;
     lbl2: TLabel;
     Label2: TLabel;
-    dsFindMat: TpFIBDataSet;
+    dsFindMat: TFIBDataSet;
     edtMaterial: TDBEditEh;
     edtQuant: TDBNumberEditEh;
     memNotice: TDBMemoEh;
@@ -40,20 +39,20 @@ type
     lblDem: TLabel;
     btnSave: TButton;
     btnClose: TButton;
-    dsMaterials: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsMaterials: TFIBDataSet;
+    trRead: TFIBTransaction;
     CnErrors: TCnErrorProvider;
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     srcWH: TDataSource;
-    qCloseDoc: TpFIBQuery;
+    qCloseDoc: TFIBQuery;
     lbl5: TLabel;
     lcbShipper: TDBLookupComboboxEh;
-    dsShippers: TpFIBDataSet;
+    dsShippers: TFIBDataSet;
     srcShippers: TDataSource;
     lbl6: TLabel;
     edtShipper: TDBNumberEditEh;
     btnOpen: TButton;
-    qOpenDoc: TpFIBQuery;
+    qOpenDoc: TFIBQuery;
     btnDel: TBitBtn;
     lbl4: TLabel;
     ednTTN: TDBNumberEditEh;
@@ -73,15 +72,16 @@ type
     btnScaner: TButton;
     dlgOpen: TOpenDialog;
     btnOpenFile: TButton;
-    qReqFile: TpFIBQuery;
-    qSaveFile: TpFIBQuery;
+    qReqFile: TFIBQuery;
+    qSaveFile: TFIBQuery;
     pnlGrids: TPanel;
     dbgDocMat: TDBGridEh;
     btnUNIT: TButton;
     actUNITS: TAction;
-    trReadDS: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trReadDS: TFIBTransaction;
+    trWrite: TFIBTransaction;
     Splitter: TSplitter;
+    trReadQ: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure edtMaterialOpenDropDownForm(EditControl: TControl; Button: TEditButtonEh; var DropDownForm: TCustomForm;
       DynParams: TDynVarsEh);
@@ -523,7 +523,7 @@ begin
 
   if EditText(s, 'Примечание', 'Примечание для услуги') then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;

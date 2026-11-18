@@ -143,7 +143,7 @@ object CustChannelForm: TCustChannelForm
     Left = 60
     Top = 122
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_CHANNELS'
       'SET '
@@ -203,7 +203,7 @@ object CustChannelForm: TCustChannelForm
     Left = 144
     Top = 128
   end
-  object dsChannList: TpFIBDataSet
+  object dsChannList: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT c.Ch_Id, c.Ch_Name, c.Ch_Notice'
       'FROM Channels c'

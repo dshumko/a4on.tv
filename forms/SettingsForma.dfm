@@ -2582,13 +2582,13 @@ object SettingsForm: TSettingsForm
       OnClick = lstSettingsClick
     end
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     Left = 25
     Top = 205
   end
-  object select: TpFIBDataSet
+  object select: TFIBDataSet
     SelectSQL.Strings = (
       'select VAR_NAME, VAR_VALUE'
       'from SETTINGS')
@@ -2610,7 +2610,7 @@ object SettingsForm: TSettingsForm
     Left = 24
     Top = 281
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.Service_Id,'
@@ -2640,7 +2640,7 @@ object SettingsForm: TSettingsForm
     Left = 84
     Top = 260
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -2657,7 +2657,7 @@ object SettingsForm: TSettingsForm
     Left = 84
     Top = 316
   end
-  object dsRQtype: TpFIBDataSet
+  object dsRQtype: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       ' W.RT_ID, w.RT_NAME '
@@ -2682,7 +2682,7 @@ object SettingsForm: TSettingsForm
     Left = 68
     Top = 476
   end
-  object dsRAW: TpFIBDataSet
+  object dsRAW: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SETTINGS'
       'SET '
@@ -2728,7 +2728,7 @@ object SettingsForm: TSettingsForm
     Left = 356
     Top = 252
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'

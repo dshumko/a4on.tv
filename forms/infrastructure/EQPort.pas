@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask, Vcl.ActnList,
-  CnErrorProvider, DM, DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh, FIBDataSet, pFIBDataSet, pFIBQuery, A4onTypeUnit;
+  CnErrorProvider, DM, DBGridEh, DBCtrlsEh, DBLookupEh, GridsEh, FIBDataSet, FIBQuery, A4onTypeUnit,
+  CnClasses;
 
 type
   TEQPortForm = class(TForm)
@@ -27,17 +28,17 @@ type
     lbl5: TLabel;
     lcbState: TDBLookupComboboxEh;
     lblEquipment: TLabel;
-    dsType: TpFIBDataSet;
+    dsType: TFIBDataSet;
     srcType: TDataSource;
-    dsState: TpFIBDataSet;
+    dsState: TFIBDataSet;
     srcState: TDataSource;
     lblVLAN: TLabel;
     srcVLANS: TDataSource;
-    dsVlans: TpFIBDataSet;
+    dsVlans: TFIBDataSet;
     lcbVLAN: TDBLookupComboboxEh;
     lblWire: TLabel;
     lcbWIRE: TDBLookupComboboxEh;
-    dsWire: TpFIBDataSet;
+    dsWire: TFIBDataSet;
     srcWire: TDataSource;
     lblLabel: TLabel;
     cbLABELS: TDBComboBoxEh;
@@ -210,7 +211,7 @@ end;
 
 procedure TEQPortForm.SaveAndClose;
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
   i, cnt: Integer;
   pn: string;
 
@@ -227,7 +228,7 @@ var
   end;
 
 begin
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
@@ -260,6 +261,7 @@ begin
         fq.ParamByName('Port').AsString := pn;
         fq.Transaction.StartTransaction;
         fq.ExecQuery;
+        fq.Close;
         fq.Transaction.Commit;
       end;
     end
@@ -268,6 +270,7 @@ begin
       fq.ParamByName('Port').AsString := FPort;
       fq.Transaction.StartTransaction;
       fq.ExecQuery;
+      fq.Close;
       fq.Transaction.Commit;
     end;
     fq.Close;
@@ -386,12 +389,12 @@ end;
 
 procedure TEQPortForm.GetPortInfo;
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
-    fq.Transaction := dmMain.trReadQ;
+    fq.Transaction := dmMain.GetTransactionForRead;
     fq.sql.Text := 'select p.Notice, p.P_Type, p.P_State, p.Speed, p.Vlan_Id, p.WID, e.Node_Id, p.WLABEL, p.CONFIG';
     fq.sql.Add('from Port p left outer join Equipment e on (p.Eid = e.Eid)');
     fq.sql.Add('where p.Eid = :Eid and p.Port = :Port');
@@ -423,9 +426,10 @@ begin
       if not fq.FN('WLABEL').IsNull then
         cbLABELS.Text := fq.FN('WLABEL').AsString;
     end;
-    fq.Transaction.Commit;
     fq.Close;
+    fq.Transaction.Commit;
   finally
+    if assigned(fq.Transaction) then fq.Transaction.Free;
     fq.Free;
   end;
   ModalResult := mrOk;

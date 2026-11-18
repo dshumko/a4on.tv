@@ -8,7 +8,7 @@ uses
   DBGridEhGrouping, ToolCtrlsEh,
   DBGridEhToolCtrls, DynVarsEh, MemTableDataEh, Data.DB,
   MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh,
-  DBCtrlsEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery,
+  DBCtrlsEh, FIBDataSet, FIBQuery,
   PropFilerEh, PropStorageEh;
 
 type
@@ -22,9 +22,9 @@ type
     btnCancel: TButton;
     edDate: TDBDateTimeEditEh;
     btnGet: TButton;
-    dsElectroPoint: TpFIBDataSet;
+    dsElectroPoint: TFIBDataSet;
     btnSet: TButton;
-    qrySet: TpFIBQuery;
+    qrySet: TFIBQuery;
     mtCntNAME: TStringField;
     mtCntNOTICE: TStringField;
     mtCntPID: TIntegerField;

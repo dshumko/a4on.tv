@@ -9,14 +9,13 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
-  FIBDatabase,
-  pFIBDatabase, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery, pFIBQuery,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  FIBDatabase, DBCtrlsEh, DBLookupEh, CnErrorProvider, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBQuery,
   PrnDbgeh, CnClasses;
 
 type
   TWorkersForm = class(TGridForm)
-    dsWorkers: TpFIBDataSet;
+    dsWorkers: TFIBDataSet;
     lbl3: TLabel;
     lbl4: TLabel;
     lbl5: TLabel;
@@ -42,14 +41,14 @@ type
     deBIRTHDAY: TDBDateTimeEditEh;
     lbl6: TLabel;
     dbmmoNOTICE: TDBMemoEh;
-    trSWrite: TpFIBTransaction;
-    dsTEAM: TpFIBDataSet;
+    trSWrite: TFIBTransaction;
+    dsTEAM: TFIBDataSet;
     srcTEAM: TDataSource;
-    dsWA: TpFIBDataSet;
+    dsWA: TFIBDataSet;
     srcWA: TDataSource;
-    dsDEPART: TpFIBDataSet;
+    dsDEPART: TFIBDataSet;
     srcDepart: TDataSource;
-    trSRead: TpFIBTransaction;
+    trSRead: TFIBTransaction;
     edtPRINT_FIO: TDBEditEh;
     Label1: TLabel;
     edtPRINT_TEXT: TDBEditEh;
@@ -57,7 +56,7 @@ type
     ToolButton7: TToolButton;
     btnSendSMS: TToolButton;
     actSendSMS: TAction;
-    qrySaveMessages: TpFIBQuery;
+    qrySaveMessages: TFIBQuery;
     ednHRATE: TDBNumberEditEh;
     lbl12: TLabel;
     Label3: TLabel;

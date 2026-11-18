@@ -835,7 +835,7 @@ object BCIForm: TBCIForm
       OnExecute = actSaveExecute
     end
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    C.Ch_Id'
@@ -932,7 +932,7 @@ object BCIForm: TBCIForm
     Left = 808
     Top = 400
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -943,7 +943,7 @@ object BCIForm: TBCIForm
     Left = 268
     Top = 389
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -955,7 +955,7 @@ object BCIForm: TBCIForm
     Left = 195
     Top = 396
   end
-  object trIW: TpFIBTransaction
+  object trIW: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -966,7 +966,7 @@ object BCIForm: TBCIForm
     Left = 524
     Top = 333
   end
-  object trIR: TpFIBTransaction
+  object trIR: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -978,7 +978,7 @@ object BCIForm: TBCIForm
     Left = 515
     Top = 388
   end
-  object dsIssue: TpFIBDataSet
+  object dsIssue: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE BCISSUE'
       'SET '
@@ -1064,7 +1064,7 @@ object BCIForm: TBCIForm
     Left = 400
     Top = 384
   end
-  object dsIType: TpFIBDataSet
+  object dsIType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'
@@ -1087,7 +1087,7 @@ object BCIForm: TBCIForm
     Left = 608
     Top = 384
   end
-  object trRIT: TpFIBTransaction
+  object trRIT: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1099,7 +1099,7 @@ object BCIForm: TBCIForm
     Left = 715
     Top = 332
   end
-  object dsSolution: TpFIBDataSet
+  object dsSolution: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id'
@@ -6791,7 +6791,7 @@ object BCIForm: TBCIForm
     Left = 32
     Top = 400
   end
-  object qrySave: TpFIBQuery
+  object qrySave: TFIBQuery
     Transaction = trWrite
     Database = dmMain.dbTV
     Left = 288

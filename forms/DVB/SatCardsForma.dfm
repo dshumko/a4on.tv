@@ -485,7 +485,7 @@ inherited SatCardsForm: TSatCardsForm
     Left = 344
     Top = 288
   end
-  object dsSatCards: TpFIBDataSet
+  object dsSatCards: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 44, :O_ID, :O_Name, :O_Descript' +
@@ -561,7 +561,7 @@ inherited SatCardsForm: TSatCardsForm
     Left = 48
     Top = 296
   end
-  object dsChan: TpFIBDataSet
+  object dsChan: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     RefreshSQL.Strings = (
@@ -665,7 +665,7 @@ inherited SatCardsForm: TSatCardsForm
     Left = 432
     Top = 368
   end
-  object dsCrypt: TpFIBDataSet
+  object dsCrypt: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       ' o.O_Id'

@@ -160,7 +160,7 @@ object FlatsAddForm: TFlatsAddForm
     Left = 266
     Top = 96
   end
-  object qry: TpFIBQuery
+  object qry: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     Left = 73

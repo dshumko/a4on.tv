@@ -7,14 +7,14 @@ uses
   System.Classes, System.SysUtils, System.Variants, System.UITypes, System.RegularExpressions,
   Data.DB,
   Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.Forms,
-  OkCancel_frame, DBLookupEh, A4onTypeUnit, DBGridEh, CnErrorProvider, FIBDataSet, pFIBDataSet, DBCtrlsEh, FIBQuery, PrjConst,
-  FIBDatabase, pFIBDatabase;
+  OkCancel_frame, DBLookupEh, A4onTypeUnit, DBGridEh, CnErrorProvider, FIBDataSet, DBCtrlsEh, FIBQuery, PrjConst,
+  FIBDatabase, CnClasses;
 
 type
   TAttributeEditForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
     srcAttributes: TDataSource;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     dbluAttribute: TDBLookupComboboxEh;
     memNotice: TDBMemoEh;
     Label1: TLabel;
@@ -22,11 +22,11 @@ type
     Label2: TLabel;
     edtAVALUE: TDBEditEh;
     CnErrors: TCnErrorProvider;
-    dsAtrRecord: TpFIBDataSet;
+    dsAtrRecord: TFIBDataSet;
     srcAtrRecord: TDataSource;
     cbbList: TDBComboBoxEh;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbluAttributeChange(Sender: TObject);
@@ -44,7 +44,7 @@ function AttributeEdit(var aAttribute: TAttribute): Boolean;
 implementation
 
 uses
-  DM, pFIBQuery;
+  DM;
 
 {$R *.dfm}
 
@@ -197,7 +197,7 @@ var
   errors: Boolean;
   s: string;
   reg: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   errors := false;
 
@@ -225,10 +225,10 @@ begin
 
   if (dsAttributes['O_UNIQ'] = 1) then
   begin
-    fq := TpFIBQuery.Create(Self);
+    fq := TFIBQuery.Create(Self);
     try
       fq.Database := dmMain.dbTV;
-      fq.Transaction := dmMain.trReadQ;
+      fq.Transaction := dmMain.GetTransactionForRead;
       fq.sql.Text:= 'select Result from Attribute_Check_Uniq(:Type_Id, :Object_Id, :Aid, :Avalue)';
 
       fq.ParamByName('Type_Id').AsInteger := FAttribute.TYPE_ID;
@@ -241,9 +241,10 @@ begin
       fq.Transaction.StartTransaction;
       fq.ExecQuery;
       s := fq.FieldByName('Result').AsString;
-      fq.Transaction.Commit;
       fq.Close;
+      fq.Transaction.Commit;
     finally
+      if assigned(fq.Transaction) then fq.Transaction.Free;
       fq.free;
     end;
     if not s.IsEmpty then

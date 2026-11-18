@@ -1384,7 +1384,6 @@ object RequestsForm: TRequestsForm
             Height = 13
             Align = alTop
             Caption = #1042#1103#1074#1083#1077#1085#1085#1072#1103' '#1085#1077#1080#1089#1087#1088#1072#1074#1085#1086#1089#1090#1100' '
-            ExplicitWidth = 136
           end
           object splWork: TSplitter
             Left = 164
@@ -1441,8 +1440,6 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
-                ExplicitWidth = 350
-                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 350
                   Height = 176
@@ -1513,7 +1510,7 @@ object RequestsForm: TRequestsForm
                       Title.TitleButton = True
                     end>
                 end
-                inherited dsReqMaterials: TpFIBDataSet
+                inherited dsReqMaterials: TFIBDataSet
                   SelectSQL.Strings = (
                     'select'
                     
@@ -1572,8 +1569,6 @@ object RequestsForm: TRequestsForm
                 ParentShowHint = False
                 ShowHint = True
                 TabOrder = 0
-                ExplicitWidth = 271
-                ExplicitHeight = 176
                 inherited dbGrid: TDBGridEh
                   Width = 271
                   Height = 176
@@ -1657,7 +1652,7 @@ object RequestsForm: TRequestsForm
                       Width = 0
                     end>
                 end
-                inherited dsReqWorks: TpFIBDataSet
+                inherited dsReqWorks: TFIBDataSet
                   DataSource = srcExec
                   Left = 36
                   WaitEndMasterScroll = True
@@ -2059,7 +2054,7 @@ object RequestsForm: TRequestsForm
       OnClick = pmgSaveSelectionClick
     end
   end
-  object dsReqWorks: TpFIBDataSet
+  object dsReqWorks: TFIBDataSet
     Transaction = trRead
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
@@ -2208,7 +2203,7 @@ object RequestsForm: TRequestsForm
       OnExecute = actCopyIDExecute
     end
   end
-  object dsAll: TpFIBDataSet
+  object dsAll: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    REQUEST'
@@ -2281,7 +2276,7 @@ object RequestsForm: TRequestsForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME,    '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info,'
@@ -2396,7 +2391,7 @@ object RequestsForm: TRequestsForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME,    '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info,'
@@ -2633,7 +2628,7 @@ object RequestsForm: TRequestsForm
     Left = 395
     Top = 205
   end
-  object drvPlan: TpFIBDataDriverEh
+  object drvPlan: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -2726,7 +2721,7 @@ object RequestsForm: TRequestsForm
     Left = 393
     Top = 268
   end
-  object drvGive: TpFIBDataDriverEh
+  object drvGive: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -2819,7 +2814,7 @@ object RequestsForm: TRequestsForm
     Left = 395
     Top = 315
   end
-  object drvExec: TpFIBDataDriverEh
+  object drvExec: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -2912,7 +2907,7 @@ object RequestsForm: TRequestsForm
     Left = 392
     Top = 363
   end
-  object drvAll: TpFIBDataDriverEh
+  object drvAll: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -2999,7 +2994,7 @@ object RequestsForm: TRequestsForm
     Left = 514
     Top = 364
   end
-  object dsPlan: TpFIBDataSet
+  object dsPlan: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    REQUEST'
@@ -3027,7 +3022,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
-      '    S.STREET_ID,    '
+      '    S.STREET_ID,   '
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -3145,7 +3140,7 @@ object RequestsForm: TRequestsForm
       '    R.RQ_NOTICE,'
       '    R.EDIT_BY,'
       '    R.EDIT_ON,'
-      '    S.STREET_ID,    '
+      '    S.STREET_ID,   '
       '    R.HOUSE_ID,'
       '    R.ADDED_BY,'
       '    R.ADDED_ON,'
@@ -3253,7 +3248,7 @@ object RequestsForm: TRequestsForm
     Left = 575
     Top = 206
   end
-  object dsGive: TpFIBDataSet
+  object dsGive: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    REQUEST'
@@ -3326,7 +3321,7 @@ object RequestsForm: TRequestsForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME,    '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info,'
@@ -3440,7 +3435,7 @@ object RequestsForm: TRequestsForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME,    '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info,'
@@ -3498,7 +3493,7 @@ object RequestsForm: TRequestsForm
     Left = 573
     Top = 261
   end
-  object dsExec: TpFIBDataSet
+  object dsExec: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    REQUEST'
@@ -3571,7 +3566,7 @@ object RequestsForm: TRequestsForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME,    '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info,'
@@ -3688,7 +3683,7 @@ object RequestsForm: TRequestsForm
       '                   where C.CUSTOMER_ID = R.RQ_CUSTOMER'
       '                         and C.CC_TYPE < 2)) ALL_PHONES,'
       '    R.RECEIPT,'
-      '    RR.NAME as RESULT_NAME,     '
+      '    RR.NAME as RESULT_NAME,    '
       '    coalesce(r.Porch_N, HF.porch_n) porch_n,'
       '    coalesce(R.Floor_N, hf.floor_n) floor_n, '
       '    r.Add_Info,'
@@ -4020,7 +4015,7 @@ object RequestsForm: TRequestsForm
     Left = 191
     Top = 271
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -4031,7 +4026,7 @@ object RequestsForm: TRequestsForm
     Left = 141
     Top = 339
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'

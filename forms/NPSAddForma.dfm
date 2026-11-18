@@ -13,7 +13,6 @@ object NPSAddForm: TNPSAddForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
@@ -21,7 +20,6 @@ object NPSAddForm: TNPSAddForm
   DesignSize = (
     411
     215)
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     AlignWithMargins = True
@@ -1041,7 +1039,7 @@ object NPSAddForm: TNPSAddForm
       00000000FF00FF00000000000000000000000000000000000000000000000000
       000000000000}
   end
-  object qInsert: TpFIBQuery
+  object qInsert: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

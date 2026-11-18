@@ -188,7 +188,7 @@ inherited PaymentSourcesForm: TPaymentSourcesForm
   inherited CnErrors: TCnErrorProvider
     Top = 280
   end
-  object dsPaymentSource: TpFIBDataSet
+  object dsPaymentSource: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PAYSOURCE'
       'SET '

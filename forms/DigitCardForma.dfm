@@ -12,7 +12,6 @@ object DigitCardForm: TDigitCardForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnCreate = FormCreate
@@ -20,7 +19,6 @@ object DigitCardForm: TDigitCardForm
   DesignSize = (
     353
     231)
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     Left = 8

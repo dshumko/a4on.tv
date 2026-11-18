@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons,
-  FIBDataSet, pFIBDataSet, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery,
+  FIBDataSet, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDatabase, FIBQuery,
   DBGridEh, CnClasses, CnErrorProvider;
 
 type
   THouseForm = class(TForm)
-    dsSubAreas: TpFIBDataSet;
+    dsSubAreas: TFIBDataSet;
     srcSubAreas: TDataSource;
     Panel1: TPanel;
     Label7: TLabel;
@@ -28,20 +28,20 @@ type
     OkCancelFrame: TOkCancelFrame;
     Label1: TLabel;
     LupStreets: TDBLookupComboboxEh;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHouse: TpFIBDataSet;
+    dsHouse: TFIBDataSet;
     srcHouse: TDataSource;
-    trSWrite: TpFIBTransaction;
-    trSRead: TpFIBTransaction;
+    trSWrite: TFIBTransaction;
+    trSRead: TFIBTransaction;
     lbl1: TLabel;
     cbb1: TDBLookupComboboxEh;
     srcOrg: TDataSource;
-    dsOrg: TpFIBDataSet;
+    dsOrg: TFIBDataSet;
     lbl2: TLabel;
     lbl3: TLabel;
     cbb2: TDBLookupComboboxEh;
-    dsHE: TpFIBDataSet;
+    dsHE: TFIBDataSet;
     srcHE: TDataSource;
     lblCODE: TLabel;
     lbl4: TLabel;
@@ -50,7 +50,7 @@ type
     dbckTV: TDBCheckBoxEh;
     dbckLAN: TDBCheckBoxEh;
     dbckDTV: TDBCheckBoxEh;
-    dsWORKGROUP: TpFIBDataSet;
+    dsWORKGROUP: TFIBDataSet;
     srcWORKGROUP: TDataSource;
     edtinput: TDBDateTimeEditEh;
     edtRepair: TDBDateTimeEditEh;
@@ -266,10 +266,10 @@ procedure THouseForm.dsHouseNewRecord(DataSet: TDataSet);
 begin
   if (Pos('[КОД ДОМА]', dmMain.GetSettingsValue('ACCOUNT_FORMAT')) > 0) then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         SQL.Text := 'select count(*) count_h from house';
         Transaction.StartTransaction;
         ExecQuery;
@@ -277,6 +277,7 @@ begin
         Close;
         Transaction.Commit;
       finally
+        if assigned(Transaction) then Transaction.Free;
         free;
       end;
   end;

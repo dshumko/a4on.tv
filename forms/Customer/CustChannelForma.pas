@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, OkCancel_frame;
+  DBGridEh, FIBDataSet, DBCtrlsEh, DBLookupEh, OkCancel_frame;
 
 type
   TCustChannelForm = class(TForm)
@@ -17,9 +17,9 @@ type
     DBDateTimeEditEh2: TDBDateTimeEditEh;
     DBMemo1: TDBMemo;
     srcChannels: TDataSource;
-    dsChannels: TpFIBDataSet;
+    dsChannels: TFIBDataSet;
     srcChannList: TDataSource;
-    dsChannList: TpFIBDataSet;
+    dsChannList: TFIBDataSet;
     Label1: TLabel;
     Label2: TLabel;
     Label3: TLabel;

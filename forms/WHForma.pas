@@ -8,24 +8,24 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
+  GridForma, FIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider,
   PrjConst, amSplitter,
   EhLibVCL, DBCtrlsEh, DBGridEhGrouping, DynVarsEh, DBLookupEh, PrnDbgeh,
   CnClasses;
 
 type
   TWHform = class(TGridForm)
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
     dbmmoO_DESCRIPTION: TDBMemoEh;
-    dsRights: TpFIBDataSet;
+    dsRights: TFIBDataSet;
     srcRights: TDataSource;
     cbbOwner: TDBLookupComboboxEh;
     lbl4: TLabel;
     srcOwner: TDataSource;
-    dsOwner: TpFIBDataSet;
+    dsOwner: TFIBDataSet;
     actCopyID: TAction;
     chkDel: TDBCheckBoxEh;
     pnlBtm: TPanel;

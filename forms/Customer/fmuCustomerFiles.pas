@@ -7,30 +7,31 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, A4onTypeUnit,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, FIBQuery, A4onTypeUnit,
   Vcl.Buttons, Vcl.ExtCtrls;
 
 type
   TapgCustomerFiles = class(TA4onPage)
-    dsCustFiles: TpFIBDataSet;
+    dsCustFiles: TFIBDataSet;
     srcCustFiles: TDataSource;
     dbgCustFiles: TDBGridEh;
     ActListCustomers: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    qRead: TpFIBQuery;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    qRead: TFIBQuery;
     actView: TAction;
-    qReqFile: TpFIBQuery;
+    qReqFile: TFIBQuery;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;
     btnOpen: TSpeedButton;
+    trReadQ: TFIBTransaction;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -343,7 +344,7 @@ begin
     qRead.ExecQuery;
     qRead.FieldByName('content').SaveToFile(fileName);
     qRead.Close;
-    qRead.Transaction.Rollback;
+    qRead.Transaction.Commit;
   end
   else
   begin
@@ -352,7 +353,7 @@ begin
     qReqFile.ExecQuery;
     qReqFile.FieldByName('jpg').SaveToFile(fileName);
     qReqFile.Close;
-    qReqFile.Transaction.Rollback;
+    qReqFile.Transaction.Commit;
   end;
 
   if FileExists(fileName) then

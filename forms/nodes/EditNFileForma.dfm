@@ -13,15 +13,13 @@ object EditNFileForm: TEditNFileForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
+  ShowHint = True
   OnKeyDown = FormKeyDown
   DesignSize = (
     397
     236)
-  PixelsPerInch = 96
   TextHeight = 13
-  ShowHint = True
   object Label1: TLabel
     Left = 8
     Top = 88
@@ -59,11 +57,15 @@ object EditNFileForm: TEditNFileForm
     DynProps = <>
     DataField = 'NF_TYPE'
     DataSource = srcCustFile
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1058#1080#1087' '#1092#1072#1081#1083#1072
     EditButtons = <>
     KeyField = 'O_ID'
     ListField = 'O_NAME'
     ListSource = srcFiles
+    ShowHint = True
     TabOrder = 0
     Visible = True
   end
@@ -79,6 +81,7 @@ object EditNFileForm: TEditNFileForm
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1054#1087#1080#1089#1072#1085#1080#1077
+    ShowHint = True
     TabOrder = 3
     Visible = True
     WantReturns = True
@@ -94,6 +97,7 @@ object EditNFileForm: TEditNFileForm
     DynProps = <>
     EditButtons = <>
     EmptyDataInfo.Text = #1053#1072#1080#1084#1077#1085#1086#1074#1072#1085#1080#1077' / '#1085#1086#1084#1077#1088' '#1076#1086#1082#1091#1084#1077#1085#1090#1072
+    ShowHint = True
     TabOrder = 1
     Visible = True
   end
@@ -136,6 +140,7 @@ object EditNFileForm: TEditNFileForm
       end>
     EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1092#1072#1081#1083
     ReadOnly = True
+    ShowHint = True
     TabOrder = 2
     Visible = True
   end
@@ -145,7 +150,7 @@ object EditNFileForm: TEditNFileForm
     Left = 316
     Top = 140
   end
-  object dsFiles: TpFIBDataSet
+  object dsFiles: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED'
       'FROM OBJECTS'
@@ -163,7 +168,7 @@ object EditNFileForm: TEditNFileForm
     Left = 163
     Top = 136
   end
-  object dsFile: TpFIBDataSet
+  object dsFile: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE NODE_FILES'
       'SET '
@@ -250,7 +255,7 @@ object EditNFileForm: TEditNFileForm
     Left = 208
     Top = 88
   end
-  object qUpdate: TpFIBQuery
+  object qUpdate: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

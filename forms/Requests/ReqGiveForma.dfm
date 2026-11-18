@@ -143,7 +143,7 @@ object ReqGiveForm: TReqGiveForm
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object dsWORKGROUP: TpFIBDataSet
+  object dsWORKGROUP: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    s.WG_ID,'
@@ -164,7 +164,7 @@ object ReqGiveForm: TReqGiveForm
     Left = 83
     Top = 48
   end
-  object dsW: TpFIBDataSet
+  object dsW: TFIBDataSet
     DeleteSQL.Strings = (
       '')
     SelectSQL.Strings = (

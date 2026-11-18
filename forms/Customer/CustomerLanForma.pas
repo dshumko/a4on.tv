@@ -11,15 +11,14 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons,
   Vcl.ActnList,
   Vcl.ExtCtrls,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider,
-  FIBDatabase,
-  pFIBDatabase, A4onTypeUnit, EhlibFIB, CnClasses;
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider,
+  FIBDatabase, A4onTypeUnit, EhlibFIB, CnClasses;
 
 type
   TCustomerLanForm = class(TForm)
     OkCancelFrame: TOkCancelFrame;
     srcLan: TDataSource;
-    dsLAN: TpFIBDataSet;
+    dsLAN: TFIBDataSet;
     pnlMain: TPanel;
     Label4: TLabel;
     Label2: TLabel;
@@ -27,16 +26,16 @@ type
     Label1: TLabel;
     eIP: TDBEditEh;
     srcVLANS: TDataSource;
-    dsVlans: TpFIBDataSet;
+    dsVlans: TFIBDataSet;
     lbl3: TLabel;
     dbleVLAN: TDBLookupComboboxEh;
     srcEQ: TDataSource;
-    dsEQ: TpFIBDataSet;
+    dsEQ: TFIBDataSet;
     actlst1: TActionList;
     actFindIP: TAction;
     cnError: TCnErrorProvider;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     lbl1: TLabel;
     eIPv6: TDBEditEh;
     lbl2: TLabel;
@@ -48,10 +47,10 @@ type
     actLanTelnet: TAction;
     actLanHttp: TAction;
     btn1: TButton;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
     srcHouse: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     pnlAddres: TPanel;
     Label3: TLabel;
     lbl4: TLabel;
@@ -62,7 +61,7 @@ type
     pnlMemo: TPanel;
     mmoNOTICE: TDBMemoEh;
     lcbPort: TDBLookupComboboxEh;
-    dsPort: TpFIBDataSet;
+    dsPort: TFIBDataSet;
     srcPort: TDataSource;
     actAddPort: TAction;
     actEditPort: TAction;
@@ -162,7 +161,7 @@ implementation
 
 uses
   System.StrUtils, httpsend, synacode, JsonDataObjects,
-  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, pFIBQuery,
+  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, FIBQuery,
   TelnetForma, atrCmdUtils, EQPort, HtmlForma, AtrEhLibAddons;
 
 {$R *.dfm}
@@ -472,11 +471,11 @@ begin
   if ip = '' then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Clear;
       sql.Add('select Id, Info, Mac, Ip_Where from FIND_IP_INFO(:ip, :VLAN_id)');
       if VLAN_ID <> -1 then
@@ -501,6 +500,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -512,11 +512,11 @@ begin
   if MAC = '' then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select c.Account_No, Ip, Mac';
       sql.Add(' from Tv_Lan t inner join customer c on (t.Customer_Id = c.Customer_Id)');
       sql.Add(' where t.Mac = :Mac');
@@ -538,6 +538,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -565,11 +566,11 @@ begin
     Exit;
   end;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select 0 OT, c.Account_No as Account_No, t.Ip';
       sql.Add('from Tv_Lan t inner join customer c on (t.Customer_Id = c.Customer_Id)');
       sql.Add('where t.Eq_Id = :EQ and t.Port = :PT');
@@ -603,9 +604,10 @@ begin
         Next;
       end;
       Close;
-      Result := Result.Trim;
       Transaction.Commit;
+      Result := Result.Trim;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -1394,11 +1396,11 @@ begin
   if (ip = '') or (VLAN_ID = -1) then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select count(V_Id) cnt from Vlans v';
       sql.Add('where V_Id = :VLAN_ID and Inet_Aton(:IP) between v.Ip_Begin_Bin and v.Ip_End_Bin');
       ParamByName('VLAN_id').AsInteger := VLAN_ID;
@@ -1409,6 +1411,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -1420,11 +1423,11 @@ begin
   if (VLAN_ID = -1) or (HOUSE_ID = -1) then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select count(c.House_Id) H_COUNT, sum(iif((c.House_Id = :HOUSE_ID), 1, 0)) H_FINDED';
       sql.Add(' from objects_coverage c where c.oc_type = 2 and c.o_id = :VLAN_ID');
 
@@ -1444,6 +1447,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -1452,10 +1456,10 @@ end;
 function TCustomerLanForm.GetNodeID: Integer;
 begin
   Result := -1;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select first 1 n.Node_Id';
       sql.Add(' from customer c ');
       sql.Add(' inner join node_flats f on (f.House_Id = c.House_Id and f.Flat_No = c.flat_no) ');
@@ -1469,6 +1473,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
 end;
@@ -1697,11 +1702,11 @@ begin
   eid := -1;
   answer := '';
   ACCOUNTS := '';
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select e.Eid, s.Street_Name, h.House_No';
       sql.Add(', (select list(c.Account_No) from tv_lan l inner join customer c on (c.Customer_Id = l.Customer_Id) where l.Eq_Id = e.Eid) ACCOUNTS');
       sql.Add('from Equipment e');
@@ -1729,6 +1734,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -1752,7 +1758,7 @@ function TCustomerLanForm.CreateOrMoveEquipment(): Integer;
 begin
   if FModemID <> -1 then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         Database := dmMain.dbTV;
@@ -1778,7 +1784,7 @@ begin
   end
   else
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         Database := dmMain.dbTV;

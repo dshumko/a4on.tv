@@ -8,23 +8,23 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
   Vcl.ExtCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, FIBQuery, pFIBQuery, MemTableDataEh, DataDriverEh,
-  pFIBDataDriverEh,
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, FIBQuery, MemTableDataEh, DataDriverEh,
+  FIBDataDriverEh,
   MemTableEh;
 
 type
   TapgNodeMaterialsMove = class(TA4onPage)
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     dbgMat: TDBGridEh;
     srcMat: TDataSource;
     pnlButtons: TPanel;
     btnDetail: TSpeedButton;
     ActListCustomers: TActionList;
     actAdd: TAction;
-    dsMat: TpFIBDataSet;
+    dsMat: TFIBDataSet;
     actDetail: TAction;
     procedure actDetailExecute(Sender: TObject);
     procedure dbgMatDblClick(Sender: TObject);

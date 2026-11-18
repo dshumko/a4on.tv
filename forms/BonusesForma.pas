@@ -8,12 +8,12 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBLookupEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh;
 
 type
   TBonusesForm = class(TGridForm)
-    dsBonuses: TpFIBDataSet;
+    dsBonuses: TFIBDataSet;
     lbl2: TLabel;
     lbl1: TLabel;
     lbl3: TLabel;
@@ -22,7 +22,7 @@ type
     edtFrom: TDBNumberEditEh;
     edtTO: TDBNumberEditEh;
     edtRate: TDBNumberEditEh;
-    dsBT: TpFIBDataSet;
+    dsBT: TFIBDataSet;
     edtName: TDBLookupComboboxEh;
     srcBT: TDataSource;
     lbl4: TLabel;

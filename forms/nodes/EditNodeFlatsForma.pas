@@ -7,9 +7,9 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
-  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, DBGridEhGrouping,
+  FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, DBGridEhGrouping,
   ToolCtrlsEh,
-  DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, pFIBDatabase, amSplitter;
+  DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh, FIBDatabase, amSplitter;
 
 type
   TedtNodeFlats = class(TForm)
@@ -21,13 +21,13 @@ type
     btnUGAdd: TSpeedButton;
     btnUGremove: TSpeedButton;
     pnl4: TPanel;
-    dsOn: TpFIBDataSet;
+    dsOn: TFIBDataSet;
     srcOn: TDataSource;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     dbgOff: TDBGridEh;
     srcOff: TDataSource;
-    dsOff: TpFIBDataSet;
+    dsOff: TFIBDataSet;
     pnl5: TPanel;
     btnOk: TBitBtn;
     lblOn: TLabel;

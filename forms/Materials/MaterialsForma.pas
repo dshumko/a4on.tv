@@ -8,9 +8,9 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.Controls, Vcl.ExtCtrls,
-  pFIBDatabase, FIBDataSet, pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, frxClass,
+  FIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, frxClass,
   PropStorageEh,
-  FIBQuery, pFIBQuery, FIBDatabase, PropFilerEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, DBGridEhGrouping,
+  FIBQuery, FIBDatabase, PropFilerEh, MemTableDataEh, DataDriverEh, FIBDataDriverEh, DBGridEhGrouping,
   ToolCtrlsEh,
   DBGridEhToolCtrls, DynVarsEh, PrjConst, MemTableEh, EhLibMTE, frxDBSet, amSplitter,
   PrnDbgeh, Vcl.DBCtrls;
@@ -22,24 +22,24 @@ type
     actDelete: TAction;
     actEdit: TAction;
     actQuickFilter: TAction;
-    dsRemain: TpFIBDataSet;
+    dsRemain: TFIBDataSet;
     srcRemain: TDataSource;
     pnlHead: TPanel;
     pnlMat: TPanel;
     pnlGroup: TPanel;
     DBGridGroups: TDBGridEh;
     Splitter2: TSplitter;
-    dsMatGropups: TpFIBDataSet;
+    dsMatGropups: TFIBDataSet;
     srcMatGropups: TDataSource;
     actAddGroup: TAction;
     ActEditGroup: TAction;
     ActDelGroup: TAction;
     DBGridEh: TDBGridEh;
-    dsMaterials: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    TrTemp: TpFIBTransaction;
-    QrTemp: TpFIBQuery;
+    dsMaterials: TFIBDataSet;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
+    TrTemp: TFIBTransaction;
+    QrTemp: TFIBQuery;
     srcDataSource: TDataSource;
     pgcInOut: TPageControl;
     tsIn: TTabSheet;
@@ -48,11 +48,11 @@ type
     spl1: TSplitter;
     tsJournal: TTabSheet;
     dbgJournal: TDBGridEh;
-    dsJournal: TpFIBDataSet;
+    dsJournal: TFIBDataSet;
     srcJournal: TDataSource;
     tsIncome: TTabSheet;
     dbgIncome: TDBGridEh;
-    dsIncome: TpFIBDataSet;
+    dsIncome: TFIBDataSet;
     srcIncome: TDataSource;
     actRemainRecalc: TAction;
     actOpenMatDoc: TAction;
@@ -62,7 +62,7 @@ type
     frxReport: TfrxReport;
     tsItog: TTabSheet;
     dsItogo: TMemTableEh;
-    drvFIB: TpFIBDataDriverEh;
+    drvFIB: TFIBDataDriverEh;
     srcItog: TDataSource;
     dbgGridPivot: TDBGridEh;
     actRecalcAll: TAction;
@@ -72,19 +72,19 @@ type
     dbgOut: TDBGridEh;
     dbgInvent: TDBGridEh;
     dbgMove: TDBGridEh;
-    dsMove: TpFIBDataSet;
+    dsMove: TFIBDataSet;
     srcMove: TDataSource;
-    dsInvent: TpFIBDataSet;
+    dsInvent: TFIBDataSet;
     srcInvent: TDataSource;
     srcOut: TDataSource;
-    dsOut: TpFIBDataSet;
-    qReqFile: TpFIBQuery;
+    dsOut: TFIBDataSet;
+    qReqFile: TFIBQuery;
     tsSerials: TTabSheet;
-    dsSerials: TpFIBDataSet;
+    dsSerials: TFIBDataSet;
     srcSerials: TDataSource;
     dbgSN: TDBGridEh;
-    trWriteDS: TpFIBTransaction;
-    trReadDS: TpFIBTransaction;
+    trWriteDS: TFIBTransaction;
+    trReadDS: TFIBTransaction;
     pmPivot: TPopupMenu;
     miRowHight: TMenuItem;
     frxMaterials: TfrxDBDataset;
@@ -145,16 +145,16 @@ type
     btnSavePhoto1: TSpeedButton;
     btnViewPhoto: TSpeedButton;
     dbgPhotos: TDBGridEh;
-    dsFiles: TpFIBDataSet;
+    dsFiles: TFIBDataSet;
     srcFiles: TDataSource;
-    qryBlobFile: TpFIBQuery;
+    qryBlobFile: TFIBQuery;
     dlgOpen: TOpenDialog;
-    qSaveFile: TpFIBQuery;
+    qSaveFile: TFIBQuery;
     dlgSave: TSaveDialog;
     actCopyID: TAction;
     actOpenDocs: TAction;
     mtGroups: TMemTableEh;
-    drvFibGroups: TpFIBDataDriverEh;
+    drvFibGroups: TFIBDataDriverEh;
     miN3: TMenuItem;
     miN4: TMenuItem;
     miAddGroup: TMenuItem;
@@ -191,6 +191,7 @@ type
     miRemainRecalcMat: TMenuItem;
     miRemainRecalcMatMain: TMenuItem;
     miN1: TMenuItem;
+    trReadQ: TFIBTransaction;
     procedure actAddGroupExecute(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actNewExecute(Sender: TObject);
@@ -1558,7 +1559,7 @@ procedure TMaterialsForm.actOpenMatDocExecute(Sender: TObject);
 var
   d_id: Integer;
   dt_id: Integer;
-  ds: TpFIBDataSet;
+  ds: TFIBDataSet;
 begin
   d_id := -1;
   dt_id := -1;

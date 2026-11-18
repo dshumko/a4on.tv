@@ -591,7 +591,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     Left = 304
     Top = 408
   end
-  object dsElectroRecipient: TpFIBDataSet
+  object dsElectroRecipient: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 77, :O_ID, :O_Name, :O_Descript' +
@@ -642,7 +642,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     Left = 144
     Top = 136
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -654,7 +654,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     Left = 200
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -666,7 +666,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     Left = 312
     Top = 188
   end
-  object dsHistory: TpFIBDataSet
+  object dsHistory: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS_HISTORY'
       'SET '
@@ -741,7 +741,7 @@ inherited ElectroRecipientForm: TElectroRecipientForm
     Left = 97
     Top = 417
   end
-  object dsElectroPoint: TpFIBDataSet
+  object dsElectroPoint: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_ID'

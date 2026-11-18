@@ -273,7 +273,7 @@ object DistrContractForm: TDistrContractForm
     TabOrder = 1
     Visible = True
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -284,7 +284,7 @@ object DistrContractForm: TDistrContractForm
     Left = 360
     Top = 168
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -296,7 +296,7 @@ object DistrContractForm: TDistrContractForm
     Left = 24
     Top = 184
   end
-  object dsContract: TpFIBDataSet
+  object dsContract: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DISTRIB_CONTRACTS'
       'SET '
@@ -383,7 +383,7 @@ object DistrContractForm: TDistrContractForm
     Left = 216
     Top = 144
   end
-  object dsReports: TpFIBDataSet
+  object dsReports: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       'r.report_name,'

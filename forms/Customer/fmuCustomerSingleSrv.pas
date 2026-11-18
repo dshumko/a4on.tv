@@ -6,15 +6,15 @@ uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants,
   System.Classes, System.Actions, System.UITypes, Data.DB, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
-  Vcl.ActnList, Vcl.Menus, AtrPages, ToolCtrlsEh, FIBDataSet, pFIBDataSet,
+  Vcl.ActnList, Vcl.Menus, AtrPages, ToolCtrlsEh, FIBDataSet,
   GridsEh, DBGridEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase;
 
 type
   TapgCustomerSingleSrv = class(TA4onPage)
     pnlButtons: TPanel;
     dbgSingleServ: TDBGridEh;
-    dsSingleService: TpFIBDataSet;
+    dsSingleService: TFIBDataSet;
     srcSingleSerivce: TDataSource;
     ActListCustomers: TActionList;
     actAdd: TAction;
@@ -24,8 +24,8 @@ type
     actEditNotice: TAction;
     pmGrid: TPopupMenu;
     N1: TMenuItem;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     procedure actAddExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
     procedure srcSingleSerivceDataChange(Sender: TObject; Field: TField);
@@ -54,7 +54,7 @@ type
 implementation
 
 uses
-  DM, pFIBQuery, OnOffServicesForma, MAIN, TextEditForma, OrdersTPForma, RequestForma;
+  DM, FIBQuery, OnOffServicesForma, MAIN, TextEditForma, OrdersTPForma, RequestForma;
 
 {$R *.dfm}
 
@@ -226,7 +226,7 @@ begin
 
   if EditText(s, 'Примечание', 'Примечание для услуги') then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -309,13 +309,13 @@ var
   s: string;
   grid: TCustomDBGridEh;
   id, i, j: Integer;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   grid := TCustomDBGridEh(Sender);
-  FIBDS := grid.DataSource.DataSet as TpFIBDataSet;
+  FIBDS := grid.DataSource.DataSet as TFIBDataSet;
   id := -1;
   if Sender is TCustomDBGridEh then
   begin

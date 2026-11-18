@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, OkCancel_frame, FIBDatabase, CnErrorProvider, PrjConst;
 
 type
   TAreaViewForm = class(TForm)
@@ -18,9 +18,9 @@ type
     dbeName: TDBEditEh;
     Label4: TLabel;
     DBMemo1: TDBMemoEh;
-    trSRead: TpFIBTransaction;
-    trSWrite: TpFIBTransaction;
-    dsArea: TpFIBDataSet;
+    trSRead: TFIBTransaction;
+    trSWrite: TFIBTransaction;
+    dsArea: TFIBDataSet;
     srcArea: TDataSource;
     CnErrors: TCnErrorProvider;
     procedure FormKeyPress(Sender: TObject; var Key: Char);

@@ -4,7 +4,6 @@ inherited VlansForm: TVlansForm
   Caption = #1051#1086#1082#1072#1083#1100#1085#1099#1077' '#1089#1077#1090#1080
   ClientHeight = 538
   ClientWidth = 740
-  PixelsPerInch = 96
   TextHeight = 13
   object spl1: TSplitter [0]
     Left = 0
@@ -1026,7 +1025,7 @@ inherited VlansForm: TVlansForm
     Left = 464
     Top = 120
   end
-  object dsVlans: TpFIBDataSet
+  object dsVlans: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE VLANS'
       'SET '
@@ -1126,7 +1125,7 @@ inherited VlansForm: TVlansForm
     Left = 32
     Top = 288
   end
-  object dsEnabled: TpFIBDataSet
+  object dsEnabled: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    OBJECTS_COVERAGE'
@@ -1179,7 +1178,7 @@ inherited VlansForm: TVlansForm
     WaitEndMasterScroll = True
     oFetchAll = True
   end
-  object dsExists: TpFIBDataSet
+  object dsExists: TFIBDataSet
     RefreshSQL.Strings = (
       'select h.HOUSE_ID, s.street_name, s.street_short, h.HOUSE_NO'
       'from HOUSE h'
@@ -1241,7 +1240,7 @@ inherited VlansForm: TVlansForm
     Left = 453
     Top = 298
   end
-  object dsUsed: TpFIBDataSet
+  object dsUsed: TFIBDataSet
     SelectSQL.Strings = (
       
         'select '#39#1040#39' as TIP , u.ip_bin, c.customer_id, c.surname, s.street' +
@@ -1273,7 +1272,7 @@ inherited VlansForm: TVlansForm
     Left = 479
     Top = 411
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE ATTRIBUTE'
       'SET '

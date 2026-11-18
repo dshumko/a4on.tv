@@ -351,7 +351,7 @@ inherited RecoursesForm: TRecoursesForm
       OnExecute = actFilterCustomerExecute
     end
   end
-  object dsRecourses: TpFIBDataSet
+  object dsRecourses: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM RECOURSE WHERE (RC_ID = :OLD_RC_ID)')
     RefreshSQL.Strings = (
@@ -439,7 +439,7 @@ inherited RecoursesForm: TRecoursesForm
     Left = 395
     Top = 205
   end
-  object drvRecourses: TpFIBDataDriverEh
+  object drvRecourses: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>

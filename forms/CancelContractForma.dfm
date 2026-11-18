@@ -110,7 +110,7 @@ object CancelContractForm: TCancelContractForm
     Left = 40
     Top = 88
   end
-  object dsServiceOff: TpFIBDataSet
+  object dsServiceOff: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT distinct s.SERVICE_ID, s.NAME, s.DESCRIPTION'
       

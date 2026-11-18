@@ -13,14 +13,12 @@ object EditAttributForm: TEditAttributForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
   DesignSize = (
     401
     194)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -52,10 +50,12 @@ object EditAttributForm: TEditAttributForm
     TabOrder = 4
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -77,6 +77,9 @@ object EditAttributForm: TEditAttributForm
     DynProps = <>
     DataField = 'O_ID'
     DataSource = srcCustAttribut
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EditButtons = <>
     KeyField = 'O_ID'
     ListField = 'O_NAME'
@@ -136,7 +139,7 @@ object EditAttributForm: TEditAttributForm
     Left = 236
     Top = 60
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -172,7 +175,7 @@ object EditAttributForm: TEditAttributForm
     Left = 35
     Top = 104
   end
-  object dsCustAttribut: TpFIBDataSet
+  object dsCustAttribut: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_ATTRIBUTES'
       'SET '

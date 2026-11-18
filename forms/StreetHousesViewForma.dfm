@@ -477,7 +477,7 @@ object StreetHouseViewForm: TStreetHouseViewForm
     Left = 128
     Top = 208
   end
-  object drvFIBView: TpFIBDataDriverEh
+  object drvFIBView: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (

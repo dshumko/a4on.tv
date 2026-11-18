@@ -115,7 +115,7 @@ object WorkAreaLimitForm: TWorkAreaLimitForm
     Left = 178
     Top = 112
   end
-  object dsRequestType: TpFIBDataSet
+  object dsRequestType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       ' W.rqtl_id, w.rq_content || '#39' ('#39' || r.rt_name || '#39')'#39' as name'
@@ -134,7 +134,7 @@ object WorkAreaLimitForm: TWorkAreaLimitForm
     Left = 239
     Top = 75
   end
-  object dsLimit: TpFIBDataSet
+  object dsLimit: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE WORKAREALIMIT'
       'SET '

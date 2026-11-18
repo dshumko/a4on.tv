@@ -5,7 +5,7 @@ interface
 uses
   Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Buttons,
-  Vcl.ExtCtrls, PropFilerEh, Data.DB, FIBDataSet, pFIBDataSet,
+  Vcl.ExtCtrls, PropFilerEh, Data.DB, FIBDataSet,
   PropStorageEh, DBGridEh, DBCtrlsEh, Vcl.Mask, DBLookupEh,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL,
   GridsEh, DBAxisGridsEh, CnErrorProvider, CnClasses;
@@ -16,10 +16,10 @@ type
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
     PropStorage: TPropStorageEh;
-    dsMaterial: TpFIBDataSet;
+    dsMaterial: TFIBDataSet;
     srcMaterial: TDataSource;
     CnErrors: TCnErrorProvider;
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     srcWH: TDataSource;
     lblDim: TLabel;
     pnlTop: TPanel;
@@ -63,7 +63,7 @@ function ReqMaterialReturnByBack(const aRequest: Integer; const aOwnerID: Intege
 implementation
 
 uses
-  PrjConst, DM, MAIN, pFIBQuery;
+  PrjConst, DM, MAIN, FIBQuery;
 
 {$R *.dfm}
 
@@ -202,7 +202,7 @@ begin
   Result := False;
   if dsMaterial.Locate('ID', lcbEquipment.KeyValue, []) then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         Database := dmMain.dbTV;
@@ -217,7 +217,7 @@ begin
         if not dsMaterial.FieldByName('COST').IsNull then
           ParamByName('COST').Value := dsMaterial.FieldByName('COST').Value;
 
-        // 4 Возврат бесплатно,  5 Возврат за деньги (Выкуп)
+        // 4 Возврат бесплатно, 5 Возврат за деньги (Выкуп)
         if not FByBack then
           ParamByName('PROP').Value := 4
         else

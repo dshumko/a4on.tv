@@ -9,7 +9,7 @@ uses
   System.SysUtils, System.Classes, System.DateUtils, System.Types, System.Generics.Collections,
   Data.DB,
   Vcl.Dialogs,
-  httpsend, SynaUtil, FIBQuery, pFIBQuery, JsonDataObjects, A4onTypeUnit;
+  httpsend, SynaUtil, FIBQuery, JsonDataObjects, A4onTypeUnit;
 
 const
   // Константы для отправки SMS
@@ -82,7 +82,7 @@ begin
   fError := '';
   soData['login'] := fA4ON_USER;
   soData['password'] := fA4ON_KEY;
-  s := soData.ToString;
+  s := UTF8String(soData.ToString);
   soData['hash'] := string(MD5(s));
 
   strmData := TStringStream.Create(soData.ToString, TEncoding.UTF8);
@@ -316,19 +316,18 @@ end;
 function TSMSapi.SendBatch(var ErrorText: String; const batchCnt: Integer = 0): Integer;
 var
   i: Integer;
-  ReadfromDB: TpFIBQuery;
-  UpdateInDB: TpFIBQuery;
+  ReadfromDB: TFIBQuery;
+  UpdateInDB: TFIBQuery;
   SMSList: TSMSList;
   sms: TSMS;
   sqlPart: string;
   sendedSmsCount: Integer;
   CountSMS: Integer;
 begin
-  Result := 0;
   ErrorText := '';
 
-  ReadfromDB := TpFIBQuery.Create(nil);
-  UpdateInDB := TpFIBQuery.Create(nil);
+  ReadfromDB := TFIBQuery.Create(nil);
+  UpdateInDB := TFIBQuery.Create(nil);
   SMSList := TSMSList.Create;
 
   if batchCnt > 0 then
@@ -338,18 +337,16 @@ begin
 
   try
     ReadfromDB.DataBase := dmMain.dbTV;
-    ReadfromDB.Transaction := dmMain.trReadQ;
+    ReadfromDB.Transaction := dmMain.GetTransactionForRead;
     ReadfromDB.SQL.Add('select ' + sqlPart + ' m.reciver as PHONE, M.Mes_Text, m.Mes_Id  ');
     ReadfromDB.SQL.Add(' from messages m where m.mes_result = 0 and m.Mes_Type = ''SMS'' ');
     ReadfromDB.SQL.Add(' order by m.mes_prior, m.Mes_Id desc ');
 
     UpdateInDB.DataBase := dmMain.dbTV;
-    UpdateInDB.Transaction := dmMain.trWriteQ;
+    UpdateInDB.Transaction := dmMain.GetTransactionForWrite;
     UpdateInDB.SQL.Text := ' update Messages set Mes_Result = :Mes_Result, ext_id = :ext_id where Mes_Id = :Mes_Id ';
-
     sendedSmsCount := 0;
     repeat
-    begin
       SMSList.Clear;
 
       ReadfromDB.Transaction.StartTransaction;
@@ -383,15 +380,17 @@ begin
             UpdateInDB.ParamByName('Mes_Result').AsInteger := SMSList[i].status;
             UpdateInDB.ParamByName('ext_id').AsInteger := SMSList[i].smsID;
             UpdateInDB.ExecQuery;
+            UpdateInDB.Close;
             UpdateInDB.Transaction.Commit;
           end;
         end;
       end
-    end
     until (SMSList.Count = 0);
   finally
     SMSList.Free;
+    ReadfromDB.Transaction.Free;
     ReadfromDB.Free;
+    UpdateInDB.Transaction.Free;
     UpdateInDB.Free;
   end;
 
@@ -471,50 +470,58 @@ var
   SMSList: TSMSList;
   sms: TSMS;
   i: Integer;
-  rSMS: TpFIBQuery;
-  uSMS: TpFIBQuery;
+  rSMS: TFIBQuery;
+  uSMS: TFIBQuery;
 begin
 
   Result := 0;
   SMSList := TSMSList.Create;
-  rSMS := TpFIBQuery.Create(nil);
-  uSMS := TpFIBQuery.Create(nil);
+  rSMS := TFIBQuery.Create(nil);
+  uSMS := TFIBQuery.Create(nil);
   try
     rSMS.DataBase := dmMain.dbTV;
-    rSMS.Transaction := dmMain.trReadQ;
-    rSMS.SQL.Add
-      ('select Mes_Id, ext_id from messages m where m.mes_result = 1 and (not ext_id is NULL) and m.Mes_Type = ''SMS'' ');
-
-    rSMS.Transaction.StartTransaction;
-    rSMS.ExecQuery;
-    while not rSMS.EOF do
-    begin
-      sms.a4ID := rSMS.fn('Mes_Id').AsInteger;
-      sms.smsID := rSMS.fn('ext_id').AsInteger;
-      SMSList.Add(sms);
-      rSMS.NEXT;
+    rSMS.Transaction := dmMain.GetTransactionForRead;
+    try
+      rSMS.SQL.Text := 'select Mes_Id, ext_id from messages m where m.mes_result = 1 and (not ext_id is NULL) and m.Mes_Type = ''SMS''';
+        rSMS.Transaction.StartTransaction;
+      rSMS.ExecQuery;
+      while not rSMS.EOF do
+      begin
+        sms.a4ID := rSMS.fn('Mes_Id').AsInteger;
+        sms.smsID := rSMS.fn('ext_id').AsInteger;
+        SMSList.Add(sms);
+        rSMS.NEXT;
+      end;
+      rSMS.Close;
+      rSMS.Transaction.Commit;
+    finally
+      rSMS.Transaction.Free;
     end;
-    rSMS.Transaction.Commit;
 
     if SMSList.Count > 0 then
     begin
       // если есть что отправлять
       StatusList(SMSList);
       uSMS.DataBase := dmMain.dbTV;
-      uSMS.Transaction := dmMain.trWriteQ;
-      uSMS.SQL.Text := ' update Messages set Mes_Result = :Mes_Result where Mes_Id = :Mes_Id ';
-      for i := 0 to SMSList.Count - 1 do
-      begin
-        // 18, 19 - в очереди на сервере отправки смс
-        if not(SMSList[i].status in [0, 1, 18, 19]) then
+      uSMS.Transaction := dmMain.GetTransactionForWrite;
+      try
+        uSMS.SQL.Text := 'update Messages set Mes_Result = :Mes_Result where Mes_Id = :Mes_Id';
+        for i := 0 to SMSList.Count - 1 do
         begin
-          uSMS.Transaction.StartTransaction;
-          uSMS.ParamByName('Mes_Id').AsInteger := SMSList[i].a4ID;
-          uSMS.ParamByName('Mes_Result').AsInteger := SMSList[i].status;
-          // uSMS.ParamByName('ext_id').AsInteger := SMSList[i].smsID;
-          uSMS.ExecQuery;
-          uSMS.Transaction.Commit;
+          // 18, 19 - в очереди на сервере отправки смс
+          if not(SMSList[i].status in [0, 1, 18, 19]) then
+          begin
+            uSMS.Transaction.StartTransaction;
+            uSMS.ParamByName('Mes_Id').AsInteger := SMSList[i].a4ID;
+            uSMS.ParamByName('Mes_Result').AsInteger := SMSList[i].status;
+            // uSMS.ParamByName('ext_id').AsInteger := SMSList[i].smsID;
+            uSMS.ExecQuery;
+            uSMS.Close;
+            uSMS.Transaction.Commit;
+          end;
         end;
+      finally
+        uSMS.Transaction.Free;
       end;
       Result := SMSList.Count;
     end;

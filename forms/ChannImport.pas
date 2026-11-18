@@ -7,19 +7,19 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask,
-  FIBDatabase, pFIBDatabase, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh, GridsEh, DBAxisGridsEh,
-  DBGridEh, EhLibMTE, DBCtrlsEh, FIBQuery, pFIBQuery, OXmlReadWrite, OXmlUtils, OXmlPDOM, EhLibVCL, DBGridEhGrouping, DynVarsEh;
+  FIBDatabase, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, MemTableDataEh, MemTableEh, GridsEh, DBAxisGridsEh,
+  DBGridEh, EhLibMTE, DBCtrlsEh, FIBQuery, OXmlReadWrite, OXmlUtils, OXmlPDOM, EhLibVCL, DBGridEhGrouping, DynVarsEh;
 
 type
   TChImportForm = class(TForm)
     pnlBottom: TPanel;
     Button1: TButton;
     btnSave: TButton;
-    trRead: TpFIBTransaction;
+    trRead: TFIBTransaction;
     srcXMLChennals: TDataSource;
     dsXMLChennals: TMemTableEh;
-    trWrite: TpFIBTransaction;
-    Query: TpFIBQuery;
+    trWrite: TFIBTransaction;
+    Query: TFIBQuery;
     OpenDialog: TOpenDialog;
     pnlChennals: TPanel;
     dbgChannels: TDBGridEh;

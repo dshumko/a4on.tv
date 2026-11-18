@@ -229,7 +229,7 @@ object apgCustomerBonus: TapgCustomerBonus
       OnClick = btnAdd1Click
     end
   end
-  object dsBonus: TpFIBDataSet
+  object dsBonus: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    CUSTOMER_BONUSES'
@@ -279,7 +279,7 @@ object apgCustomerBonus: TapgCustomerBonus
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -291,7 +291,7 @@ object apgCustomerBonus: TapgCustomerBonus
     Left = 700
     Top = 58
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

@@ -301,7 +301,7 @@ object fmCardsPay: TfmCardsPay
     Left = 72
     Top = 56
   end
-  object dsCardPay: TpFIBDataSet
+  object dsCardPay: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    CARDS_PREPAY'

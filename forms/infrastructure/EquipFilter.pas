@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.ActnList,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, pFIBQuery,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, FIBQuery,
   PrjConst, DBGridEh;
 
 type
@@ -18,11 +18,11 @@ type
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     srcStreets: TDataSource;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcHomes: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcSubArea: TDataSource;
-    dsSubArea: TpFIBDataSet;
+    dsSubArea: TFIBDataSet;
     btnClear: TSpeedButton;
     OpenDialog1: TOpenDialog;
     pgcFilter: TPageControl;
@@ -42,7 +42,7 @@ type
     actClear: TAction;
     bbCancel: TBitBtn;
     bbOk: TBitBtn;
-    dsArea: TpFIBDataSet;
+    dsArea: TFIBDataSet;
     srcArea: TDataSource;
     chkAddress: TDBCheckBoxEh;
     lbl3: TLabel;
@@ -66,7 +66,7 @@ type
     edtNAME: TDBEditEh;
     chkCHECK_ADRESS: TDBCheckBoxEh;
     lbl41: TLabel;
-    dsNodes: TpFIBDataSet;
+    dsNodes: TFIBDataSet;
     srcNodes: TDataSource;
     lcbNode: TDBLookupComboboxEh;
     procedure SpeedButton2Click(Sender: TObject);

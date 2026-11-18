@@ -8,14 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider, DBCtrlsEh,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, frxClass, frxDBSet, FIBDatabase, pFIBDatabase, FIBQuery,
-  pFIBQuery, GridForma, SendEmail, distrValuePeriodForma, amSplitter,
+  DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider, DBCtrlsEh,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh, frxClass, frxDBSet, FIBDatabase, FIBQuery,
+   GridForma, SendEmail, distrValuePeriodForma, amSplitter,
   PrnDbgeh;
 
 type
   TDistribForm = class(TGridForm)
-    dsDistrib: TpFIBDataSet;
+    dsDistrib: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
@@ -30,10 +30,10 @@ type
     tsChan: TTabSheet;
     tsReports: TTabSheet;
     srcChan: TDataSource;
-    dsChan: TpFIBDataSet;
+    dsChan: TFIBDataSet;
     dbgReports: TDBGridEh;
     srcContract: TDataSource;
-    dsContract: TpFIBDataSet;
+    dsContract: TFIBDataSet;
     pnlButtom: TPanel;
     dbgContract: TDBGridEh;
     tlb1: TToolBar;
@@ -47,7 +47,7 @@ type
     actCEdit: TAction;
     actCDel: TAction;
     srcReport: TDataSource;
-    dsReport: TpFIBDataSet;
+    dsReport: TFIBDataSet;
     dbgReport: TDBGridEh;
     ToolBar1: TToolBar;
     ToolButton7: TToolButton;
@@ -79,16 +79,16 @@ type
     btnSendPDF: TToolButton;
     actSendPDF: TAction;
     frxReport: TfrxReport;
-    qryRead: TpFIBQuery;
-    trReadQ: TpFIBTransaction;
+    qryRead: TFIBQuery;
+    trReadQ: TFIBTransaction;
     dbgPC: TDBGridEh;
     Splitter1: TSplitter;
-    dsRC: TpFIBDataSet;
+    dsRC: TFIBDataSet;
     srcRC: TDataSource;
     btn6: TToolButton;
     btnSetPeriodAll: TToolButton;
     actSetPeriodAll: TAction;
-    trWriteQ: TpFIBTransaction;
+    trWriteQ: TFIBTransaction;
     pgcDistr: TPageControl;
     tsContract: TTabSheet;
     tsCards: TTabSheet;
@@ -100,7 +100,7 @@ type
     btnactCnPrefixWizard1: TToolButton;
     btn10: TToolButton;
     btnactCnPrefixWizard2: TToolButton;
-    dsCards: TpFIBDataSet;
+    dsCards: TFIBDataSet;
     srcCards: TDataSource;
     dbgCards: TDBGridEh;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

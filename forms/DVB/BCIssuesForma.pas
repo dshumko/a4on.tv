@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Menus, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, EhLibFIB,
+  GridForma, FIBDataSet, GridsEh, DBGridEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, EhLibFIB,
   PrnDbgeh;
 
 type
   TBCIssuesForm = class(TGridForm)
-    dsIssues: TpFIBDataSet;
+    dsIssues: TFIBDataSet;
     btnDateFilter: TToolButton;
     actDateFilter: TAction;
     pmPeriod: TPopupMenu;
@@ -70,7 +70,7 @@ implementation
 
 uses
   System.StrUtils,
-  DM, BCIForma, MAIN, AtrStrUtils, pFIBProps, PeriodForma, HtmlForma;
+  DM, BCIForma, MAIN, AtrStrUtils, FIBProps, PeriodForma, HtmlForma;
 
 {$R *.dfm}
 

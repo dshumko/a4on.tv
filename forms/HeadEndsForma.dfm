@@ -158,7 +158,7 @@ inherited HeadEndsForm: THeadEndsForm
       OnExecute = actEditExecute
     end
   end
-  object dsHE: TpFIBDataSet
+  object dsHE: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    HEADEND'
@@ -199,7 +199,7 @@ inherited HeadEndsForm: THeadEndsForm
     Left = 185
     Top = 188
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -211,7 +211,7 @@ inherited HeadEndsForm: THeadEndsForm
     Left = 148
     Top = 266
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -232,7 +232,7 @@ inherited HeadEndsForm: THeadEndsForm
     Left = 386
     Top = 176
   end
-  object drvHE: TpFIBDataDriverEh
+  object drvHE: TFIBDataDriverEh
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
     InsertCommand.Params = <>

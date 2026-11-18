@@ -330,7 +330,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
     Left = 275
     Top = 188
   end
-  object dsGroup: TpFIBDataSet
+  object dsGroup: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       ' -1 O_ID, '#39#1042#1089#1077#39' as name, '#39' _'#39' SORT_NAME'
@@ -354,7 +354,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
     Left = 146
     Top = 128
   end
-  object dsGC: TpFIBDataSet
+  object dsGC: TFIBDataSet
     UpdateSQL.Strings = (
       'update Equipment_Cmd_Grp'
       'set Eg_Id = :Eg_Id,'
@@ -393,7 +393,7 @@ object EquipmentCommandForm: TEquipmentCommandForm
     Left = 83
     Top = 129
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

@@ -598,7 +598,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
       OnClick = miN2Click
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -610,7 +610,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
     Left = 148
     Top = 418
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -654,7 +654,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
     Left = 224
     Top = 328
   end
-  object dsIPTVGroup: TpFIBDataSet
+  object dsIPTVGroup: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    IPTV_GROUP'
@@ -681,7 +681,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
     Left = 201
     Top = 124
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    gc.Ig_Id'
@@ -715,7 +715,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
     Left = 380
     Top = 304
   end
-  object drvFIBView: TpFIBDataDriverEh
+  object drvFIBView: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (
@@ -751,7 +751,7 @@ object IPTVSettinsForm: TIPTVSettinsForm
       Action = actSave
     end
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (

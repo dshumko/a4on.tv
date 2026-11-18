@@ -151,7 +151,7 @@ object frmChangeChannelForm: TfrmChangeChannelForm
       TabOrder = 4
     end
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    Ch_Id'
@@ -187,7 +187,7 @@ object frmChangeChannelForm: TfrmChangeChannelForm
     Left = 344
     Top = 64
   end
-  object qryChange: TpFIBQuery
+  object qryChange: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

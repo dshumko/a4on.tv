@@ -7,8 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.DBCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  DBLookupEh, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, CnErrorProvider, FIBDatabase, pFIBDatabase, FIBQuery,
-  pFIBQuery, CnClasses;
+  DBLookupEh, DBCtrlsEh, FIBDataSet, DBGridEh, CnErrorProvider, FIBDatabase, FIBQuery, CnClasses;
 
 type
   TMatGroupForm = class(TForm)
@@ -19,23 +18,23 @@ type
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
     CnErrors: TCnErrorProvider;
-    trRead: TpFIBTransaction;
+    trRead: TFIBTransaction;
     lbl41: TLabel;
     lbl42: TLabel;
-    dsServices: TpFIBDataSet;
+    dsServices: TFIBDataSet;
     srcServices: TDataSource;
     lcbRENT: TDBLookupComboboxEh;
     lcbLAON: TDBLookupComboboxEh;
     lblSold: TLabel;
     lcbSOLD: TDBLookupComboboxEh;
-    dsSoldSRV: TpFIBDataSet;
+    dsSoldSRV: TFIBDataSet;
     srcSoldSRV: TDataSource;
     srcMGropups: TDataSource;
-    dsMGropups: TpFIBDataSet;
+    dsMGropups: TFIBDataSet;
     lcbGR_ID: TDBLookupComboboxEh;
     lbl1: TLabel;
-    trWrite: TpFIBTransaction;
-    dsGroup: TpFIBDataSet;
+    trWrite: TFIBTransaction;
+    dsGroup: TFIBDataSet;
     srcGroup: TDataSource;
     cbProp: TDBComboBoxEh;
     lblPCE1: TLabel;

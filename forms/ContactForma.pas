@@ -7,8 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons,
-  FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, A4onTypeUnit,
-  Vcl.ExtCtrls;
+  FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, A4onTypeUnit,
+  Vcl.ExtCtrls, CnClasses;
 
 type
   TMaskEdit = class(Vcl.Mask.TMaskEdit)
@@ -18,7 +18,7 @@ type
 
   TContactForm = class(TForm)
     srcContactType: TDataSource;
-    dsContactType: TpFIBDataSet;
+    dsContactType: TFIBDataSet;
     CnErrors: TCnErrorProvider;
     pnlTop: TPanel;
     chkNotify: TDBCheckBoxEh;
@@ -61,9 +61,7 @@ implementation
 
 uses
   System.RegularExpressions, System.MaskUtils,
-  Vcl.Consts,
-  DM, pFIBQuery,
-  AtrStrUtils;
+  Vcl.Consts, DM, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -254,11 +252,11 @@ begin
     Exit;
 
   ShowBalance := (dmMain.GetSettingsValue('SHOW_AS_BALANCE') = '1');
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Clear;
       sql.Add('select first 10 1 fnd, c.Customer_Id, c.Account_No, c.Debt_Sum, c.Cust_Code, c.Surname, c.Firstname, c.Midlename');
       sql.Add(', coalesce((select i.Cust_Code from customer i where i.Customer_Id = :CID), '''') OLD_CODE');
@@ -324,6 +322,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -391,11 +390,11 @@ begin
   if n.IsEmpty then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Clear;
 
       sql.Add('select d.Surname, d.Firstname, d.Midlename');
@@ -418,6 +417,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;

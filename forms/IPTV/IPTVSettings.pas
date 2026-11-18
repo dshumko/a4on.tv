@@ -9,10 +9,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.Menus,
   Vcl.Grids,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
   DBGridEhToolCtrls,
-  DBAxisGridsEh, PrjConst, FIBDatabase, pFIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
-  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, amSplitter;
+  DBAxisGridsEh, PrjConst, FIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
+  FIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, amSplitter;
 
 type
   TIPTVSettinsForm = class(TForm)
@@ -22,8 +22,8 @@ type
     pmgSelectAll: TMenuItem;
     pmgSep1: TMenuItem;
     pmgSaveSelection: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     actlstSearch: TActionList;
     actFilterSearchText: TAction;
     actSearchNext: TAction;
@@ -41,8 +41,8 @@ type
     dbgIPTVGroup: TDBGridEh;
     srcIPTVGroup: TDataSource;
     srcChannels: TDataSource;
-    dsIPTVGroup: TpFIBDataSet;
-    dsChannels: TpFIBDataSet;
+    dsIPTVGroup: TFIBDataSet;
+    dsChannels: TFIBDataSet;
     actGroupNEW: TAction;
     actGroupEdit: TAction;
     actGroupDel: TAction;
@@ -52,7 +52,7 @@ type
     tsView: TTabSheet;
     dbgView: TDBGridEh;
     mtView: TMemTableEh;
-    drvFIBView: TpFIBDataDriverEh;
+    drvFIBView: TFIBDataDriverEh;
     dsView: TDataSource;
     pmViewGrid: TPopupMenu;
     actSave: TAction;
@@ -70,7 +70,7 @@ type
     actAtrEdit: TAction;
     actAtrDel: TAction;
     dbgCh: TDBGridEh;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     srcAttributes: TDataSource;
     miN2: TMenuItem;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);

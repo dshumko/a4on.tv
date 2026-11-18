@@ -418,7 +418,7 @@ object fmCardPayActivate: TfmCardPayActivate
       end
     end
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.street_id, s.street_short,s.street_name, a.area_name'
       'FROM STREET s left outer join area a on (a.area_id = s.area_id)'
@@ -434,7 +434,7 @@ object fmCardPayActivate: TfmCardPayActivate
     Left = 330
     Top = 101
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '    H.HOUSE_ID,'
@@ -458,7 +458,7 @@ object fmCardPayActivate: TfmCardPayActivate
     Left = 338
     Top = 149
   end
-  object qActivate: TpFIBQuery
+  object qActivate: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -473,7 +473,7 @@ object fmCardPayActivate: TfmCardPayActivate
     Left = 281
     Top = 201
   end
-  object dsCardSerial: TpFIBDataSet
+  object dsCardSerial: TFIBDataSet
     DeleteSQL.Strings = (
       ''
       '    ')

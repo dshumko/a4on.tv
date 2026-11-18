@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, DBGridEh, DBLookupEh;
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, FIBDatabase, DBGridEh, DBLookupEh;
 
 type
   TReqTypeForm = class(TForm)
@@ -20,9 +20,9 @@ type
     dbmmo1: TDBMemoEh;
     cbb1: TDBComboBoxEh;
     lblPPR: TLabel;
-    dsRT: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    dsRT: TFIBDataSet;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     dlgColor: TColorDialog;
     btnColor: TBitBtn;
     btnClear: TButton;

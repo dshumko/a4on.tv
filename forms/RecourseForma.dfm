@@ -517,7 +517,7 @@ object RecourseForm: TRecourseForm
     Left = 371
     Top = 190
   end
-  object dsRecourses: TpFIBDataSet
+  object dsRecourses: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    rt.RT_ID'
@@ -571,7 +571,7 @@ object RecourseForm: TRecourseForm
     Left = 371
     Top = 251
   end
-  object dsTypes: TpFIBDataSet
+  object dsTypes: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT O_ID, O_NAME, O_DESCRIPTION, coalesce(O_CHARFIELD, '#39#39') O_' +
@@ -591,7 +591,7 @@ object RecourseForm: TRecourseForm
     Left = 142
     Top = 249
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short street_na' +
@@ -609,7 +609,7 @@ object RecourseForm: TRecourseForm
     Left = 48
     Top = 19
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT'
       '    H.HOUSE_ID,'
@@ -671,7 +671,7 @@ object RecourseForm: TRecourseForm
     Left = 378
     Top = 16
   end
-  object dsResult: TpFIBDataSet
+  object dsResult: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'

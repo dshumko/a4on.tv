@@ -221,7 +221,7 @@ inherited RatesForm: TRatesForm
     Left = 40
     Top = 304
   end
-  object dsRates: TpFIBDataSet
+  object dsRates: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE RATES'
       'SET '
@@ -270,7 +270,7 @@ inherited RatesForm: TRatesForm
     Left = 40
     Top = 232
   end
-  object qInsert: TpFIBQuery
+  object qInsert: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (

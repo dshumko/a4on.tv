@@ -219,7 +219,7 @@ object ReqSingleMatGiveForm: TReqSingleMatGiveForm
     Left = 137
     Top = 153
   end
-  object dsMaterial: TpFIBDataSet
+  object dsMaterial: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    APPLIANCE'
@@ -345,7 +345,7 @@ object ReqSingleMatGiveForm: TReqSingleMatGiveForm
     Left = 64
     Top = 157
   end
-  object dsWH: TpFIBDataSet
+  object dsWH: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    APPLIANCE'

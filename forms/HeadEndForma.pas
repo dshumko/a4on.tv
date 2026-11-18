@@ -8,19 +8,20 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
   Vcl.ComCtrls,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, DBLookupEh, OkCancel_frame, pFIBQuery,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter;
+  FIBDataSet, GridsEh, DBGridEh, FIBDatabase, DBCtrlsEh, DBLookupEh, OkCancel_frame, FIBQuery,
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, amSplitter,
+  CnClasses;
 
 type
   THeadEndForm = class(TForm)
     pnlHead: TPanel;
-    dsHC: TpFIBDataSet;
+    dsHC: TFIBDataSet;
     srcHC: TDataSource;
-    dsC: TpFIBDataSet;
+    dsC: TFIBDataSet;
     srcC: TDataSource;
-    dsHE: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsHE: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     srcHE: TDataSource;
     Label2: TLabel;
     edtHE_NAME: TDBEditEh;
@@ -32,16 +33,16 @@ type
     cbbLupStreets: TDBLookupComboboxEh;
     lbl4: TLabel;
     cbbLupHOUSE: TDBLookupComboboxEh;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
     dbmmoNotice: TDBMemoEh;
     lbl5: TLabel;
     OkCancelFrame1: TOkCancelFrame;
     cbbType: TDBLookupComboboxEh;
     lblAttribute: TLabel;
-    dsType: TpFIBDataSet;
+    dsType: TFIBDataSet;
     srcType: TDataSource;
     pgcInfo: TPageControl;
     tsChanals: TTabSheet;
@@ -57,12 +58,12 @@ type
     pnl3: TPanel;
     lbl2: TLabel;
     dbgrdGridC: TDBGridEh;
-    dsHouses: TpFIBDataSet;
+    dsHouses: TFIBDataSet;
     srcHouses: TDataSource;
     dbgrdHouses: TDBGridEh;
     lbl6: TLabel;
     luParent: TDBLookupComboboxEh;
-    dsParent: TpFIBDataSet;
+    dsParent: TFIBDataSet;
     srcParent: TDataSource;
     cnErrors: TCnErrorProvider;
     procedure btnChanAddClick(Sender: TObject);
@@ -122,7 +123,7 @@ end;
 
 procedure THeadEndForm.btnChanAddClick(Sender: TObject);
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -141,7 +142,7 @@ end;
 
 procedure THeadEndForm.btnChanRemoveClick(Sender: TObject);
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;

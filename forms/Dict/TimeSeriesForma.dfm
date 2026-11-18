@@ -232,7 +232,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
     Left = 104
     Top = 272
   end
-  object dsSeries: TpFIBDataSet
+  object dsSeries: TFIBDataSet
     UpdateSQL.Strings = (
       
         'EXECUTE PROCEDURE ATTRIBUTES_IUD(:O_ID, :O_NAME, :O_DESCRIPTION,' +
@@ -287,7 +287,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
     Left = 144
     Top = 136
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -299,7 +299,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
     Left = 200
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -311,7 +311,7 @@ inherited TimeSeriesForm: TTimeSeriesForm
     Left = 312
     Top = 188
   end
-  object dsValues: TpFIBDataSet
+  object dsValues: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS_HISTORY'
       'SET '

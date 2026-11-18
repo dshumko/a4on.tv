@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.Buttons, Vcl.DBCtrls,
   Vcl.ComCtrls, Vcl.ActnList,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, pFIBQuery,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, FIBQuery,
   PrjConst, DBGridEh;
 
 type
@@ -18,14 +18,14 @@ type
     SpeedButton1: TSpeedButton;
     SpeedButton2: TSpeedButton;
     srcStreets: TDataSource;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcHomes: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcSubArea: TDataSource;
-    dsSubArea: TpFIBDataSet;
+    dsSubArea: TFIBDataSet;
     btnClear: TSpeedButton;
     srcNodeType: TDataSource;
-    dsNodeType: TpFIBDataSet;
+    dsNodeType: TFIBDataSet;
     OpenDialog1: TOpenDialog;
     pgcFilter: TPageControl;
     tsFilter: TTabSheet;
@@ -45,7 +45,7 @@ type
     actClear: TAction;
     bbCancel: TBitBtn;
     bbOk: TBitBtn;
-    dsArea: TpFIBDataSet;
+    dsArea: TFIBDataSet;
     srcArea: TDataSource;
     chkAddress: TDBCheckBoxEh;
     lbl5: TLabel;
@@ -62,11 +62,11 @@ type
     chkinversion: TDBCheckBoxEh;
     btnAND: TButton;
     btnOR: TButton;
-    dsEPoint: TpFIBDataSet;
+    dsEPoint: TFIBDataSet;
     srcEPoint: TDataSource;
     lcbEpoint: TDBLookupComboboxEh;
     lbl21: TLabel;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     srcAttributes: TDataSource;
     chkCUST_NOT_ATTRIBUTE: TDBCheckBoxEh;
     lbl2: TLabel;

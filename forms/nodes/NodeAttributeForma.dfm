@@ -49,17 +49,13 @@ object NodeAttributForm: TNodeAttributForm
     Align = alBottom
     TabOrder = 4
     TabStop = True
-    ExplicitTop = 159
-    ExplicitWidth = 401
     inherited Label2: TLabel
       Height = 13
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited Label1: TLabel
       Height = 13
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -67,12 +63,9 @@ object NodeAttributForm: TNodeAttributForm
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 67
-      ExplicitWidth = 245
     end
     inherited bbCancel: TBitBtn
       Left = 318
-      ExplicitLeft = 318
     end
   end
   object dbluAttribute: TDBLookupComboboxEh
@@ -84,6 +77,9 @@ object NodeAttributForm: TNodeAttributForm
     DynProps = <>
     DataField = 'O_ID'
     DataSource = srcNodeAttribute
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EditButtons = <>
     KeyField = 'O_ID'
     ListField = 'O_NAME'
@@ -143,7 +139,7 @@ object NodeAttributForm: TNodeAttributForm
     Left = 236
     Top = 68
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -178,7 +174,7 @@ object NodeAttributForm: TNodeAttributForm
     Left = 75
     Top = 80
   end
-  object dsNodeAttribute: TpFIBDataSet
+  object dsNodeAttribute: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE NODES_ATTRIBUTES'
       'SET '

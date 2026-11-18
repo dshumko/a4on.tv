@@ -10,10 +10,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin,
   Vcl.ActnList, Vcl.Menus, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.StdCtrls,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DM,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DM,
   DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, A4onTypeUnit;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, A4onTypeUnit;
 
 type
   TapgCustomerAppl = class(TA4onPage)
@@ -27,10 +27,10 @@ type
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     actOpenBid: TAction;
-    dsAppliance: TpFIBDataSet;
+    dsAppliance: TFIBDataSet;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);

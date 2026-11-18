@@ -12,7 +12,7 @@ uses
 {$IFDEF VER290}
   System.ImageList,
 {$ENDIF}
-  FIBQuery, pFIBQuery, frxExportPDF, frxExportRTF, frxExportTXT, frxExportHTML, frxExportXLS, frxExportImage,
+  FIBQuery, frxExportPDF, frxExportRTF, frxExportTXT, frxExportHTML, frxExportXLS, frxExportImage,
   frxExportCSV,
   frxExportBIFF, frxExportDBF, frxExportODF, frxExportMail, JvDesktopAlert, DBCtrlsEh, GridsEh,
   frxClass, frxExportXML, EhLibLangConsts, EhLibEmbeddedLangConsts, LanguageResManEh, MDIChildBar,
@@ -1209,10 +1209,10 @@ begin
   SM.fs.Clear;
   SM.fs.SyntaxType := 'PascalScript';
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.text := 'select coalesce(Lang,0) Lang, Module from Modules where Id_Module = :Id_Module';
 
       ParamByName('Id_Module').AsInteger := (Sender as TMenuItem).Tag;
@@ -1232,8 +1232,10 @@ begin
         end;
         SM.fs.Lines.text := fn('MODULE').AsString;
       end;
+      Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
 
@@ -1476,7 +1478,7 @@ begin
   begin
     b := Now();
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(self) do
+    with TFIBQuery.Create(self) do
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -1485,6 +1487,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -1556,7 +1559,7 @@ begin
     mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(self) do
+    with TFIBQuery.Create(self) do
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -1564,6 +1567,7 @@ begin
         ParamByName('P_MONTH').AsDate := s;
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -1601,13 +1605,14 @@ end;
 procedure TA4MainForm.miIndexSatatClick(Sender: TObject);
 begin
   Screen.Cursor := crSQLWait;
-  with TpFIBQuery.Create(self) do
+  with TFIBQuery.Create(self) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
       SQL.text := 'EXECUTE PROCEDURE INDICES_REBUILD_SELECTIVITY';
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       Free;
@@ -1869,7 +1874,7 @@ begin
   Application.title := Format('%s %s %s', [alias, dmMain.dbTV.ConnectParams.UserName, rsAplicationName]);
 
   {
-    with TpFIBQuery.Create(self) do
+    with TFIBQuery.Create(self) do
     try
     DataBase := dmMain.dbTV;
     Transaction := dmMain.trReadQ;
@@ -2233,7 +2238,7 @@ begin
   if ChangePeriod(bDate, eDate) then
   begin
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(self) do
+    with TFIBQuery.Create(self) do
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -2243,6 +2248,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
 
       finally
@@ -2454,10 +2460,10 @@ begin
   findclose(SearchRec);
 
   dstr := '';
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       id := ifThen(GetWineAvail, '-110' , '-111');
       SQL.text := 'SELECT NOTICE FROM BLB_GZIP WHERE BLB_ID = ' + id;
       Transaction.StartTransaction;
@@ -2467,6 +2473,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
 
@@ -2504,7 +2511,7 @@ begin
     filename := Application.ExeName;
     if FileExists(filename) then
     begin
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
@@ -2533,7 +2540,7 @@ begin
     filename := 'fbclient.dll';
     if FileExists(filename) then
     begin
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
@@ -2582,11 +2589,11 @@ begin
     iFileNameNew := FileGetTempName('fbclient');
     strm := TFileStream.Create(iFileNameNew, fmCreate);
     try
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
       begin
         try
           DataBase := dmMain.dbTV;
-          Transaction := dmMain.trReadQ;
+          Transaction := dmMain.GetTransactionForRead;
           SQL.text := 'SELECT BLB_BODY FROM BLB_GZIP WHERE BLB_ID = -112';
           Transaction.StartTransaction;
           ExecQuery;
@@ -2594,6 +2601,7 @@ begin
           Close;
           Transaction.Commit;
         finally
+          if assigned(Transaction) then Transaction.Free;
           Free;
         end;
       end;
@@ -2645,11 +2653,11 @@ begin
     iFileNameNew := FileGetTempName('a4on');
     strm := TFileStream.Create(iFileNameNew, fmCreate);
     try
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
       begin
         try
           DataBase := dmMain.dbTV;
-          Transaction := dmMain.trReadQ;
+          Transaction := dmMain.GetTransactionForRead;
           id := ifThen(GetWineAvail, '-110' , '-111');
           SQL.text := 'SELECT BLB_BODY FROM BLB_GZIP WHERE BLB_ID = ' + id;
           Transaction.StartTransaction;
@@ -2658,6 +2666,7 @@ begin
           Close;
           Transaction.Commit;
         finally
+          if assigned(Transaction) then Transaction.Free;
           Free;
         end;
       end;
@@ -2725,6 +2734,7 @@ begin
       ParamByName('MES_TYPE').AsString := 'SMS';
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
       Result := True;
     except
@@ -2847,6 +2857,7 @@ begin
         Next;
       end;
     finally
+      Close;
       Transaction.Rollback;
       Transaction := tr;
     end;
@@ -2934,6 +2945,7 @@ begin
           Next;
         end;
       finally
+        Close;
         Transaction.Rollback;
         Transaction := tr;
       end;
@@ -2987,13 +2999,14 @@ begin
   begin
     b := Now();
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(self) do
+    with TFIBQuery.Create(self) do
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
         SQL.text := 'execute procedure Close_Day_Proc(current_date, null)';
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         Free;
@@ -3839,10 +3852,10 @@ begin
     Exit;
 
   E := -1;
-  with TpFIBQuery.Create(self) do
+  with TFIBQuery.Create(self) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Clear;
       SQL.Add('select datediff(DAY, coalesce(u.Pswd_Changed, cast(''2019-07-01'' as timestamp)), localtimestamp) as PE from Sys$User u');
       SQL.Add(Format('where u.Ibname = ''%s''', [dmMain.User]));
@@ -3850,8 +3863,10 @@ begin
       ExecQuery;
       if (not fn('PE').IsNull) then
         E := fn('PE').AsInteger;
+      Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
 
@@ -4099,6 +4114,7 @@ var
 begin
   if (not actBuildings.Visible) then
     Exit;
+
   sid := dmMain.dbTV.QueryValue('select coalesce(Street_Id, -1) from house where house_id =' + ID.ToString, 0,
     dmMain.trReadQ, False);
 

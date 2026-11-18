@@ -249,11 +249,10 @@ object apgCustomerSrv: TapgCustomerSrv
         object Label14: TLabel
           Left = 0
           Top = 0
-          Width = 921
+          Width = 139
           Height = 13
           Align = alTop
           Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1081' '#1090#1072#1088#1080#1092' ::.'
-          ExplicitWidth = 139
         end
         object dbgPersTarif: TDBGridEh
           Left = 27
@@ -431,7 +430,7 @@ object apgCustomerSrv: TapgCustomerSrv
       end
     end
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     RefreshSQL.Strings = (
       'select *'
       'from ('
@@ -685,7 +684,7 @@ object apgCustomerSrv: TapgCustomerSrv
     Left = 385
     Top = 94
   end
-  object dsPersonelTarif: TpFIBDataSet
+  object dsPersonelTarif: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    PERSONAL_TARIF'
@@ -850,7 +849,7 @@ object apgCustomerSrv: TapgCustomerSrv
       Action = actChangeNotice
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -862,7 +861,7 @@ object apgCustomerSrv: TapgCustomerSrv
     Left = 172
     Top = 58
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

@@ -3,7 +3,7 @@ object CustomersForm: TCustomersForm
   Top = 0
   ActiveControl = dbgCustomers
   Caption = #1057#1087#1080#1089#1086#1082' '#1072#1073#1086#1085#1077#1085#1090#1086#1074
-  ClientHeight = 526
+  ClientHeight = 506
   ClientWidth = 970
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -26,7 +26,7 @@ object CustomersForm: TCustomersForm
   TextHeight = 13
   object splMain: TSplitter
     Left = 0
-    Top = 271
+    Top = 251
     Width = 970
     Height = 4
     Cursor = crVSplit
@@ -35,7 +35,7 @@ object CustomersForm: TCustomersForm
   end
   object pnlForms: TPanel
     Left = 0
-    Top = 275
+    Top = 255
     Width = 970
     Height = 251
     Align = alBottom
@@ -109,7 +109,7 @@ object CustomersForm: TCustomersForm
     Left = 0
     Top = 57
     Width = 970
-    Height = 214
+    Height = 194
     Align = alClient
     AllowedOperations = []
     ColumnDefValues.ToolTips = True
@@ -716,7 +716,7 @@ object CustomersForm: TCustomersForm
       OnKeyDown = AddrSearchFieldKeyDown
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -728,7 +728,7 @@ object CustomersForm: TCustomersForm
     Left = 237
     Top = 403
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -739,7 +739,7 @@ object CustomersForm: TCustomersForm
     Left = 299
     Top = 407
   end
-  object dsCustomers: TpFIBDataSet
+  object dsCustomers: TFIBDataSet
     DeleteSQL.Strings = (
       'EXECUTE PROCEDURE DELETE_CUSTOMER(:CUSTOMER_ID)')
     RefreshSQL.Strings = (
@@ -1316,15 +1316,15 @@ object CustomersForm: TCustomersForm
     Left = 104
     Top = 214
   end
-  object qBalance: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qBalance: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select *'
       'from customer_balance(:CUSTOMER_ID)'
       'order by rmonth')
-    Left = 480
-    Top = 172
+    Left = 472
+    Top = 132
   end
   object UpdateTimer: TTimer
     Enabled = False
@@ -2110,8 +2110,8 @@ object CustomersForm: TCustomersForm
   end
   object mdsBalance: TMemTableEh
     Params = <>
-    Left = 423
-    Top = 123
+    Left = 399
+    Top = 131
     object MemTableData: TMemTableDataEh
       object DataStruct: TMTDataStructEh
         object CUSTOMER_ID: TMTNumericDataFieldEh
@@ -2168,7 +2168,7 @@ object CustomersForm: TCustomersForm
       end
     end
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.street_id'
@@ -2190,7 +2190,7 @@ object CustomersForm: TCustomersForm
     Left = 596
     Top = 331
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    H.HOUSE_ID'
@@ -2215,7 +2215,7 @@ object CustomersForm: TCustomersForm
     Left = 594
     Top = 373
   end
-  object dsFLAT: TpFIBDataSet
+  object dsFLAT: TFIBDataSet
     SelectSQL.Strings = (
       'select distinct'
       '    iif(FLAT_NO <> '#39#39', FLAT_NO, '#39'-'#39') FLAT_NO'
@@ -2234,7 +2234,7 @@ object CustomersForm: TCustomersForm
     Left = 597
     Top = 436
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'
@@ -2312,5 +2312,17 @@ object CustomersForm: TCustomersForm
     OnTimer = tmrSearchTimer
     Left = 712
     Top = 336
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 472
+    Top = 200
   end
 end

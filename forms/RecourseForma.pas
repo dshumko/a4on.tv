@@ -9,19 +9,19 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.DBCtrls,
   Vcl.Mask,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBQuery, pFIBQuery, CnErrorProvider,
+  DBCtrlsEh, DBLookupEh, FIBDataSet, OkCancel_frame, FIBQuery, CnErrorProvider,
   PropFilerEh,
   PropStorageEh, DM, PrjConst, CustomerInfoFrame, A4onTypeUnit, GridsEh, DBGridEh, amSplitter, CnClasses;
 
 type
   TRecourseForm = class(TForm)
     srcRecourse: TDataSource;
-    dsRecourses: TpFIBDataSet;
+    dsRecourses: TFIBDataSet;
     pnlNotice: TPanel;
     pnlRecourse: TPanel;
     lblAttribute: TLabel;
     cbRecourse: TDBLookupComboboxEh;
-    dsTypes: TpFIBDataSet;
+    dsTypes: TFIBDataSet;
     srcTypes: TDataSource;
     pnlInfo: TPanel;
     CustomerInfoFrm: TCustomerInfoFrm;
@@ -30,9 +30,9 @@ type
     lbl4: TLabel;
     lbl5: TLabel;
     btnFind: TButton;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
     LupStreets: TDBLookupComboboxEh;
     LupHOUSE: TDBLookupComboboxEh;
@@ -60,7 +60,7 @@ type
     pnlResult: TPanel;
     lblResult: TLabel;
     lcbResult: TDBLookupComboboxEh;
-    dsResult: TpFIBDataSet;
+    dsResult: TFIBDataSet;
     srcResult: TDataSource;
     btnOkandTask: TBitBtn;
     pnlTags: TPanel;
@@ -420,7 +420,7 @@ begin
     end;
   end;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;

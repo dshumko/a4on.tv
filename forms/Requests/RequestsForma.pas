@@ -8,10 +8,10 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Menus,
-  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, frxClass, frxDBSet, EhLibFIB, GridsEh, DBGridEhGrouping,
-  ReqWorksFrame, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ReqMaterialsFrame, PropFilerEh,
+  DBGridEh, FIBDataSet, DBCtrlsEh, frxClass, frxDBSet, EhLibFIB, GridsEh, DBGridEhGrouping,
+  ReqWorksFrame, MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, ReqMaterialsFrame, PropFilerEh,
   PropStorageEh,
-  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh, amSplitter;
+  ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, FIBDatabase, DynVarsEh, amSplitter;
 
 type
   TRequestsForm = class(TForm)
@@ -31,7 +31,7 @@ type
     pmgSep1: TMenuItem;
     pmgSaveSelection: TMenuItem;
     pnlClientInfo: TPanel;
-    dsAll: TpFIBDataSet;
+    dsAll: TFIBDataSet;
     actShowInfo: TAction;
     ToolButton8: TToolButton;
     pnlContetnt: TPanel;
@@ -68,7 +68,7 @@ type
     frxDBrequests: TfrxDBDataset;
     frxDBReqMaterials: TfrxDBDataset;
     mtPlan: TMemTableEh;
-    drvPlan: TpFIBDataDriverEh;
+    drvPlan: TFIBDataDriverEh;
     btnQuickFilter: TToolButton;
     btn2: TToolButton;
     actGIVE: TAction;
@@ -102,13 +102,13 @@ type
     chkGroupPlan: TCheckBox;
     chkGroupGive: TCheckBox;
     mtGive: TMemTableEh;
-    drvGive: TpFIBDataDriverEh;
+    drvGive: TFIBDataDriverEh;
     srcGive: TDataSource;
     mtExec: TMemTableEh;
-    drvExec: TpFIBDataDriverEh;
+    drvExec: TFIBDataDriverEh;
     srcExec: TDataSource;
     mtAll: TMemTableEh;
-    drvAll: TpFIBDataDriverEh;
+    drvAll: TFIBDataDriverEh;
     srcAll: TDataSource;
     tlb1: TToolBar;
     chkGrupeExec: TCheckBox;
@@ -121,9 +121,9 @@ type
     btnPrint: TToolButton;
     btn7: TToolButton;
     actPrintAN: TAction;
-    dsPlan: TpFIBDataSet;
-    dsGive: TpFIBDataSet;
-    dsExec: TpFIBDataSet;
+    dsPlan: TFIBDataSet;
+    dsGive: TFIBDataSet;
+    dsExec: TFIBDataSet;
     N17: TMenuItem;
     N18: TMenuItem;
     btnCloseGroup1: TToolButton;
@@ -139,8 +139,8 @@ type
     frxRequests: TfrxDBDataset;
     btnSelectPrint1: TToolButton;
     btn9: TToolButton;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     btn6: TToolButton;
     btnPlaner: TToolButton;
     actPlaner: TAction;
@@ -237,7 +237,7 @@ type
     procedure LoadReportBody(const fReport_ID: Integer);
     procedure AddReport(const r_id: Integer; const variable: string; const value: Variant;
       const AsNew: Boolean = False);
-    procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet; MemDS: TMemTableEh);
+    procedure SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TFIBDataSet; MemDS: TMemTableEh);
     function GetActiveGrid(): TDBGridEh;
     procedure SetFrozen(const v: Integer);
   public
@@ -253,7 +253,7 @@ implementation
 
 uses
   System.DateUtils, System.StrUtils,
-  RequestForma, RequestFilterForma, MAIN, DM, AtrCommon, AtrStrUtils, pFIBQuery, SelDateForma, RequestNewForma,
+  RequestForma, RequestFilterForma, MAIN, DM, AtrCommon, AtrStrUtils, FIBQuery, SelDateForma, RequestNewForma,
   ReqGiveForma, CF,
   ReportPreview, ReqPlanerForma;
 
@@ -1039,7 +1039,7 @@ begin
   s := InputBox(rsRequestCloseAs, rsFromClosedRequest, '');
   if TryStrToInt(s, AS_RQ_ID) then
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -2015,18 +2015,18 @@ var
   i, j: Integer;
   Grid: TCustomDBGridEh;
   id: Integer;
-  FibDS: TpFIBDataSet;
+  FibDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   if not(Sender is TDBGridEh) then
     exit;
-  if not((Sender as TDBGridEh).DataSource.DataSet is TpFIBDataSet) then
+  if not((Sender as TDBGridEh).DataSource.DataSet is TFIBDataSet) then
     exit;
 
   cr := Screen.Cursor;
   Screen.Cursor := crSqlWait;
   Grid := TCustomDBGridEh(Sender);
-  FibDS := TpFIBDataSet(Grid.DataSource.DataSet);
+  FibDS := TFIBDataSet(Grid.DataSource.DataSet);
   id := -1;
   if Sender is TCustomDBGridEh then
   begin
@@ -2088,7 +2088,7 @@ end;
 procedure TRequestsForm.GiveRequest(const req_id: Integer; const date: TDateTime; const WorkGroup: Integer = -1;
   const Workers: String = '');
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -2110,7 +2110,7 @@ end;
 
 procedure TRequestsForm.ChangeDayRequest(const req_id: Integer; const date: TDateTime);
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -2125,7 +2125,7 @@ begin
     end;
 end;
 
-procedure TRequestsForm.SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TpFIBDataSet; MemDS: TMemTableEh);
+procedure TRequestsForm.SwitchTreeMode(chkBox: TCheckBox; TreeGrid: TDBGridEh; FibDS: TFIBDataSet; MemDS: TMemTableEh);
 var
   Crsr: TCursor;
 begin

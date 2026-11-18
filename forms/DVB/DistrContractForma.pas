@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Mask, Vcl.DBCtrls, Vcl.StdCtrls,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, CnErrorProvider, PrjConst, DBGridEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, OkCancel_frame, FIBDatabase, CnErrorProvider, PrjConst, DBGridEh;
 
 type
   TDistrContractForm = class(TForm)
@@ -15,10 +15,10 @@ type
     OkCancelFrame: TOkCancelFrame;
     edtC_NUMBER: TDBEditEh;
     DBMemo1: TDBMemoEh;
-    trSRead: TpFIBTransaction;
-    trSWrite: TpFIBTransaction;
+    trSRead: TFIBTransaction;
+    trSWrite: TFIBTransaction;
     CnErrors: TCnErrorProvider;
-    dsContract: TpFIBDataSet;
+    dsContract: TFIBDataSet;
     srcContract: TDataSource;
     DBDateTimeEditEh1: TDBDateTimeEditEh;
     edtC_DATE: TDBDateTimeEditEh;
@@ -26,7 +26,7 @@ type
     lbl2: TLabel;
     lbl3: TLabel;
     cbbREPORT_FORM: TDBComboBoxEh;
-    dsReports: TpFIBDataSet;
+    dsReports: TFIBDataSet;
     lbl4: TLabel;
     cbbREPORT_FRMT: TDBComboBoxEh;
     lbl5: TLabel;

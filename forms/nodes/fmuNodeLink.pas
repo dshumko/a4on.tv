@@ -9,29 +9,28 @@ uses
   Vcl.Graphics, Vcl.Forms, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Controls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.ActnList,
   Vcl.Menus,
-  PrjConst, AtrPages, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, FIBQuery, pFIBQuery, FIBDatabase,
-  pFIBDatabase,
-  FIBDataSet, pFIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, A4onTypeUnit;
+  PrjConst, AtrPages, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, FIBQuery, FIBDatabase,
+  FIBDataSet, EhLibVCL, GridsEh, DBAxisGridsEh, DBGridEh, A4onTypeUnit;
 
 type
   TapgNodeLink = class(TA4onPage)
-    dsLink: TpFIBDataSet;
+    dsLink: TFIBDataSet;
     srcLink: TDataSource;
     dbgNodeLink: TDBGridEh;
     ActList: TActionList;
     actAdd: TAction;
     actEdit: TAction;
     actDel: TAction;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    qRead: TpFIBQuery;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    qRead: TFIBQuery;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnAdd: TSpeedButton;
     pnlRow: TPanel;
     dbgDetail: TDBGridEh;
-    dsEQ: TpFIBDataSet;
+    dsEQ: TFIBDataSet;
     srcEQ: TDataSource;
     actPEdit: TAction;
     pnlDBtns: TPanel;
@@ -51,6 +50,7 @@ type
     miEdit: TMenuItem;
     actOpenEqpmntTo: TAction;
     miOpenEqpmntTo: TMenuItem;
+    trReadQ: TFIBTransaction;
     procedure actAddExecute(Sender: TObject);
     procedure actEditExecute(Sender: TObject);
     procedure actDelExecute(Sender: TObject);
@@ -312,7 +312,7 @@ begin
     MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;

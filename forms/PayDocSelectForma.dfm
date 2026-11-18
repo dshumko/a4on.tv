@@ -132,7 +132,7 @@ object PayDocSelectForm: TPayDocSelectForm
     Left = 154
     Top = 42
   end
-  object dsPaymentDocs: TpFIBDataSet
+  object dsPaymentDocs: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    *'

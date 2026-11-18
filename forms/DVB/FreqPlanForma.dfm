@@ -422,7 +422,7 @@ inherited FreqPlanForm: TFreqPlanForm
     Left = 344
     Top = 288
   end
-  object dsFreqPlan: TpFIBDataSet
+  object dsFreqPlan: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE FREQPLAN'
       'SET '
@@ -619,7 +619,7 @@ inherited FreqPlanForm: TFreqPlanForm
     Top = 296
     oFetchAll = True
   end
-  object qryOIRT: TpFIBQuery
+  object qryOIRT: TFIBQuery
     Transaction = trWrite
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1354,7 +1354,7 @@ inherited FreqPlanForm: TFreqPlanForm
     Left = 48
     Top = 368
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1366,7 +1366,7 @@ inherited FreqPlanForm: TFreqPlanForm
     Left = 152
     Top = 364
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (

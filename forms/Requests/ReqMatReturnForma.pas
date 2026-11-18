@@ -7,9 +7,9 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
-  FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
+  FIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter,
-  MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, Vcl.Menus;
+  MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, Vcl.Menus;
 
 type
   TReqMatReturnForm = class(TForm)
@@ -17,13 +17,13 @@ type
     pnlGrids: TPanel;
     dbGrid: TDBGridEh;
     srcDataSource: TDataSource;
-    dsReqMaterials: TpFIBDataSet;
+    dsReqMaterials: TFIBDataSet;
     OkCancelFrame1: TOkCancelFrame;
     srcMatGropups: TDataSource;
     Splitter1: TSplitter;
     PropStorage: TPropStorageEh;
     mtGroups: TMemTableEh;
-    drvFibGroups: TpFIBDataDriverEh;
+    drvFibGroups: TFIBDataDriverEh;
     dbGridGroups: TDBGridEh;
     pmTreeView: TPopupMenu;
     miFE: TMenuItem;

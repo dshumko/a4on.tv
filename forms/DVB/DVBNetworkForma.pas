@@ -8,15 +8,15 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtDlgs,
-  FIBDataSet, pFIBDataSet, OkCancel_frame, FIBDatabase, pFIBDatabase, DBCtrlsEh, uDBImages;
+  FIBDataSet, OkCancel_frame, FIBDatabase, DBCtrlsEh, uDBImages;
 
 type
 
   TDVBNetworkForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
-    dsNetwork: TpFIBDataSet;
+    dsNetwork: TFIBDataSet;
     srcNetwork: TDataSource;
-    trWrite: TpFIBTransaction;
+    trWrite: TFIBTransaction;
     edtNAME: TDBEditEh;
     edtTIMEOFFSET: TDBNumberEditEh;
     edtNID: TDBNumberEditEh;

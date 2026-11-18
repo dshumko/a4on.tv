@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask,
-  IB_Services, uFBServices, pFIBExtract, FIBDatabase, pFIBDatabase, PrjConst, DBCtrlsEh;
+  FIBServices, uFBServices, FIBExtract, FIBDatabase, PrjConst, DBCtrlsEh;
 
 type
   TSrvServiceForm = class(TForm)
@@ -21,8 +21,8 @@ type
     memServerProps: TMemo;
     btnServerProperties: TButton;
     btnServerLog: TButton;
-    DBforExtract: TpFIBDatabase;
-    trForExtract: TpFIBTransaction;
+    DBforExtract: TFIBDatabase;
+    trForExtract: TFIBTransaction;
     edtBackupFBK: TDBEditEh;
     dlgOpen: TOpenDialog;
     edtBackupFDB: TDBEditEh;
@@ -41,7 +41,7 @@ type
     procedure edtBackupFDBEditButtons0Click(Sender: TObject; var Handled: Boolean);
   private
     { Private declarations }
-    // DBExtract: TpFIBExtract;
+    // DBExtract: TFIBExtract;
     procedure OnServerLog(Sender: TObject; const Text: string);
     procedure OnDatabaseLog(Sender: TObject; const Text: string);
     function GetFirebirdServer: TFirebirdServer;
@@ -72,12 +72,12 @@ end;
 
 function TSrvServiceForm.GetFirebirdServer: TFirebirdServer;
 begin
-  Result := TFirebirdServer.Instance(dmMain.Server, dmMain.User, dmMain.Password, TProtocol(0), dmMain.ClientLib);
+  Result := TFirebirdServer.Instance(dmMain.Server, dmMain.User, dmMain.Password, TFIBProtocol(0), dmMain.ClientLib);
 end;
 
 procedure TSrvServiceForm.btnServerPropertiesClick(Sender: TObject);
 var
-  sp: TpFIBServerProperties;
+  sp: TFIBServerProperties;
   i: Integer;
 begin
   sp := GetFirebirdServer.GetServerPropeties([Database, Version, ConfigParameters]);
@@ -194,7 +194,7 @@ end;
 
 procedure TSrvServiceForm.FormCreate(Sender: TObject);
 begin
-  // DBExtract := TpFIBExtract.Create(self);
+  // DBExtract := TFIBExtract.Create(self);
 end;
 
 end.

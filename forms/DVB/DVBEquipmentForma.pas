@@ -10,16 +10,16 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBCtrlsEh, DBAxisGridsEh,
   CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, amSplitter,
   PrnDbgeh, CnClasses;
 
 type
   TDVBEquipmentForm = class(TGridForm)
-    dsEQ: TpFIBDataSet;
+    dsEQ: TFIBDataSet;
     btn2: TToolButton;
     actHistory: TAction;
-    dsHistory: TpFIBDataSet;
+    dsHistory: TFIBDataSet;
     srcHistory: TDataSource;
     pnlHistory: TPanel;
     dbgHistory: TDBGridEh;

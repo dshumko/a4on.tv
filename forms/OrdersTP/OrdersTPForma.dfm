@@ -27,7 +27,6 @@ object OrdersTPForm: TOrdersTPForm
     Height = 461
     Align = alClient
     TabOrder = 0
-    ExplicitHeight = 441
     object dbgOrdersTP: TDBGridEh
       Left = 1
       Top = 30
@@ -490,7 +489,7 @@ object OrdersTPForm: TOrdersTPForm
       OnClick = ppmSaveSelectionClick
     end
   end
-  object dsOrdersTP: TpFIBDataSet
+  object dsOrdersTP: TFIBDataSet
     DeleteSQL.Strings = (
       'execute block(OID D_Integer = :OLD_OTP_ID) as'
       'declare variable c D_Uid_Null;'
@@ -596,8 +595,8 @@ object OrdersTPForm: TOrdersTPForm
     Left = 315
     Top = 211
   end
-  object qDetailCount: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qDetailCount: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select count(*) from payment p where p.pay_doc_id = :pay_doc_id')
@@ -667,7 +666,7 @@ object OrdersTPForm: TOrdersTPForm
     Left = 378
     Top = 135
   end
-  object drvOrdersTP: TpFIBDataDriverEh
+  object drvOrdersTP: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     UpdateCommand.Params = <>
@@ -860,5 +859,17 @@ object OrdersTPForm: TOrdersTPForm
     object miPrintOrder1: TMenuItem
       Action = actPrintOrder
     end
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 312
+    Top = 288
   end
 end

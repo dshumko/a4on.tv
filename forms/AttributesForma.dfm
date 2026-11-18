@@ -389,7 +389,7 @@ inherited AttributesForm: TAttributesForm
     Left = 280
     Top = 304
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     UpdateSQL.Strings = (
       
         'EXECUTE PROCEDURE ATTRIBUTES_IUD(:O_ID, :O_NAME, :O_DESCRIPTION,' +
@@ -454,7 +454,7 @@ inherited AttributesForm: TAttributesForm
     Left = 144
     Top = 136
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -466,7 +466,7 @@ inherited AttributesForm: TAttributesForm
     Left = 200
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

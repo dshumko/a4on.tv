@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh, CnErrorProvider,
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, DBLookupEh, DBGridEh, CnErrorProvider,
   CnClasses;
 
 type
@@ -21,11 +21,11 @@ type
     lbl3: TLabel;
     mmoNotice: TDBMemoEh;
     srcMAN: TDataSource;
-    dsMan: TpFIBDataSet;
+    dsMan: TFIBDataSet;
     Label1: TLabel;
     cbType: TDBLookupComboboxEh;
     srcType: TDataSource;
-    dsType: TpFIBDataSet;
+    dsType: TFIBDataSet;
     lbl5: TLabel;
     cbEncode: TDBComboBoxEh;
     btnOk: TBitBtn;
@@ -51,7 +51,7 @@ implementation
 
 uses
   System.RegularExpressions, System.DateUtils, System.Math, System.StrUtils,
-  pFIBQuery, DM, PrjConst, atrCommon, CnBigNumber;
+   DM, PrjConst, atrCommon, CnBigNumber, FIBQuery;
 
 {$R *.dfm}
 
@@ -219,7 +219,7 @@ begin
     if ((StartN <> -1) or (count = 1)) and (MessageDlg(Format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtNumber.Text]),
       mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
-      with TpFIBQuery.Create(dmMain) do
+      with TFIBQuery.Create(dmMain) do
       begin
         try
           Database := dmMain.dbTV;
@@ -262,6 +262,7 @@ begin
             end;
             ExecQuery;
           end;
+          Close;
           Transaction.Commit;
           Result := true;
         finally
@@ -351,7 +352,7 @@ begin
     if BigNumberSubWord(StartNum, 1) and (MessageDlg(Format(rsCREATE_DIGIT_CARDS, [edCount.Value, edtNumber.Text]),
       mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
     begin
-      with TpFIBQuery.Create(dmMain) do
+      with TFIBQuery.Create(dmMain) do
       begin
         try
           Database := dmMain.dbTV;

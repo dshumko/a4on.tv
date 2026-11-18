@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.ExtCtrls,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask,
-  GridForma, FIBDataSet, pFIBDataSet, DBGridEh, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBCtrlsEh,
+  GridForma, FIBDataSet, DBGridEh, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBCtrlsEh,
   CnErrorProvider, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh,
   PrnDbgeh;
 
 type
   TLettersForm = class(TGridForm)
-    dsLetters: TpFIBDataSet;
+    dsLetters: TFIBDataSet;
     DBCheckBoxEh1: TDBCheckBoxEh;
     deName: TDBEditEh;
     cbFOR_FORM: TDBComboBoxEh;
@@ -22,7 +22,7 @@ type
     Label2: TLabel;
     Label4: TLabel;
     cbReport: TDBComboBoxEh;
-    dsReports: TpFIBDataSet;
+    dsReports: TFIBDataSet;
     chkSaveAsPDF: TDBCheckBoxEh;
     procedure tbOkClick(Sender: TObject);
     procedure tbCancelClick(Sender: TObject);

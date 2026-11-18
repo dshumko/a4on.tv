@@ -120,7 +120,7 @@ object apgNodeFiles: TapgNodeFiles
       Action = actView
     end
   end
-  object dsFiles: TpFIBDataSet
+  object dsFiles: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    CUSTOMER_FILES'
@@ -193,7 +193,7 @@ object apgNodeFiles: TapgNodeFiles
       OnExecute = actViewExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -205,7 +205,7 @@ object apgNodeFiles: TapgNodeFiles
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -217,12 +217,24 @@ object apgNodeFiles: TapgNodeFiles
     Left = 371
     Top = 42
   end
-  object qRead: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qRead: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Content from node_Files where NF_Id = :NF_Id')
     Left = 296
     Top = 120
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 352
+    Top = 119
   end
 end

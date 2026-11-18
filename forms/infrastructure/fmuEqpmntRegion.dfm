@@ -10,10 +10,8 @@ object apgEqpmntRegion: TapgEqpmntRegion
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlButtons: TPanel
     Left = 0
@@ -120,7 +118,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
     object RowDetailData: TRowDetailPanelControlEh
     end
   end
-  object dsData: TpFIBDataSet
+  object dsData: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    EQUIPMENT_COVERAGE'
@@ -192,7 +190,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -204,7 +202,7 @@ object apgEqpmntRegion: TapgEqpmntRegion
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

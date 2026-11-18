@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.ActnList, Vcl.Forms, Vcl.Controls, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Buttons, Vcl.Mask, Vcl.ComCtrls,
   Vcl.Dialogs, Vcl.DBCtrls,
-  DBGridEh, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, FIBDatabase, pFIBDatabase, DM, GridsEH,
+  DBGridEh, OkCancel_frame, DBCtrlsEh, DBLookupEh, FIBDataSet, FIBDatabase, DM, GridsEH,
   PrjConst,
   A4onTypeUnit, CnErrorProvider, CnClasses;
 
@@ -46,17 +46,17 @@ type
     DBEdit1: TDBEditEh;
     edtPlace: TDBEditEh;
     srcVLANS: TDataSource;
-    dsVlans: TpFIBDataSet;
-    dsEQGroups: TpFIBDataSet;
+    dsVlans: TFIBDataSet;
+    dsEQGroups: TFIBDataSet;
     srcEQGroups: TDataSource;
-    dsEquipment: TpFIBDataSet;
+    dsEquipment: TFIBDataSet;
     srcDataSource: TDataSource;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
-    trSWrite: TpFIBTransaction;
-    trSRead: TpFIBTransaction;
+    trSWrite: TFIBTransaction;
+    trSRead: TFIBTransaction;
     actlst1: TActionList;
     actFindIP: TAction;
     btnFindIP: TBitBtn;
@@ -72,7 +72,7 @@ type
     lbl9: TLabel;
     lbl10: TLabel;
     lbl11: TLabel;
-    dsParent: TpFIBDataSet;
+    dsParent: TFIBDataSet;
     srcParent: TDataSource;
     luParent: TDBLookupComboboxEh;
     edtPort: TDBEditEh;
@@ -86,10 +86,10 @@ type
     lblNODE: TLabel;
     lcbNODE: TDBLookupComboboxEh;
     srcNODE: TDataSource;
-    dsNode: TpFIBDataSet;
+    dsNode: TFIBDataSet;
     DBEditEh1: TDBEditEh;
     Label10: TLabel;
-    dsEQtype: TpFIBDataSet;
+    dsEQtype: TFIBDataSet;
     srcEQtype: TDataSource;
     lcbEQtype: TDBLookupComboboxEh;
     pnl1: TPanel;
@@ -159,7 +159,7 @@ implementation
 
 uses
   System.StrUtils,
-  AtrStrUtils, atrCmdUtils, AtrCommon, TelnetForma, pFibQuery, MAIN;
+  AtrStrUtils, atrCmdUtils, AtrCommon, TelnetForma, FibQuery, MAIN;
 
 {$R *.dfm}
 
@@ -811,10 +811,10 @@ begin
   if ip = '' then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select c.Account_No, Ip, Mac';
       sql.Add(' from Tv_Lan t inner join customer c on (t.Customer_Id = c.Customer_Id)');
       sql.Add(' where t.Ip = :ip');
@@ -841,6 +841,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
 end;
@@ -860,13 +861,13 @@ end;
 
 procedure TEquipEditForm.GetCloneDataFromDB(const aEQ_ID: Int64);
 var
-  cq: TpFIBQuery;
+  cq: TFIBQuery;
 begin
-  cq := TpFIBQuery.Create(Nil);
+  cq := TFIBQuery.Create(Nil);
 
   try
     cq.Database := dmMain.dbTV;
-    cq.Transaction := dmMain.trReadQ;
+    cq.Transaction := dmMain.GetTransactionForRead;
     cq.sql.Text := dsEquipment.SQLs.SelectSQL.Text;
     cq.ParamByName('EID').AsInteger := aEQ_ID;
     cq.Transaction.StartTransaction;
@@ -931,6 +932,7 @@ begin
     cq.Close;
     cq.Transaction.Commit;
   finally
+    if assigned(cq.Transaction) then cq.Transaction.Free;
     cq.free;
   end;
 end;
@@ -941,11 +943,11 @@ begin
   if MAC = '' then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select Name, Ip, Mac from Equipment where Mac = :Mac ';
 
       if dsEquipment.State in [dsEdit] then
@@ -964,7 +966,8 @@ begin
         result := result + ' MAC ' + FieldByName('Mac').Value + ' ';
       Close;
       Transaction.Commit;
-    finally
+    finally 
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -976,11 +979,11 @@ var
 begin
   gcnt := 0;
   gid := 1;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select (select count(*) cnt from port where EID = -1*e.Eq_Group) gcnt, ' +
         '(select count(*) cnt from port where EID = e.Eid) ecnt, -1*e.Eq_Group gid from Equipment e where e.Eid = :eid';
       ParamByName('Eid').AsInteger := eid;
@@ -994,6 +997,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -1005,7 +1009,7 @@ begin
     MB_YESNO + MB_ICONQUESTION + MB_DEFBUTTON2) = IDNO then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;

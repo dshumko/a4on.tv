@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls,
   Vcl.ComCtrls,
   Vcl.ToolWin, Vcl.Mask, Vcl.DBCtrls, Vcl.Menus,
-  DBGridEh, FIBDataSet, frxClass, pFIBDataSet, GridsEh, DBLookupEh, DBCtrlsEh, FIBDatabase, pFIBDatabase,
+  DBGridEh, FIBDataSet, frxClass, GridsEh, DBLookupEh, DBCtrlsEh, FIBDatabase,
   ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, DBVertGridsEh,
   CnErrorProvider, amSplitter, CnClasses;
 
@@ -22,7 +22,7 @@ type
     btnPrintCheck: TToolButton;
     dbgPayDocPayment: TDBGridEh;
     bbtnNewPayment: TBitBtn;
-    dsPayDocDetail: TpFIBDataSet;
+    dsPayDocDetail: TFIBDataSet;
     srcsPayDocDetail: TDataSource;
     alPayment: TActionList;
     actPaymentNew: TAction;
@@ -30,13 +30,13 @@ type
     actPayDocEdit: TAction;
     actPaymentDetail: TAction;
     act_CalcFine: TAction;
-    dsPayDoc: TpFIBDataSet;
+    dsPayDoc: TFIBDataSet;
     srcPayDoc: TDataSource;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
-    trWriteQ: TpFIBTransaction;
-    trReadQ: TpFIBTransaction;
-    dsPaymentSource: TpFIBDataSet;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
+    trWriteQ: TFIBTransaction;
+    trReadQ: TFIBTransaction;
+    dsPaymentSource: TFIBDataSet;
     srcPaymentSource: TDataSource;
     bbDelete: TBitBtn;
     ToolButton3: TToolButton;
@@ -60,7 +60,7 @@ type
     pnlErrors: TPanel;
     lbl1: TLabel;
     srcErrors: TDataSource;
-    dsErrors: TpFIBDataSet;
+    dsErrors: TFIBDataSet;
     spliter: TSplitter;
     btn1: TToolButton;
     btnMovePayment: TToolButton;
@@ -77,7 +77,7 @@ type
     N1: TMenuItem;
     N2: TMenuItem;
     actPrintCheck: TAction;
-    trRead1: TpFIBTransaction;
+    trRead1: TFIBTransaction;
     actErrorProceed: TAction;
     actErrorsDel: TAction;
     N3: TMenuItem;
@@ -183,8 +183,8 @@ procedure CreatePayDoc(aPayDocID: Integer; const PAYMENT_ID: Integer = -1);
 implementation
 
 uses
-  DM, MAIN, AtrCommon, AtrStrUtils, PaymentForma, DBGridEhFindDlgs, PaymentEditForma, pFIBQuery, PayDocSelectForma,
-  ReportPreview,
+  DM, MAIN, AtrCommon, AtrStrUtils, PaymentForma, DBGridEhFindDlgs, PaymentEditForma, PayDocSelectForma,
+  ReportPreview, FIBQuery,
   CF, CustomerForma, RequestForma;
 
 {$R *.dfm}
@@ -198,18 +198,23 @@ begin
   b := dmMain.AllowedAction(rght_Pays_full) or dmMain.AllowedAction(rght_Programm_ViewMoney) or
     dmMain.AllowedAction(rght_Pays_add) or dmMain.AllowedAction(rght_Pays_AddToday) or
     dmMain.AllowedAction(rght_Pays_del);
+
   if not b then
     Exit;
 
   b := false;
   for i := A4MainForm.MDIChildCount - 1 DownTo 0 Do
+  begin
     if Assigned(A4MainForm.MDIChildren[i]) and (A4MainForm.MDIChildren[i] is TPaymentDocForm) then
+    begin
       if A4MainForm.MDIChildren[i].tag = aPayDocID then
       begin
         b := true;
         PDF := (A4MainForm.MDIChildren[i] as TPaymentDocForm);
         A4MainForm.MDIChildren[i].Show;
       end;
+    end;
+  end;
 
   if not b then
   begin
@@ -311,7 +316,7 @@ begin
   pd := PayDocSelectForma.SelectPaymentDoc;
   if pd >= 0 then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -328,6 +333,7 @@ begin
                 .AsInteger;
               Transaction.StartTransaction;
               ExecQuery;
+              Close;
               Transaction.Commit;
             end;
           finally
@@ -340,6 +346,7 @@ begin
           ParamByName('pay_id').AsInteger := dbgPayDocPayment.DataSource.DataSet.FieldByName('payment_id').AsInteger;
           Transaction.StartTransaction;
           ExecQuery;
+          Close;
           Transaction.Commit;
         end;
       finally
@@ -773,16 +780,18 @@ begin
   if dsPayDocDetail.RecordCount = 0 then
   begin
     // Проверим. Есть ли документ
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         SQL.Text := 'select PAY_DOC_ID from PAY_DOC where PAY_DOC_ID = ' + IntToStr(dsPayDoc['PAY_DOC_ID']);
         Transaction.StartTransaction;
         ExecQuery;
         AR := Eof;
+        Close;
         Transaction.Commit;
       finally
+        if assigned(Transaction) then Transaction.Free;
         free;
       end;
     if AR then
@@ -930,11 +939,11 @@ Begin
   end
   else
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         SQL.Text := 'select r.RQ_ID from request r where r.RECEIPT = :RECEIPT';
         ParamByName('RECEIPT').Value := dsPayDocDetail.FieldByName('PAYMENT_ID').AsString;
         Transaction.StartTransaction;
@@ -947,6 +956,7 @@ Begin
         Close;
         Transaction.Commit;
       finally
+        if assigned(Transaction) then Transaction.Free;
         free;
       end;
     end;

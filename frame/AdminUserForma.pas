@@ -14,7 +14,7 @@ type
     pFIBBackupService1: TpFIBBackupService;
     pFIBRestoreService1: TpFIBRestoreService;
     pFIBValidationService: TpFIBValidationService;
-    pFIBSecurityService1: TpFIBSecurityService;
+    pFIBSecurityService1: TFIBSecurityService;
     Button1: TButton;
     Button2: TButton;
     Memo1: TMemo;

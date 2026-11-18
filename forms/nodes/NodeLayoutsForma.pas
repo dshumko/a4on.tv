@@ -9,14 +9,14 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus,
   Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  VclTee.TeCanvas, GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  VclTee.TeCanvas, GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
-  CnErrorProvider, DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, amSplitter,
+  CnErrorProvider, DBCtrlsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, amSplitter,
   PrnDbgeh, CnClasses;
 
 type
   TNodeLayoutsForm = class(TGridForm)
-    dsFileType: TpFIBDataSet;
+    dsFileType: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
@@ -31,9 +31,9 @@ type
     btnEditL: TSpeedButton;
     btnDelL: TSpeedButton;
     srcLayout: TDataSource;
-    dsLayout: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
-    trRead: TpFIBTransaction;
+    dsLayout: TFIBDataSet;
+    trWrite: TFIBTransaction;
+    trRead: TFIBTransaction;
     lbl4: TLabel;
     spl1: TSplitter;
     btnCopy: TSpeedButton;
@@ -68,7 +68,7 @@ var
 implementation
 
 uses
-  DM, MAIN, A4onTypeUnit, NodeLayoutForma, pFIBQuery;
+  DM, MAIN, A4onTypeUnit, NodeLayoutForma, FIBQuery;
 
 {$R *.dfm}
 
@@ -193,7 +193,7 @@ begin
   old_n := InputBox('Укажите Тип с которого скопировать', 'Компановка как у Типа', '');
   if (old_n <> '') then
   begin
-    with TpFIBQuery.Create(self) do
+    with TFIBQuery.Create(self) do
     begin
       try
         DataBase := dmMain.dbTV;

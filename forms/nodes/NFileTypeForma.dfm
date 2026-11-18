@@ -155,7 +155,7 @@ inherited NFileTypeForm: TNFileTypeForm
     Left = 344
     Top = 288
   end
-  object dsFileType: TpFIBDataSet
+  object dsFileType: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 40, :O_ID, :O_Name, :O_Descript' +

@@ -526,7 +526,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     Left = 178
     Top = 237
   end
-  object dsServicesHistory: TpFIBDataSet
+  object dsServicesHistory: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBSCR_HIST'
       'SET '
@@ -566,8 +566,8 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
       'select '
       ' h.*, s_on.NAME as ON_NAME, s_off.NAME as OFF_NAME,'
       
-        ' datediff(day, iif(h.Date_From = '#39'2100-1-1'#39', current_date,  h.Da' +
-        'te_From), h.Date_To) DAYS_ON,'
+        ' datediff(day, iif(h.Date_From = '#39'2100-1-1'#39', current_date, h.Dat' +
+        'e_From), h.Date_To) DAYS_ON,'
       
         ' coalesce((select first 1 w.Surname FROM worker w where w.Ibname' +
         ' = h.Added_By), h.Added_By)  as WHO_ADD,'
@@ -597,7 +597,7 @@ object CustSubscrHistoryForma: TCustSubscrHistoryForma
     Top = 240
     oFetchAll = True
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBSCR_SERV'
       'SET '

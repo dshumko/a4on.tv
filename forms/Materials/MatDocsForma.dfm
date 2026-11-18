@@ -5,8 +5,6 @@ inherited MatDocsForm: TMatDocsForm
   Menu = mmMaterialDoc
   StyleElements = [seFont, seClient, seBorder]
   OnActivate = FormActivate
-  ExplicitWidth = 830
-  ExplicitHeight = 563
   TextHeight = 13
   object spl1: TSplitter [0]
     Left = 0
@@ -19,8 +17,6 @@ inherited MatDocsForm: TMatDocsForm
   inherited splPG: TSplitter
     Top = 305
     Width = 814
-    ExplicitTop = 305
-    ExplicitWidth = 814
   end
   inherited dbGrid: TDBGridEh
     Top = 57
@@ -214,7 +210,6 @@ inherited MatDocsForm: TMatDocsForm
   end
   inherited tlbMain: TToolBar
     Width = 814
-    ExplicitWidth = 814
     inherited btnNew: TToolButton
       Hint = #1044#1086#1073#1072#1074#1080#1090#1100' '#1076#1086#1082#1091#1084#1077#1085#1090
       Action = nil
@@ -223,55 +218,43 @@ inherited MatDocsForm: TMatDocsForm
       PopupMenu = pmBTN
       Style = tbsDropDown
       OnClick = ToolButton1Click
-      ExplicitWidth = 38
     end
     inherited btnEdit: TToolButton
       Left = 43
-      ExplicitLeft = 43
     end
     inherited ToolButton5: TToolButton
       Left = 66
-      ExplicitLeft = 66
     end
     inherited ToolButton6: TToolButton
       Left = 70
-      ExplicitLeft = 70
     end
     inherited btnDelete: TToolButton
       Left = 74
-      ExplicitLeft = 74
     end
     inherited ToolButton9: TToolButton
       Left = 97
-      ExplicitLeft = 97
     end
     inherited tbOk: TToolButton
       Left = 112
       Visible = False
-      ExplicitLeft = 112
     end
     inherited ToolButton10: TToolButton
       Left = 135
       Visible = False
-      ExplicitLeft = 135
     end
     inherited tbCancel: TToolButton
       Left = 139
       Visible = False
-      ExplicitLeft = 139
     end
     inherited ToolButton20: TToolButton
       Left = 162
       Visible = False
-      ExplicitLeft = 162
     end
     inherited btnQuickFilter: TToolButton
       Left = 170
-      ExplicitLeft = 170
     end
     inherited sep444: TToolButton
       Left = 193
-      ExplicitLeft = 193
     end
     object ToolButton19: TToolButton
       Left = 201
@@ -327,7 +310,6 @@ inherited MatDocsForm: TMatDocsForm
     BevelOuter = bvNone
     Caption = 'pnlDetail'
     TabOrder = 3
-    ExplicitHeight = 192
     object dbgDetail: TDBGridEh
       Left = 0
       Top = 0
@@ -486,19 +468,13 @@ inherited MatDocsForm: TMatDocsForm
     Width = 814
     Height = 32
     StyleElements = [seFont, seClient, seBorder]
-    ExplicitWidth = 814
-    ExplicitHeight = 32
     inherited btnSaveLink: TBitBtn
       Top = -1
       Width = 628
-      ExplicitTop = -1
-      ExplicitWidth = 628
     end
     inherited btnCancelLink: TBitBtn
       Left = 719
       Top = -1
-      ExplicitLeft = 719
-      ExplicitTop = -1
     end
   end
   inherited srcDataSource: TDataSource
@@ -593,7 +569,7 @@ inherited MatDocsForm: TMatDocsForm
   inherited CnErrors: TCnErrorProvider
     Top = 24
   end
-  object dsDocs: TpFIBDataSet
+  object dsDocs: TFIBDataSet
     UpdateSQL.Strings = (
       '')
     DeleteSQL.Strings = (
@@ -733,7 +709,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 192
     Top = 208
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       '  select'
       '    md.M_Id'
@@ -815,7 +791,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 312
     Top = 208
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -827,7 +803,7 @@ inherited MatDocsForm: TMatDocsForm
     Left = 136
     Top = 190
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

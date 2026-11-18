@@ -202,7 +202,7 @@ object ReqTypeForm: TReqTypeForm
     Left = 32
     Top = 208
   end
-  object dsRT: TpFIBDataSet
+  object dsRT: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST_TYPES'
       'SET '
@@ -267,7 +267,7 @@ object ReqTypeForm: TReqTypeForm
     Left = 80
     Top = 208
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -279,7 +279,7 @@ object ReqTypeForm: TReqTypeForm
     Left = 184
     Top = 208
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

@@ -171,6 +171,9 @@ object MatDocFilterForm: TMatDocFilterForm
           DynProps = <>
           DataField = 'MD_TYPE'
           DataSource = srcFilter
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1058#1080#1087' '#1076#1086#1082#1091#1084#1077#1085#1090#1072', '#1077#1089#1083#1080' '#1087#1091#1089#1090#1086' '#1090#1086' '#1074#1089#1077' '#1090#1080#1087#1099
@@ -245,6 +248,9 @@ object MatDocFilterForm: TMatDocFilterForm
           DynProps = <>
           DataField = 'M_ID'
           DataSource = srcFilter
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1052#1072#1090#1077#1088#1080#1072#1083', '#1077#1089#1083#1080' '#1087#1091#1089#1090#1086' '#1090#1086' '#1074#1089#1077' '#1084#1072#1090#1077#1088#1080#1072#1083#1099
@@ -265,6 +271,9 @@ object MatDocFilterForm: TMatDocFilterForm
           DynProps = <>
           DataField = 'WH_IN'
           DataSource = srcFilter
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1053#1072' '#1082#1072#1082#1086#1081' '#1089#1082#1083#1072#1076' '#1087#1088#1080#1093#1086#1076', '#1077#1089#1083#1080' '#1087#1091#1089#1090#1086' '#1090#1086' - '#1083#1102#1073#1086#1081
@@ -285,6 +294,9 @@ object MatDocFilterForm: TMatDocFilterForm
           DynProps = <>
           DataField = 'WH_OUT'
           DataSource = srcFilter
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1057' '#1082#1072#1082#1086#1075#1086' '#1089#1082#1083#1072#1076#1072' '#1089#1087#1080#1089#1072#1083#1080', '#1077#1089#1083#1080' '#1087#1091#1089#1090#1086' '#1090#1086' - '#1083#1102#1073#1086#1081
@@ -394,7 +406,7 @@ object MatDocFilterForm: TMatDocFilterForm
     Left = 374
     Top = 240
   end
-  object dsType: TpFIBDataSet
+  object dsType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id, o.O_Name'
@@ -440,7 +452,7 @@ object MatDocFilterForm: TMatDocFilterForm
       OnExecute = actClearExecute
     end
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       
@@ -460,7 +472,7 @@ object MatDocFilterForm: TMatDocFilterForm
     Left = 420
     Top = 248
   end
-  object dsWHIN: TpFIBDataSet
+  object dsWHIN: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    o.O_Id, o.O_Name'

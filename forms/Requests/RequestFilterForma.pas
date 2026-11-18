@@ -8,30 +8,30 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList,
   Vcl.DBCtrls, Vcl.ComCtrls,
-  DBGridEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, PrjConst, MemTableEh, PropFilerEh, PropStorageEh;
+  DBGridEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDataSet, PrjConst, MemTableEh, PropFilerEh, PropStorageEh;
 
 type
   TRequestFilterForm = class(TForm)
     pnlOKCancel: TPanel;
     SpeedButton3: TSpeedButton;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreets: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHomes: TDataSource;
-    dsArea: TpFIBDataSet;
+    dsArea: TFIBDataSet;
     srcArea: TDataSource;
-    dsSubArea: TpFIBDataSet;
+    dsSubArea: TFIBDataSet;
     srcSubArea: TDataSource;
-    dsRequestType: TpFIBDataSet;
+    dsRequestType: TFIBDataSet;
     srcRequestType: TDataSource;
-    dsExecutor: TpFIBDataSet;
+    dsExecutor: TFIBDataSet;
     srcExecutor: TDataSource;
     srcWORKAREA: TDataSource;
-    dsWORKAREA: TpFIBDataSet;
-    dsWORKGROUP: TpFIBDataSet;
+    dsWORKAREA: TFIBDataSet;
+    dsWORKGROUP: TFIBDataSet;
     srcWORKGROUP: TDataSource;
     srcANALYS: TDataSource;
-    dsANALYS: TpFIBDataSet;
+    dsANALYS: TFIBDataSet;
     chkDefaultFilter: TCheckBox;
     pnlBtns: TPanel;
     lbl4: TLabel;
@@ -43,15 +43,15 @@ type
     btnLoad: TSpeedButton;
     btnSave: TSpeedButton;
     dlgOpen: TOpenDialog;
-    dsOrg: TpFIBDataSet;
+    dsOrg: TFIBDataSet;
     srcOrg: TDataSource;
     srcMH: TDataSource;
-    dsMH: TpFIBDataSet;
-    dsWorks: TpFIBDataSet;
+    dsMH: TFIBDataSet;
+    dsWorks: TFIBDataSet;
     srcWorks: TDataSource;
-    dsResult: TpFIBDataSet;
+    dsResult: TFIBDataSet;
     srcResult: TDataSource;
-    dsErrors: TpFIBDataSet;
+    dsErrors: TFIBDataSet;
     srcErrors: TDataSource;
     bbOk: TBitBtn;
     bbCancel: TBitBtn;
@@ -147,7 +147,7 @@ var
 implementation
 
 uses
-  DM, RequestsForma, MAIN, AtrCommon, SelectFilterForma, pFIBQuery;
+  DM, RequestsForma, MAIN, AtrCommon, SelectFilterForma, FIBQuery;
 
 {$R *.dfm}
 
@@ -167,7 +167,7 @@ procedure TRequestFilterForm.actSaveToDbExecute(Sender: TObject);
 var
   n: string;
   s: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   if InputQuery('Введите название фильтра', 'Название', n) and (not n.IsEmpty) then
   begin
@@ -177,7 +177,7 @@ begin
     if s.IsEmpty then
       exit;
 
-    fq := TpFIBQuery.Create(self);
+    fq := TFIBQuery.Create(self);
     try
       fq.Database := dmMain.dbTV;
       fq.Transaction := dmMain.trWriteQ;

@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.ExtCtrls, Vcl.ActnList, Vcl.ComCtrls,
   Vcl.ToolWin,
-  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, pFIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  AtrPages, ToolCtrlsEh, GridsEh, DBGridEh, FIBDataSet, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
-  DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, amSplitter;
+  DBGridEhGrouping, DynVarsEh, FIBDatabase, DBCtrlsEh, amSplitter;
 
 type
   TapgNodeRequests = class(TA4onPage)
-    dsRequests: TpFIBDataSet;
+    dsRequests: TFIBDataSet;
     srcRequests: TDataSource;
     dbGridCustReq: TDBGridEh;
     ActListCustomers: TActionList;
@@ -25,10 +25,10 @@ type
     btnDel1: TSpeedButton;
     btnAdd1: TSpeedButton;
     btnEdit1: TSpeedButton;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlPhoto: TPanel;
-    dsPhotos: TpFIBDataSet;
+    dsPhotos: TFIBDataSet;
     srcPhotos: TDataSource;
     dbgPhotos: TDBGridEh;
     spl1: TSplitter;

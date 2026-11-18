@@ -13,13 +13,11 @@ object ContactForm: TContactForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object pnlTop: TPanel
     Left = 0
@@ -77,6 +75,9 @@ object ContactForm: TContactForm
       Anchors = [akLeft, akTop, akRight]
       DynProps = <>
       DataField = ''
+      DropDownBox.ListSourceAutoFilter = True
+      DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+      DropDownBox.ListSourceAutoFilterAllColumns = True
       EmptyDataInfo.Text = #1058#1080#1087' '#1082#1086#1085#1090#1072#1082#1090#1072
       EditButtons = <>
       KeyField = 'O_ID'
@@ -238,7 +239,7 @@ object ContactForm: TContactForm
     Left = 188
     Top = 164
   end
-  object dsContactType: TpFIBDataSet
+  object dsContactType: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'

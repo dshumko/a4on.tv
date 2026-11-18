@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Forms, Vcl.StdCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.Controls, Vcl.ExtCtrls, Vcl.Dialogs, Vcl.DBCtrls,
-  DBCtrlsEh, PrjConst, CnErrorProvider;
+  DBCtrlsEh, PrjConst, CnErrorProvider, CnClasses;
 
 type
   TUF = class(TForm)

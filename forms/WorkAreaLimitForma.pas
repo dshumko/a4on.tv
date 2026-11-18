@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBLookupEh, DBGridEh;
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, DBLookupEh, DBGridEh;
 
 type
   TWorkAreaLimitForm = class(TForm)
@@ -15,11 +15,11 @@ type
     lbl1: TLabel;
     cbbType: TDBLookupComboboxEh;
     srcRequestType: TDataSource;
-    dsRequestType: TpFIBDataSet;
+    dsRequestType: TFIBDataSet;
     edLimit: TDBNumberEditEh;
     Label1: TLabel;
     srcLimit: TDataSource;
-    dsLimit: TpFIBDataSet;
+    dsLimit: TFIBDataSet;
     dbmNotice: TDBMemoEh;
     lbl2: TLabel;
     procedure dsLimitAfterInsert(DataSet: TDataSet);

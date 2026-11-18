@@ -10,13 +10,13 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh, DBAxisGridsEh,
   DBGridEh,
-  MemTableDataEh, MemTableEh, DataDriverEh, pFIBDataDriverEh, PrnDbgeh;
+  MemTableDataEh, MemTableEh, DataDriverEh, FIBDataDriverEh, PrnDbgeh;
 
 type
   TStreetHouseViewForm = class(TForm)
     dbgView: TDBGridEh;
     srcView: TDataSource;
-    drvFIBView: TpFIBDataDriverEh;
+    drvFIBView: TFIBDataDriverEh;
     mtView: TMemTableEh;
     pmPopUp: TPopupMenu;
     mniFilterFLD: TMenuItem;

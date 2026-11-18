@@ -103,7 +103,7 @@ inherited HETypesForm: THETypesForm
       OnExecute = actEditExecute
     end
   end
-  object dsHETypes: TpFIBDataSet
+  object dsHETypes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '

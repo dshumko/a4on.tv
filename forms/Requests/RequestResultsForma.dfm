@@ -111,7 +111,7 @@ object RequestResult: TRequestResult
     Left = 177
     Top = 100
   end
-  object dsResult: TpFIBDataSet
+  object dsResult: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST_RESULTS'
       'SET '

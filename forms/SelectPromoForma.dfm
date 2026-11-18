@@ -91,7 +91,7 @@ object fmSelectPromo: TfmSelectPromo
       OnEnter = cbPromoEnter
     end
   end
-  object dsPromo: TpFIBDataSet
+  object dsPromo: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT PROMO_ID, PROMO_NAME FROM PROMO_CHECK(:DS, :SID)')
     Transaction = dmMain.trRead

@@ -164,7 +164,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
       Flat = True
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -176,7 +176,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -209,7 +209,7 @@ object apgCustomerMaterialsMove: TapgCustomerMaterialsMove
       OnExecute = actDetailExecute
     end
   end
-  object dsMat: TpFIBDataSet
+  object dsMat: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    NM.M_ID'

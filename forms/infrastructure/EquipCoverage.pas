@@ -9,23 +9,25 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes,
   Data.DB,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.ExtCtrls,
-  FIBDataSet, pFIBDataSet, DBLookupEh, DBCtrlsEh, OkCancel_frame, FIBQuery, pFIBQuery, GridsEh, PrjConst, DBGridEh;
+  FIBDataSet, DBLookupEh, DBCtrlsEh, OkCancel_frame, FIBQuery, GridsEh, PrjConst, DBGridEh,
+  FIBDatabase;
 
 type
   TEquipCoverageForm = class(TForm)
     Label6: TLabel;
     Label1: TLabel;
     LupStreets: TDBLookupComboboxEh;
-    dsStreets: TpFIBDataSet;
-    dsHouses: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
+    dsHouses: TFIBDataSet;
     srcStreet: TDataSource;
     srcHouse: TDataSource;
     LupHOUSE_ID: TDBLookupComboboxEh;
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     eNotice: TDBMemoEh;
     OkCancelFrame: TOkCancelFrame;
     srcCoverage: TDataSource;
-    dsCoverage: TpFIBDataSet;
+    dsCoverage: TFIBDataSet;
+    trReadQ: TFIBTransaction;
     procedure OkCancelFrame1bbOkClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure FormKeyPress(Sender: TObject; var Key: Char);

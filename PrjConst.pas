@@ -249,7 +249,8 @@ resourcestring
   rsDEMO = '(расчет до 1000 абонентов)';
   rsSOFTMODE = 'В каком режиме работает ПО';
   rsUSER_BLOCKED = 'Пользователь заблокирован, обратитесь к администратору.';
-  rsCREATE_DIGIT_CARDS = 'Вы желаете создать %s,  начиная с номера %s?';
+  rsUSER_EXISTS = 'Пользователь %s уже существует.';
+  rsCREATE_DIGIT_CARDS = 'Вы желаете создать %s, начиная с номера %s?';
 
   rsRecognize = 'Распознать';
   rsSave = 'Сохранить';
@@ -1016,6 +1017,7 @@ resourcestring
   rsPromoWarning = 'Внимане. Абонент подключен по АКЦИИ!';
   rsNotAllowedService = 'Этой услугой запрещено отключать. Укажите другую.';
   rsMatDocNotClosed = 'Документ не закрыт';
+  rsBidNotFound = 'Заявка %s не найдена';
 
   rsCabelLabelError = 'Mетки "%s" нет в маркировке кабеля';
 

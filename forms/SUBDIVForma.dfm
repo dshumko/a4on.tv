@@ -83,7 +83,7 @@ inherited SubDivForm: TSubDivForm
   inherited srcDataSource: TDataSource
     DataSet = mtSUBDIV
   end
-  object pfbdtdrvrh1: TpFIBDataDriverEh
+  object pfbdtdrvrh1: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (

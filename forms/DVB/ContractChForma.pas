@@ -7,7 +7,8 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, OkCancel_frame, CnErrorProvider, FIBDatabase, pFIBDatabase;
+  DBGridEh, FIBDataSet, DBCtrlsEh, DBLookupEh, OkCancel_frame, CnErrorProvider, FIBDatabase,
+  CnClasses;
 
 type
   TContractChForm = class(TForm)
@@ -15,15 +16,15 @@ type
     DBLChannels: TDBLookupComboboxEh;
     DBMemo1: TDBMemoEh;
     srcChannel: TDataSource;
-    dsChannel: TpFIBDataSet;
+    dsChannel: TFIBDataSet;
     srcChannList: TDataSource;
-    dsChannList: TpFIBDataSet;
+    dsChannList: TFIBDataSet;
     Label1: TLabel;
     Label3: TLabel;
     CnErrors: TCnErrorProvider;
     edtCOST: TDBNumberEditEh;
-    trSWrite: TpFIBTransaction;
-    trSRead: TpFIBTransaction;
+    trSWrite: TFIBTransaction;
+    trSRead: TFIBTransaction;
     lbl1: TLabel;
     ednCOST: TDBNumberEditEh;
     chkATV: TDBCheckBoxEh;

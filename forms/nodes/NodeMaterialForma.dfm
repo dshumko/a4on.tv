@@ -42,19 +42,13 @@ object NodeMaterialForm: TNodeMaterialForm
     Align = alBottom
     TabOrder = 3
     TabStop = True
-    ExplicitTop = 199
-    ExplicitWidth = 401
     inherited Label2: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited Label1: TLabel
       Height = 13
-      Margins.Bottom = 0
       StyleElements = [seFont, seClient, seBorder]
-      ExplicitHeight = 13
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -62,12 +56,9 @@ object NodeMaterialForm: TNodeMaterialForm
       Anchors = [akLeft, akRight, akBottom]
       ModalResult = 0
       OnClick = OkCancelFrame1bbOkClick
-      ExplicitLeft = 67
-      ExplicitWidth = 245
     end
     inherited bbCancel: TBitBtn
       Left = 318
-      ExplicitLeft = 318
     end
   end
   object dbluMat: TDBLookupComboboxEh
@@ -78,6 +69,9 @@ object NodeMaterialForm: TNodeMaterialForm
     Anchors = [akLeft, akTop, akRight]
     DynProps = <>
     DataField = ''
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EmptyDataInfo.Text = #1054#1073#1086#1088#1091#1076#1086#1074#1072#1085#1080#1077' / '#1084#1072#1090#1077#1088#1080#1072#1083' '#1091#1079#1083#1072
     EditButtons = <>
     KeyField = 'M_ID'
@@ -119,7 +113,7 @@ object NodeMaterialForm: TNodeMaterialForm
     Left = 75
     Top = 80
   end
-  object dsMaterials: TpFIBDataSet
+  object dsMaterials: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '*'
@@ -137,7 +131,7 @@ object NodeMaterialForm: TNodeMaterialForm
     Left = 244
     Top = 92
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -149,7 +143,7 @@ object NodeMaterialForm: TNodeMaterialForm
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

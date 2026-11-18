@@ -627,7 +627,7 @@ inherited ChannelsForm: TChannelsForm
       Caption = #1050#1086#1084#1072#1085#1076#1099
     end
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     DeleteSQL.Strings = (
       'execute procedure Channels_Del(:OLD_CH_ID)'
       '    ')
@@ -941,7 +941,7 @@ inherited ChannelsForm: TChannelsForm
       FieldName = 'CNTR_ID'
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -952,7 +952,7 @@ inherited ChannelsForm: TChannelsForm
     Left = 152
     Top = 264
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -972,7 +972,7 @@ inherited ChannelsForm: TChannelsForm
     Left = 624
     Top = 240
   end
-  object dsIssues: TpFIBDataSet
+  object dsIssues: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    i.*'
@@ -1000,7 +1000,7 @@ inherited ChannelsForm: TChannelsForm
     dcForceMasterRefresh = True
     oFetchAll = True
   end
-  object trRA: TpFIBTransaction
+  object trRA: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (

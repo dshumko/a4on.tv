@@ -9,11 +9,11 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
   Vcl.ActnList,
   Vcl.ExtCtrls, Vcl.Buttons,
-  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery,
-  pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, GridsEh, FIBQuery,
+  
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls,
   DBAxisGridsEh,
-  PrjConst, EhLibVCL, DynVarsEh, FIBDatabase, pFIBDatabase;
+  PrjConst, EhLibVCL, DynVarsEh, FIBDatabase;
 
 type
   TPaymentsForm = class(TForm)
@@ -34,7 +34,7 @@ type
     ppmSelectAll: TMenuItem;
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
-    dsPayments: TpFIBDataSet;
+    dsPayments: TFIBDataSet;
     srcPayments: TDataSource;
     frxDBPayments: TfrxDBDataset;
     ToolBar3: TToolBar;
@@ -50,7 +50,7 @@ type
     ToolButton20: TToolButton;
     ToolButton7: TToolButton;
     ToolButton27: TToolButton;
-    dsPaymentSource: TpFIBDataSet;
+    dsPaymentSource: TFIBDataSet;
     srcPaymentSource: TDataSource;
     pmPeriod: TPopupMenu;
     N1: TMenuItem;
@@ -58,7 +58,7 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     ToolButton2: TToolButton;
-    qDetailCount: TpFIBQuery;
+    qDetailCount: TFIBQuery;
     MainMenu1: TMainMenu;
     N5: TMenuItem;
     N6: TMenuItem;
@@ -74,11 +74,11 @@ type
     actGroup: TAction;
     N13: TMenuItem;
     mtPayments: TMemTableEh;
-    drvPayments: TpFIBDataDriverEh;
+    drvPayments: TFIBDataDriverEh;
     pnlErrors: TPanel;
     lbl1: TLabel;
     dbgrdErrors: TDBGridEh;
-    dsErrors: TpFIBDataSet;
+    dsErrors: TFIBDataSet;
     srcErrors: TDataSource;
     btn2: TToolButton;
     btnFilterCustomers: TToolButton;
@@ -86,8 +86,9 @@ type
     pmGridClick: TPopupMenu;
     miPayDoc: TMenuItem;
     miAbonent: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    trReadQ: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -584,9 +585,11 @@ begin
 
   // Проверить на наличие дочерних записей
   qDetailCount.ParamByName('pay_doc_id').AsInt64 := dsPayments.FieldByName('pay_doc_id').AsInteger;
+  qDetailCount.Transaction.StartTransaction;
   qDetailCount.ExecQuery;
   i := qDetailCount.Fields[0].AsInteger;
   qDetailCount.Close;
+  qDetailCount.Transaction.Commit;
   if i > 0 then
     MessageDlg(ms_CANT_DALETE_PAY_DOC, mtWarning, [mbOk], 0)
   else if MessageDlg(Format(ms_DELETE_PAY_DOC, [dsPayments.FieldByName('PAY_DOC_NO').AsString,

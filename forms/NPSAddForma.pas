@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ImgList, Vcl.Buttons,
-  DBCtrlsEh, FIBQuery, pFIBQuery;
+  DBCtrlsEh, FIBQuery;
 
 type
   TNPSAddForm = class(TForm)
@@ -16,7 +16,7 @@ type
     bbOk: TBitBtn;
     mmoNotice: TDBMemoEh;
     lbl1: TLabel;
-    qInsert: TpFIBQuery;
+    qInsert: TFIBQuery;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure bbOkClick(Sender: TObject);
     procedure FormKeyPress(Sender: TObject; var Key: Char);

@@ -9,15 +9,15 @@ uses
   System.Classes, System.SysUtils, System.Variants, System.Types,
   Data.DB,
   Vcl.Menus, Vcl.Controls, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Mask, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs,
-  FIBQuery, pFIBQuery, OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, PrjConst, FIBDatabase, pFIBDatabase,
+  FIBQuery, OkCancel_frame, FIBDataSet, DBCtrlsEh, PrjConst, FIBDatabase,
   DBGridEh, DBLookupEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls,
   DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh;
 
 type
   TSettingsForm = class(TForm)
-    Query: TpFIBQuery;
+    Query: TFIBQuery;
     OkCancelFrame1: TOkCancelFrame;
-    select: TpFIBDataSet;
+    select: TFIBDataSet;
     pgSettings: TPageControl;
     tsPayment: TTabSheet;
     cbPaymentSrv: TCheckBox;
@@ -141,9 +141,9 @@ type
     chkHidePayPrint: TCheckBox;
     chkBidNotice: TCheckBox;
     tsEquipment: TTabSheet;
-    dsServices: TpFIBDataSet;
+    dsServices: TFIBDataSet;
     srcCardAdd: TDataSource;
-    trRead: TpFIBTransaction;
+    trRead: TFIBTransaction;
     srcCardDel: TDataSource;
     grpSrv: TGroupBox;
     cbbCardDel: TDBLookupComboboxEh;
@@ -152,7 +152,7 @@ type
     chkPersPackets: TCheckBox;
     chkVlanRequired: TCheckBox;
     lbl18: TLabel;
-    dsRQtype: TpFIBDataSet;
+    dsRQtype: TFIBDataSet;
     cbbRQ_TO_POSITIVE: TDBLookupComboboxEh;
     srcRQtype: TDataSource;
     lbl19: TLabel;
@@ -220,8 +220,8 @@ type
     lbl2422: TLabel;
     chkPortLine: TCheckBox;
     tsRAW: TTabSheet;
-    dsRAW: TpFIBDataSet;
-    trWrite: TpFIBTransaction;
+    dsRAW: TFIBDataSet;
+    trWrite: TFIBTransaction;
     dbgRAW: TDBGridEh;
     srcRAW: TDataSource;
     lbl26: TLabel;

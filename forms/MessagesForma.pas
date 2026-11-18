@@ -9,8 +9,8 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
   Vcl.ActnList,
   Vcl.ExtCtrls, Vcl.Buttons,
-  DBGridEh, DBCtrlsEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery, DBGridEhGrouping,
-  MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
+  DBGridEh, DBCtrlsEh, frxClass, frxDBSet, FIBDataSet, GridsEh, DBGridEhGrouping,
+  MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst,
   EhLibVCL,
   DynVarsEh, CnErrorProvider, DBLookupEh, amSplitter, CnClasses;
 
@@ -29,7 +29,7 @@ type
     ppmSelectAll: TMenuItem;
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
-    dsMessages: TpFIBDataSet;
+    dsMessages: TFIBDataSet;
     srcMessages: TDataSource;
     frxDBMessages: TfrxDBDataset;
     tlbMain: TToolBar;
@@ -57,7 +57,7 @@ type
     actGroup: TAction;
     N13: TMenuItem;
     mtMessages: TMemTableEh;
-    drvMessages: TpFIBDataDriverEh;
+    drvMessages: TFIBDataDriverEh;
     N7: TMenuItem;
     actDel: TAction;
     N11: TMenuItem;
@@ -82,7 +82,7 @@ type
     pnl2: TPanel;
     pnlHead: TPanel;
     lbl2: TLabel;
-    dsMessType: TpFIBDataSet;
+    dsMessType: TFIBDataSet;
     srcMessType: TDataSource;
     lbl4: TLabel;
     edtReciver: TDBEditEh;
@@ -188,7 +188,7 @@ implementation
 uses
   System.StrUtils,
   DM, MAIN, AtrCommon, PeriodForma, PaymentDocForma, AtrStrUtils, atrCmdUtils, ReportPreview,
-  apiSMS, CF, SmsQuestForma, pFIBQuery;
+  apiSMS, CF, SmsQuestForma, FIBQuery;
 
 {$R *.dfm}
 
@@ -610,7 +610,7 @@ var
   ForSendCount: Integer;
   ReciverCount: Integer;
   ErrorText: String;
-  // rSMS: TpFIBQuery;
+  // rSMS: TFIBQuery;
   BatcSize: Integer;
 begin
   GetSMSCountForSend(ReciverCount, ForSendCount);
@@ -1050,12 +1050,12 @@ end;
 
 procedure TMessagesForm.GetSMSCountForSend(var ReciverCount: Integer; var ForSendCount: Integer);
 var
-  rSMS: TpFIBQuery;
+  rSMS: TFIBQuery;
 begin
-  rSMS := TpFIBQuery.Create(nil);
+  rSMS := TFIBQuery.Create(nil);
   try
     rSMS.DataBase := dmMain.dbTV;
-    rSMS.Transaction := dmMain.trReadQ;
+    rSMS.Transaction := dmMain.GetTransactionForRead;
     rSMS.SQL.Add('select count(m.reciver) as CNT');
     rSMS.SQL.Add(' , sum(iif(char_length(m.Mes_Text) <= 70, 1, iif(char_length(m.Mes_Text) <= 134, 2, ');
     rSMS.SQL.Add
@@ -1065,8 +1065,10 @@ begin
     rSMS.ExecQuery;
     ReciverCount := rSMS.fn('CNT').AsInteger;
     ForSendCount := rSMS.fn('SMS_CNT').AsInteger;
+    rSMS.Close;
     rSMS.Transaction.Commit;
   finally
+    if assigned(rSMS.Transaction) then rSMS.Transaction.Free;
     rSMS.Free;
   end;
 end;

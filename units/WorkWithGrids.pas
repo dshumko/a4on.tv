@@ -43,7 +43,7 @@ begin
     else
     begin
       if CodePage = 0 then
-        sl[i] := OemToAnsiStr(sl[i]);
+        sl[i] := OemToAnsiStr(AnsiString(sl[i]));
       i := i + 1;
     end;
   end;

@@ -10,14 +10,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.ComCtrls, Vcl.Grids, Vcl.ActnList, Vcl.ToolWin,
   Vcl.Buttons, Vcl.Menus, Vcl.ImgList, Vcl.StdCtrls,
-  DBGridEh, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, FIBDatabase, pFIBDatabase, GridsEh, DBCtrlsEh, EhLibFIB,
+  DBGridEh, FIBDataSet, FIBQuery, FIBDatabase, GridsEh, DBCtrlsEh, EhLibFIB,
   ToolCtrlsEh,
   DBGridEhToolCtrls, RxPlacemnt, DBAxisGridsEh,
 {$IFDEF VER290}
   System.ImageList,
 {$ENDIF}
   System.Actions,
-  PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, IB_Services, DBGridEhGrouping, DynVarsEh,
+  PrjConst, EhLibVCL, MemTableDataEh, DataDriverEh, FIBDataDriverEh, FIBServices, DBGridEhGrouping, DynVarsEh,
   amSplitter, System.ImageList;
 
 type
@@ -44,13 +44,13 @@ type
     actRemoveRight: TAction;
     Splitter1: TSplitter;
     Splitter4: TSplitter;
-    dsGroups: TpFIBDataSet;
+    dsGroups: TFIBDataSet;
     srcGroups: TDataSource;
     srcUsers: TDataSource;
-    dsUsers: TpFIBDataSet;
-    dsGU: TpFIBDataSet;
+    dsUsers: TFIBDataSet;
+    dsGU: TFIBDataSet;
     srcGU: TDataSource;
-    dsG: TpFIBDataSet;
+    dsG: TFIBDataSet;
     srcG: TDataSource;
     ToolBar1: TToolBar;
     ToolButton2: TToolButton;
@@ -91,38 +91,37 @@ type
     dbgUGA: TDBGridEh;
     pnl1: TPanel;
     srcAU: TDataSource;
-    dsAU: TpFIBDataSet;
-    dsA: TpFIBDataSet;
+    dsAU: TFIBDataSet;
+    dsA: TFIBDataSet;
     srcA: TDataSource;
     actUserForWorker: TAction;
     btn1: TToolButton;
     lbl1: TLabel;
     lbl2: TLabel;
-    fSecurity: TpFIBSecurityService;
-    qModify: TpFIBQuery;
+    fSecurity: TFIBSecurityService;
+    qModify: TFIBQuery;
     pgcRights: TPageControl;
     tsReports: TTabSheet;
     tsModules: TTabSheet;
     dbgReports: TDBGridEh;
-    dsReports: TpFIBDataSet;
+    dsReports: TFIBDataSet;
     srcReports: TDataSource;
     dbgModules: TDBGridEh;
     srcModules: TDataSource;
-    dsModules: TpFIBDataSet;
+    dsModules: TFIBDataSet;
     tsRights: TTabSheet;
     dbgRights: TDBGridEh;
     srcRights: TDataSource;
-    dsRights: TpFIBDataSet;
+    dsRights: TFIBDataSet;
     chkALL_AREAS: TDBCheckBoxEh;
-    trWriteQ: TpFIBTransaction;
     tsRequest: TTabSheet;
     dbgRequest: TDBGridEh;
     srcRequest: TDataSource;
-    dsRequest: TpFIBDataSet;
+    dsRequest: TFIBDataSet;
     tsRec: TTabSheet;
     dbgRecourses: TDBGridEh;
     srcRecourses: TDataSource;
-    dsRecourses: TpFIBDataSet;
+    dsRecourses: TFIBDataSet;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure actAddGroupExecute(Sender: TObject);
     procedure actEditGroupExecute(Sender: TObject);
@@ -202,11 +201,11 @@ begin
   end
   else
   begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         SQL.Text := 'SELECT distinct trim(SEC$USER_NAME) FIO FROM SEC$USERS u where SEC$USER_NAME <> ''SYSDBA''';
         Transaction.StartTransaction;
         ExecQuery;
@@ -218,6 +217,7 @@ begin
         Close;
         Transaction.Commit;
       finally
+        Transaction.Free;
         Free;
       end;
     end;
@@ -226,11 +226,11 @@ end;
 
 procedure TUsersForm.GetWorkersList(list: TStrings; Key: TStrings);
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select WORKER_ID, SURNAME||'' ''||coalesce(FIRSTNAME,'''')||'' ''||coalesce(MIDLENAME,'''') as fio '
         + 'from WORKER where working = 1 and coalesce(IBNAME, '''') = '''' order by 2';
       Transaction.StartTransaction;
@@ -244,6 +244,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      Transaction.Free;
       Free;
     end;
   end;
@@ -261,33 +262,40 @@ begin
 
   grants := TStringList.Create;
   try
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
-        // tables and views
-        SQL.Text := 'select Rdb$Exception_Name from Rdb$Exceptions where Rdb$System_Flag <> 1';
-        Transaction.StartTransaction;
-        ExecQuery;
-        while not EOF do
-        begin
-          grants.Add(Fields[0].Value);
-          Next;
-        end;
-        Transaction.Commit;
-        Close;
-
-        Transaction := dmMain.trWriteQ;
-        ParamCheck := False;
-
-        for I := 0 to grants.Count - 1 do
-        begin
+        Transaction := dmMain.GetTransactionForRead;
+        try
+          // tables and views
+          SQL.Text := 'select Rdb$Exception_Name from Rdb$Exceptions where Rdb$System_Flag <> 1';
           Transaction.StartTransaction;
-          SQL.Text := ' GRANT USAGE ON EXCEPTION  ' + grants.Strings[I] + ' TO ' + aUserName;
           ExecQuery;
+          while not EOF do
+          begin
+            grants.Add(Fields[0].Value);
+            Next;
+          end;
+          Close;
           Transaction.Commit;
+        finally
+          Transaction.Free;
         end;
-        Close;
+
+        Transaction := dmMain.GetTransactionForWrite;
+        try
+          ParamCheck := False;
+          for I := 0 to grants.Count - 1 do
+          begin
+            Transaction.StartTransaction;
+            SQL.Text := Format('GRANT USAGE ON EXCEPTION %s TO %s', [grants.Strings[I], aUserName]);
+            ExecQuery;
+            Transaction.Commit;
+          end;
+          Close;
+        finally
+          Transaction.Free;
+        end;
       finally
         Free;
       end;
@@ -307,15 +315,67 @@ begin
 
   grants := TStringList.Create;
   try
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         if dmMain.dbTV.ServerMajorVersion >= 3 then
         begin
           DataBase := dmMain.dbTV;
-          Transaction := dmMain.trReadQ;
+          Transaction := dmMain.GetTransactionForRead;
+          try
+            // tables and views
+            SQL.Text := 'select Rdb$Generator_Name NAME from Rdb$Generators where Rdb$System_Flag = 0';
+            Transaction.StartTransaction;
+            ExecQuery;
+            grants.Clear;
+            while not EOF do
+            begin
+              grants.Add(Fields[0].Value);
+              Next;
+            end;
+            Close;
+            Transaction.Commit;
+          finally
+            Transaction.Free;
+          end;
+
+          Transaction := dmMain.GetTransactionForWrite;
+          try
+            ParamCheck := False;
+            for I := 0 to grants.Count - 1 do
+            begin
+              Transaction.StartTransaction;
+              SQL.Text := Format('GRANT USAGE ON SEQUENCE %s TO %s', [grants.Strings[I], aUserName]);
+              ExecQuery;
+              Close;
+              Transaction.Commit;
+            end;
+          finally
+            Transaction.Free;
+          end;
+        end
+        else
+        begin
+          Transaction := dmMain.GetTransactionForWrite;
+          try
+            ParamCheck := False;
+            Transaction.StartTransaction;
+            SQL.Text := Format('GRANT SELECT, UPDATE ON RDB$GENERATORS TO %s', [aUserName]);
+            ExecQuery;
+            Close;
+            Transaction.Commit;
+          finally
+            Transaction.Free;
+          end;
+
+        end;
+
+        DataBase := dmMain.dbTV;
+        Transaction := dmMain.GetTransactionForRead;
+        try
           // tables and views
-          SQL.Text := 'select Rdb$Generator_Name NAME from Rdb$Generators where Rdb$System_Flag = 0';
+          SQL.Text := 'SELECT V.RDB$RELATION_NAME AS NAME FROM RDB$RELATIONS V ' +
+            ' WHERE (V.RDB$SYSTEM_FLAG IS NULL OR V.RDB$SYSTEM_FLAG <> 1) AND (V.RDB$FLAGS = 1)';
           Transaction.StartTransaction;
           ExecQuery;
           grants.Clear;
@@ -324,63 +384,26 @@ begin
             grants.Add(Fields[0].Value);
             Next;
           end;
-          Transaction.Commit;
           Close;
+          Transaction.Commit;
+        finally
+          Transaction.Free;
+        end;
 
-          Transaction := dmMain.trWriteQ;
+        Transaction := dmMain.GetTransactionForWrite;
+        try
           ParamCheck := False;
           for I := 0 to grants.Count - 1 do
           begin
             Transaction.StartTransaction;
-            SQL.Text := ' GRANT USAGE ON SEQUENCE ' + grants.Strings[I] + ' TO ' + aUserName;
+            SQL.Text := Format('GRANT ALL ON %s TO %s', [grants.Strings[I], aUserName]);
             ExecQuery;
+            Close;
             Transaction.Commit;
           end;
-          Close;
-
-          // Transaction.StartTransaction;
-          // SQL.Text := ' GRANT ALTER ANY SEQUENCE TO ' + aUserName;
-          // ExecQuery;
-          // Transaction.Commit;
-          // Close;
-        end
-        else
-        begin
-          Transaction := dmMain.trWriteQ;
-          ParamCheck := False;
-          Transaction.StartTransaction;
-          SQL.Text := ' GRANT SELECT, UPDATE ON RDB$GENERATORS TO ' + aUserName;
-          ExecQuery;
-          Transaction.Commit;
-          Close;
+        finally
+          Transaction.Free;
         end;
-
-        DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
-        // tables and views
-        SQL.Text := 'SELECT V.RDB$RELATION_NAME AS NAME FROM RDB$RELATIONS V' + rsEOL +
-          ' WHERE (V.RDB$SYSTEM_FLAG IS NULL OR V.RDB$SYSTEM_FLAG <> 1) AND (V.RDB$FLAGS = 1)';
-        Transaction.StartTransaction;
-        ExecQuery;
-        grants.Clear;
-        while not EOF do
-        begin
-          grants.Add(Fields[0].Value);
-          Next;
-        end;
-        Transaction.Commit;
-        Close;
-
-        Transaction := dmMain.trWriteQ;
-        ParamCheck := False;
-        for I := 0 to grants.Count - 1 do
-        begin
-          Transaction.StartTransaction;
-          SQL.Text := ' GRANT ALL ON  ' + grants.Strings[I] + ' TO ' + aUserName;
-          ExecQuery;
-          Transaction.Commit;
-        end;
-        Close;
       finally
         Free;
       end;
@@ -399,34 +422,41 @@ begin
     Exit;
   grants := TStringList.Create;
   try
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
-        // procedures
-        SQL.Text := 'SELECT P.RDB$PROCEDURE_NAME AS NAME FROM RDB$PROCEDURES P' + rsEOL +
-          'WHERE P.RDB$SYSTEM_FLAG IS NULL OR P.RDB$SYSTEM_FLAG <> 1';
-        Transaction.StartTransaction;
-        ExecQuery;
-        while not EOF do
-        begin
-          grants.Add(Fields[0].Value);
-          Next;
-        end;
-        Transaction.Commit;
-        Close;
-
-        Transaction := dmMain.trWriteQ;
-        ParamCheck := False;
-        for I := 0 to grants.Count - 1 do
-        begin
+        Transaction := dmMain.GetTransactionForRead;
+        try
+          // procedures
+          SQL.Text := 'SELECT P.RDB$PROCEDURE_NAME AS NAME FROM RDB$PROCEDURES P' + rsEOL +
+            'WHERE P.RDB$SYSTEM_FLAG IS NULL OR P.RDB$SYSTEM_FLAG <> 1';
           Transaction.StartTransaction;
-          SQL.Text := ' GRANT EXECUTE ON PROCEDURE ' + grants.Strings[I] + ' TO ' + aUserName;
           ExecQuery;
+          while not EOF do
+          begin
+            grants.Add(Fields[0].Value);
+            Next;
+          end;
+          Close;
           Transaction.Commit;
+        finally
+          Transaction.Free;
         end;
-        Close;
 
+        Transaction := dmMain.GetTransactionForWrite;
+        try
+          ParamCheck := False;
+          for I := 0 to grants.Count - 1 do
+          begin
+            Transaction.StartTransaction;
+            SQL.Text := Format('GRANT EXECUTE ON PROCEDURE %s TO %s', [grants.Strings[I], aUserName]);
+            ExecQuery;
+            Close;
+            Transaction.Commit;
+          end;
+        finally
+          Transaction.Free;
+        end;
       finally
         Free;
       end;
@@ -444,34 +474,41 @@ begin
     Exit;
   grants := TStringList.Create;
   try
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
-        // procedures
-        SQL.Text := 'SELECT P.RDB$FUNCTION_NAME AS NAME FROM Rdb$Functions P' + rsEOL +
-          'WHERE P.RDB$SYSTEM_FLAG IS NULL OR P.RDB$SYSTEM_FLAG <> 1';
-        Transaction.StartTransaction;
-        ExecQuery;
-        while not EOF do
-        begin
-          grants.Add(Fields[0].Value);
-          Next;
-        end;
-        Transaction.Commit;
-        Close;
-
-        Transaction := dmMain.trWriteQ;
-        ParamCheck := False;
-        for I := 0 to grants.Count - 1 do
-        begin
+        Transaction := dmMain.GetTransactionForRead;
+        try
+          // procedures
+          SQL.Text := 'SELECT P.RDB$FUNCTION_NAME AS NAME FROM Rdb$Functions P ' +
+            ' WHERE P.RDB$SYSTEM_FLAG IS NULL OR P.RDB$SYSTEM_FLAG <> 1';
           Transaction.StartTransaction;
-          SQL.Text := ' GRANT EXECUTE ON FUNCTION ' + grants.Strings[I] + ' TO ' + aUserName;
           ExecQuery;
+          while not EOF do
+          begin
+            grants.Add(Fields[0].Value);
+            Next;
+          end;
+          Close;
           Transaction.Commit;
+        finally
+          Transaction.Free;
         end;
-        Close;
 
+        Transaction := dmMain.GetTransactionForWrite;
+        try
+          ParamCheck := False;
+          for I := 0 to grants.Count - 1 do
+          begin
+            Transaction.StartTransaction;
+            SQL.Text := Format('GRANT EXECUTE ON FUNCTION %s TO %s', [grants.Strings[I], aUserName]);
+            ExecQuery;
+            Close;
+            Transaction.Commit;
+          end;
+        finally
+          Transaction.Free;
+        end;
       finally
         Free;
       end;
@@ -488,14 +525,14 @@ begin
     if Components[I] is TDBGridEh then
       (Components[I] as TDBGridEh).SaveColumnsLayoutIni(A4MainForm.GetIniFileName,
         Self.Name + '.' + Components[I].Name, False);
+
   Action := caFree;
   UsersForm := nil;
 end;
 
 procedure TUsersForm.FormCreate(Sender: TObject);
 begin
-  isVersion3plus := dmMain.dbTV.Version.Contains(' 3.');
-  isVersion3plus := isVersion3plus or dmMain.dbTV.Version.Contains(' 4.');
+  isVersion3plus := (dmMain.FirebirdVersion >= 3);
   FormStorage.IniFileName := A4MainForm.GetIniFileName;
   pgcRights.ActivePage := tsRights;
   pgcRightsChange(pgcRights);
@@ -530,10 +567,17 @@ begin
     ' values (:User_Id, :Area_Id) matching(User_Id, Area_Id)';
   qModify.ParamByName('user_id').Value := dsUsers['ID'];
   qModify.ParamByName('area_id').Value := dsA['WA_ID'];
-  // qModify.Transaction.StartTransaction;
-  qModify.ExecQuery;
-  // qModify.Transaction.Commit;
-  // qModify.Transaction.Active := False;
+  qModify.Transaction := dmMain.GetTransactionForWrite;
+  try
+    qModify.Transaction.StartTransaction;
+    qModify.ExecQuery;
+    qModify.Close;
+    qModify.Transaction.Commit;
+  finally
+    if qModify.Transaction.InTransaction then
+      qModify.Transaction.Rollback;
+    qModify.Transaction.Free;
+  end;
   dsA.CloseOpen(true);
   dsAU.CloseOpen(true);
 end;
@@ -550,10 +594,17 @@ begin
   qModify.SQL.Text := 'delete from sys$user_areas where area_id = :area_id and user_id = :user_id';
   qModify.ParamByName('user_id').Value := dsUsers['ID'];
   qModify.ParamByName('area_id').Value := dsAU['WA_ID'];
-  // qModify.Transaction.StartTransaction;
-  qModify.ExecQuery;
-  // qModify.Transaction.Commit;
-  // qModify.Transaction.Active := False;
+  qModify.Transaction := dmMain.GetTransactionForWrite;
+  try
+    qModify.Transaction.StartTransaction;
+    qModify.ExecQuery;
+    qModify.Close;
+    qModify.Transaction.Commit;
+  finally
+    if qModify.Transaction.InTransaction then
+      qModify.Transaction.Rollback;
+    qModify.Transaction.Free;
+  end;
   dsA.CloseOpen(true);
   dsAU.CloseOpen(true);
 end;
@@ -804,10 +855,17 @@ begin
         grantProcedures('ROLE_A4USER');
         grantFunctions('ROLE_A4USER');
         qModify.SQL.Text := Format('grant ROLE_A4USER to %s', [u]);
-        // qModify.Transaction.StartTransaction;
-        qModify.ExecQuery;
-        // qModify.Transaction.Commit;
-
+        qModify.Transaction := dmMain.GetTransactionForWrite;
+        try
+          qModify.Transaction.StartTransaction;
+          qModify.ExecQuery;
+          qModify.Close;
+          qModify.Transaction.Commit;
+        finally
+          if qModify.Transaction.InTransaction then
+            qModify.Transaction.Rollback;
+          qModify.Transaction.Free;
+        end;
         dsUsers.Insert;
         // dsUsers['working'] := chkWork.Checked;
         dsUsers['ibname'] := u;
@@ -866,8 +924,11 @@ begin
             p := rsQUOTE + ReplaceStr(pswdPrefix + edPWD.Text, rsQUOTE, rsQUOTE + rsQUOTE) + rsQUOTE;
             SQL := Format('CREATE OR ALTER USER %s PASSWORD %s', [u, p]);
             UserSQL(SQL);
-            UserSQL(SQL, 'Legacy_UserManager');
-            UserSQL(SQL, 'Srp');
+            if isVersion3plus then
+            begin
+              UserSQL(SQL, 'USING PLUGIN Legacy_UserManager');
+              UserSQL(SQL, 'USING PLUGIN Srp');
+            end;
           end;
         end;
         dsUsers.Edit;
@@ -887,21 +948,18 @@ procedure TUsersForm.actDelUserExecute(Sender: TObject);
 var
   SQL: String;
 begin
-  if (dsUsers.RecordCount = 0) or (dsUsers.FieldByName('IBNAME').IsNull) then
+  if (dsUsers.RecordCount = 0) or (dsUsers.FieldByName('IBNAME').IsNull) or (AnsiUpperCase(dsUsers['IBNAME']) = 'SYSDBA')
+  then
     Exit;
 
-  if (MessageDLG(Format(rsUserDelete, [dsUsers['IBNAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrNo) then
-    Exit;
-  if AnsiUpperCase(dsUsers['IBNAME']) <> 'SYSDBA' then
+  if (MessageDLG(Format(rsUserDelete, [dsUsers['IBNAME']]), mtConfirmation, [mbYes, mbNo], 0) = mrYes) then
   begin
-    SQL := 'DROP USER ' + dsUsers['IBNAME'];
-    try
-      qModify.SQL.Text := SQL;
-      // qModify.Transaction.StartTransaction;
-      qModify.ExecQuery;
-      // qModify.Transaction.Commit;
-    finally
-      //
+    SQL := Format('DROP USER %s', [dsUsers['IBNAME']]);
+    UserSQL(SQL);
+    if isVersion3plus then
+    begin
+      UserSQL(SQL, 'USING PLUGIN Legacy_UserManager');
+      UserSQL(SQL, 'USING PLUGIN Srp');
     end;
     dsUsers.Delete;
   end;
@@ -913,10 +971,18 @@ begin
   garntExceptions('ROLE_A4USER');
   grantProcedures('ROLE_A4USER');
   grantFunctions('ROLE_A4USER');
-  qModify.SQL.Text := 'grant ROLE_A4USER to ' + dsUsers['IBNAME'];
-  qModify.Transaction.StartTransaction;
-  qModify.ExecQuery;
-  qModify.Transaction.Commit;
+  qModify.SQL.Text := Format('GRANT ROLE_A4USER TO %s', [dsUsers['IBNAME']]);
+  qModify.Transaction := dmMain.GetTransactionForWrite;
+  try
+    qModify.Transaction.StartTransaction;
+    qModify.ExecQuery;
+    qModify.Close;
+    qModify.Transaction.Commit;
+  finally
+    if qModify.Transaction.InTransaction then
+      qModify.Transaction.Rollback;
+    qModify.Transaction.Free;
+  end;
 end;
 
 procedure TUsersForm.dsUsersAfterOpen(DataSet: TDataSet);
@@ -936,13 +1002,21 @@ begin
   grantProcedures('ROLE_A4USER');
   grantFunctions('ROLE_A4USER');
   dsUsers.First;
-  while not dsUsers.EOF do
-  begin
-    qModify.SQL.Text := 'grant ROLE_A4USER to ' + dsUsers['IBNAME'];
-    // qModify.Transaction.StartTransaction;
-    qModify.ExecQuery;
-    // qModify.Transaction.Commit;
-    dsUsers.Next;
+  qModify.Transaction := dmMain.GetTransactionForWrite;
+  try
+    while not dsUsers.EOF do
+    begin
+      qModify.SQL.Text := Format('GRANT ROLE_A4USER TO %s', [dsUsers['IBNAME']]);
+      qModify.Transaction.StartTransaction;
+      qModify.ExecQuery;
+      qModify.Close;
+      qModify.Transaction.Commit;
+      dsUsers.Next;
+    end;
+  finally
+    if qModify.Transaction.InTransaction then
+      qModify.Transaction.Rollback;
+    qModify.Transaction.Free;
   end;
   dsUsers.First;
 end;
@@ -996,9 +1070,18 @@ begin
   if (I = 0) then
   begin
     qModify.SQL.Text := 'CREATE ROLE ROLE_A4USER;';
-    // qModify.Transaction.StartTransaction;
-    qModify.ExecQuery;
-    // qModify.Transaction.Commit;
+    qModify.Transaction := dmMain.GetTransactionForWrite;
+    try
+      qModify.Transaction.StartTransaction;
+      qModify.ExecQuery;
+      qModify.Close;
+      qModify.Transaction.Commit;
+    finally
+      if qModify.Transaction.InTransaction then
+        qModify.Transaction.Rollback;
+      qModify.Transaction.Free;
+    end;
+
     garntTables('ROLE_A4USER');
     garntExceptions('ROLE_A4USER');
     grantProcedures('ROLE_A4USER');
@@ -1054,28 +1137,16 @@ begin
     Background := clWindow;
 end;
 
-procedure TUsersForm.UserSQL(const SQL: string; const PLG: string = '');
-begin
-  try
-    if PLG.IsEmpty then
-      qModify.SQL.Text := SQL
-    else
-      qModify.SQL.Text := SQL + ' ACTIVE USING PLUGIN ' + PLG;
-    // qModify.Transaction.StartTransaction;
-    qModify.ExecQuery;
-    // qModify.Transaction.Commit;
-  finally
-    qModify.Close;
-  end;
-end;
-
 procedure TUsersForm.AddUser(const NewWorker: Boolean = true);
 var
   added: Boolean;
   SQL, bm: string;
   u, p, f, m, l: String;
+  UserList: TStrings;
 begin
-  { IFNDEF DEMOVERSION }
+{$IFDEF DEMOVERSION}
+  Exit;
+{$ENDIF}
   if (dsUsers.RecordCount > 0) and (not dsUsers.FieldByName('IBNAME').IsNull) then
     bm := dsUsers['IBNAME']
   else
@@ -1096,32 +1167,51 @@ begin
       begin
         if (length(edPWD.Text) > 0) and (length(edU.Text) > 0) then
         begin
-          // added := CheckUserExists(edU.Text);
-          bm := edU.Text;
-          u := ReplaceStr(edU.Text, rsQUOTE, rsQUOTE + rsQUOTE);
-          p := ReplaceStr(pswdPrefix + edPWD.Text, rsQUOTE, rsQUOTE + rsQUOTE);
-          f := ReplaceStr(edI.Text, rsQUOTE, rsQUOTE + rsQUOTE);
-          m := ReplaceStr(edF.Text, rsQUOTE, rsQUOTE + rsQUOTE);
-          l := ReplaceStr(edO.Text, rsQUOTE, rsQUOTE + rsQUOTE);
+          added := False;
+          UserList := TStringList.Create;
+          try
+            GetUsersList(UserList);
+            added := (UserList.IndexOf(edU.Text) > -1)
+          finally
+            UserList.Free;
+          end;
 
-          SQL := Format('CREATE OR ALTER USER %s PASSWORD ''%s'' FIRSTNAME ''%s'' MIDDLENAME ''%s'' LASTNAME ''%s''',
-            [u, p, f, m, l]);
-          UserSQL(SQL);
-          UserSQL(SQL, 'Legacy_UserManager');
-          UserSQL(SQL, 'Srp');
-          added := true;
-
-          if added then
+          if not added then
           begin
+            bm := edU.Text;
+            u := ReplaceStr(edU.Text, rsQUOTE, rsQUOTE + rsQUOTE);
+            p := ReplaceStr(pswdPrefix + edPWD.Text, rsQUOTE, rsQUOTE + rsQUOTE);
+            f := ReplaceStr(edI.Text, rsQUOTE, rsQUOTE + rsQUOTE);
+            m := ReplaceStr(edF.Text, rsQUOTE, rsQUOTE + rsQUOTE);
+            l := ReplaceStr(edO.Text, rsQUOTE, rsQUOTE + rsQUOTE);
+
+            SQL := Format('CREATE OR ALTER USER %s PASSWORD ''%s''', [u, p]);
+
+            UserSQL(SQL);
+            if isVersion3plus then
+            begin
+              UserSQL(SQL, 'USING PLUGIN Legacy_UserManager');
+              UserSQL(SQL, 'USING PLUGIN Srp');
+            end;
+
             garntTables('ROLE_A4USER');
             garntExceptions('ROLE_A4USER');
             grantProcedures('ROLE_A4USER');
-            grantFunctions('ROLE_A4USER');
+            if isVersion3plus then
+              grantFunctions('ROLE_A4USER');
             qModify.SQL.Clear;
             qModify.SQL.Text := Format('grant ROLE_A4USER to %s', [u]);
-            // qModify.Transaction.StartTransaction;
-            qModify.ExecQuery;
-            // qModify.Transaction.Commit;
+            qModify.Transaction := dmMain.GetTransactionForWrite;
+            try
+              qModify.Transaction.StartTransaction;
+              qModify.ExecQuery;
+              qModify.Close;
+              qModify.Transaction.Commit;
+            finally
+              if qModify.Transaction.InTransaction then
+                qModify.Transaction.Rollback;
+              qModify.Transaction.Free;
+            end;
 
             dsUsers.Insert;
             // dsUsers['working'] := chkWork.Checked;
@@ -1142,8 +1232,20 @@ begin
             else
               dsUsers['WORKER_ID'] := cbWorker.Value;
             dsUsers.Post;
-            // dsUsers.Transaction.Commit;
-          end;
+
+            if (f + m + l) <> '' then
+            begin
+              SQL := Format('ALTER USER %s FIRSTNAME ''%s'' MIDDLENAME ''%s'' LASTNAME ''%s''', [u, f, m, l]);
+              UserSQL(SQL);
+              if isVersion3plus then
+              begin
+                UserSQL(SQL, 'USING PLUGIN Legacy_UserManager');
+                UserSQL(SQL, 'USING PLUGIN Srp');
+              end;
+            end;
+          end
+          else
+            ShowMessage(Format(rsUSER_EXISTS, [edU.Text]));
         end;
       end;
     finally
@@ -1161,6 +1263,25 @@ begin
       dsUsers.Locate('ibname', bm, []);
   end;
   { ENDIF }
+end;
+
+procedure TUsersForm.UserSQL(const SQL: string; const PLG: string = '');
+begin
+  qModify.SQL.Text := SQL;
+  if not PLG.IsEmpty then
+    qModify.SQL.Add(PLG);
+
+  qModify.Transaction := dmMain.GetTransactionForWrite;
+  try
+    qModify.Transaction.StartTransaction;
+    qModify.ExecQuery;
+    qModify.Close;
+    qModify.Transaction.Commit;
+  finally
+    if qModify.Transaction.InTransaction then
+      qModify.Transaction.Rollback;
+    qModify.Transaction.Free;
+  end;
 end;
 
 end.

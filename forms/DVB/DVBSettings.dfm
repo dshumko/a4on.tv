@@ -500,7 +500,6 @@ object DVBSettinsForm: TDVBSettinsForm
               OnEnter = edtSearchEnter
               OnExit = edtSearchExit
               OnKeyUp = edtSearchKeyUp
-              ExplicitHeight = 21
             end
           end
           object ToolBar3: TToolBar
@@ -689,7 +688,6 @@ object DVBSettinsForm: TDVBSettinsForm
               OnEnter = edtSearchEnter
               OnExit = edtSearchExit
               OnKeyUp = edtSearchKeyUp
-              ExplicitHeight = 21
             end
           end
           object ToolBar1: TToolBar
@@ -1190,7 +1188,7 @@ object DVBSettinsForm: TDVBSettinsForm
       Action = actSave
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1199,10 +1197,10 @@ object DVBSettinsForm: TDVBSettinsForm
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 148
-    Top = 266
+    Left = 60
+    Top = 258
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1214,7 +1212,7 @@ object DVBSettinsForm: TDVBSettinsForm
     Left = 252
     Top = 216
   end
-  object dsTS: TpFIBDataSet
+  object dsTS: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    DVB_STREAMS'
@@ -1249,13 +1247,13 @@ object DVBSettinsForm: TDVBSettinsForm
     UpdateTransaction = trWrite
     AutoCommit = True
     DataSource = srcNetwork
-    Left = 169
-    Top = 228
+    Left = 145
+    Top = 260
   end
   object actlstSearch: TActionList
     Images = A4MainForm.ilFilter
-    Left = 97
-    Top = 117
+    Left = 73
+    Top = 109
     object actFilterSearchText: TAction
       Caption = 'actFilterSearchText'
       Hint = #1059#1089#1090#1072#1085#1086#1074#1080#1090#1100' '#1092#1080#1083#1100#1090#1088' '#1087#1086'  '#1074#1074#1077#1076#1077#1085#1085#1086#1084#1091' '#1090#1077#1082#1089#1090#1091
@@ -1275,7 +1273,7 @@ object DVBSettinsForm: TDVBSettinsForm
   object srcNetwork: TDataSource
     AutoEdit = False
     DataSet = dsNetwork
-    Left = 200
+    Left = 240
     Top = 112
   end
   object srcChannels: TDataSource
@@ -1290,7 +1288,7 @@ object DVBSettinsForm: TDVBSettinsForm
     Left = 592
     Top = 456
   end
-  object dsNetwork: TpFIBDataSet
+  object dsNetwork: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    DVB_NETWORK'
@@ -1320,9 +1318,9 @@ object DVBSettinsForm: TDVBSettinsForm
     UpdateTransaction = trWrite
     AutoCommit = True
     Left = 153
-    Top = 116
+    Top = 108
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    dc.DVBS_Id'
@@ -1349,10 +1347,10 @@ object DVBSettinsForm: TDVBSettinsForm
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     DataSource = srcTS
-    Left = 180
-    Top = 362
+    Left = 204
+    Top = 370
   end
-  object dsEPG: TpFIBDataSet
+  object dsEPG: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    e.Date_Start'
@@ -1384,10 +1382,10 @@ object DVBSettinsForm: TDVBSettinsForm
     DataDriver = drvFIBView
     Options = [mtoTextFieldsCaseInsensitive]
     ReadOnly = True
-    Left = 548
+    Left = 532
     Top = 136
   end
-  object drvFIBView: TpFIBDataDriverEh
+  object drvFIBView: TFIBDataDriverEh
     Database = dmMain.dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (
@@ -1431,7 +1429,7 @@ object DVBSettinsForm: TDVBSettinsForm
     InsertCommand.Params = <>
     DeleteCommand.Params = <>
     GetrecCommand.Params = <>
-    Left = 620
+    Left = 644
     Top = 136
   end
   object dsView: TDataSource
@@ -1461,7 +1459,19 @@ object DVBSettinsForm: TDVBSettinsForm
       'pgcMode.tsEdit.pnlChannels.grdCh.<P>.Width'
       'pgcMode.tsEdit.pnlNetwork.<P>.Height'
       'pgcMode.tsEdit.pnlStream.<P>.Height')
-    Left = 164
-    Top = 448
+    Left = 108
+    Top = 440
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    TimeoutAction = TACommit
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 212
+    Top = 436
   end
 end

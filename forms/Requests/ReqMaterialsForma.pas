@@ -7,10 +7,10 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Math,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids, Vcl.ExtCtrls, Vcl.StdCtrls,
-  FIBDataSet, pFIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
+  FIBDataSet, DBGridEh, EhLibFIB, OkCancel_frame, GridsEh, PropFilerEh, PropStorageEh, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibVCL, DBGridEhGrouping, DynVarsEh, PrjConst,
-  FIBDatabase, pFIBDatabase, amSplitter, Vcl.Tabs, MemTableDataEh,
-  DataDriverEh, pFIBDataDriverEh, MemTableEh, Vcl.Menus;
+  FIBDatabase, amSplitter, Vcl.Tabs, MemTableDataEh,
+  DataDriverEh, FIBDataDriverEh, MemTableEh, Vcl.Menus;
 
 type
   TReqMaterialsForm = class(TForm)
@@ -18,16 +18,16 @@ type
     pnlGrids: TPanel;
     dbGrid: TDBGridEh;
     srcDataSource: TDataSource;
-    dsReqMaterials: TpFIBDataSet;
+    dsReqMaterials: TFIBDataSet;
     OkCancelFrame1: TOkCancelFrame;
     srcMatGropups: TDataSource;
     Splitter1: TSplitter;
     PropStorage: TPropStorageEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     tsGroup: TTabSet;
     mtGroups: TMemTableEh;
-    drvFibGroups: TpFIBDataDriverEh;
+    drvFibGroups: TFIBDataDriverEh;
     dbGridGroups: TDBGridEh;
     pmTreeView: TPopupMenu;
     miFE: TMenuItem;

@@ -7,27 +7,27 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst, DBGridEh,
-  Vcl.Buttons, FIBDatabase, pFIBDatabase, CnClasses;
+  FIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst, DBGridEh,
+  Vcl.Buttons, FIBDatabase, CnClasses;
 
 type
   TAttrGeneralForm = class(TForm)
     srcAttributesList: TDataSource;
-    dsAttributesList: TpFIBDataSet;
+    dsAttributesList: TFIBDataSet;
     dbluAttribute: TDBLookupComboboxEh;
     mmoNOTICE: TDBMemoEh;
     lblNotice: TLabel;
     lblAttribute: TLabel;
     Label2: TLabel;
     dbValue: TDBEditEh;
-    dsAttr: TpFIBDataSet;
+    dsAttr: TFIBDataSet;
     srcAttr: TDataSource;
     CnErrors: TCnErrorProvider;
     cbbList: TDBComboBoxEh;
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     mmoValue: TDBMemoEh;
     procedure FormKeyUp(Sender: TObject; var Key: Word; Shift: TShiftState);
     procedure dbluAttributeEnter(Sender: TObject);
@@ -50,8 +50,7 @@ function AddOrEditAttribute(const pType_ID: Integer; const pObj_ID: Integer; con
 implementation
 
 uses
-  System.RegularExpressions,
-  DM, pFIBQuery;
+  System.RegularExpressions, DM, FIBQuery;
 
 {$R *.dfm}
 
@@ -173,7 +172,7 @@ function TAttrGeneralForm.CheckAllRight: Boolean;
 var
   errors: Boolean;
   s, reg: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   errors := false;
   if dbluAttribute.Text.Trim = '' then
@@ -222,10 +221,10 @@ begin
 
   if (dsAttributesList['O_UNIQ'] = 1) then
   begin
-    fq := TpFIBQuery.Create(Self);
+    fq := TFIBQuery.Create(Self);
     try
       fq.Database := dmMain.dbTV;
-      fq.Transaction := dmMain.trReadQ;
+      fq.Transaction := dmMain.GetTransactionForRead;
       with fq.sql do
       begin
         Clear;
@@ -260,9 +259,10 @@ begin
       s := '';
       if not fq.FieldByName('who').IsNull then
         s := fq.FieldByName('who').AsString;
-      fq.Transaction.Commit;
       fq.Close;
+      fq.Transaction.Commit;
     finally
+      if assigned(fq.Transaction) then fq.Transaction.Free;
       fq.free;
     end;
     if s <> '' then

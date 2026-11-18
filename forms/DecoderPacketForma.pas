@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask, Vcl.Buttons, Vcl.ExtCtrls,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, DBGridEh;
+  FIBDataSet, DBCtrlsEh, DBLookupEh, DBGridEh;
 
 type
   TDecoderPacketForm = class(TForm)
@@ -17,8 +17,8 @@ type
     lbl2: TLabel;
     srcDecPacket: TDataSource;
     srcPacket: TDataSource;
-    dsPacket: TpFIBDataSet;
-    dsDecPacket: TpFIBDataSet;
+    dsPacket: TFIBDataSet;
+    dsDecPacket: TFIBDataSet;
     btnCancel: TBitBtn;
     btnOk: TBitBtn;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

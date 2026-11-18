@@ -279,7 +279,7 @@ object MatGroupForm: TMatGroupForm
     Left = 56
     Top = 208
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -291,7 +291,7 @@ object MatGroupForm: TMatGroupForm
     Left = 164
     Top = 79
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.Service_Id'
@@ -322,7 +322,7 @@ object MatGroupForm: TMatGroupForm
     Left = 309
     Top = 77
   end
-  object dsSoldSRV: TpFIBDataSet
+  object dsSoldSRV: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.Service_Id'
@@ -353,7 +353,7 @@ object MatGroupForm: TMatGroupForm
     Left = 376
     Top = 208
   end
-  object dsMGropups: TpFIBDataSet
+  object dsMGropups: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    Mg_Id'
@@ -437,7 +437,7 @@ object MatGroupForm: TMatGroupForm
     Left = 304
     Top = 208
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -449,7 +449,7 @@ object MatGroupForm: TMatGroupForm
     Left = 24
     Top = 180
   end
-  object dsGroup: TpFIBDataSet
+  object dsGroup: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE MATERIALS_GROUP'
       'SET '

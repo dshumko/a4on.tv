@@ -10,10 +10,8 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
   Font.Height = -11
   Font.Name = 'Tahoma'
   Font.Style = []
-  OldCreateOrder = False
   OnCreate = FormCreate
   OnResize = FormResize
-  PixelsPerInch = 96
   TextHeight = 13
   object dbgCustAttr: TDBGridEh
     Left = 26
@@ -104,7 +102,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
       Flat = True
     end
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '  EQUIPMENT_ATTRIBUTES'
@@ -161,7 +159,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -173,7 +171,7 @@ object apgEqpmntAttributes: TapgEqpmntAttributes
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

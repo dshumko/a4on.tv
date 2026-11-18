@@ -214,7 +214,7 @@ object StreetViewForm: TStreetViewForm
     Left = 208
     Top = 95
   end
-  object dsAreas: TpFIBDataSet
+  object dsAreas: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -270,7 +270,7 @@ object StreetViewForm: TStreetViewForm
     Left = 144
     Top = 95
   end
-  object dsStreeType: TpFIBDataSet
+  object dsStreeType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT *'
       'FROM STREET_TYPE'
@@ -292,7 +292,7 @@ object StreetViewForm: TStreetViewForm
     Left = 192
     Top = 39
   end
-  object dsEditStreet: TpFIBDataSet
+  object dsEditStreet: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE STREET'
       'SET '
@@ -345,7 +345,7 @@ object StreetViewForm: TStreetViewForm
     Left = 128
     Top = 39
   end
-  object trSRead: TpFIBTransaction
+  object trSRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -356,7 +356,7 @@ object StreetViewForm: TStreetViewForm
     Left = 248
     Top = 39
   end
-  object trSWrite: TpFIBTransaction
+  object trSWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

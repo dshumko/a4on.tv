@@ -219,6 +219,7 @@ object CustomersFilterForm: TCustomersFilterForm
             DataSource = srcFilter
             DropDownBox.ListSource = srcServices
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
             DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
@@ -284,6 +285,9 @@ object CustomersFilterForm: TCustomersFilterForm
             DynProps = <>
             DataField = 'srvTypes'
             DataSource = srcFilter
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.Rows = 10
             EmptyDataInfo.Text = #1042#1080#1076' '#1091#1089#1083#1091#1075#1080
             EditButtons = <>
@@ -303,6 +307,9 @@ object CustomersFilterForm: TCustomersFilterForm
             DynProps = <>
             DataField = 'SRVATTR'
             DataSource = srcFilter
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.Rows = 10
             EmptyDataInfo.Text = #1087#1086#1082#1072' '#1085#1077' '#1088#1072#1073#1086#1090#1072#1077#1090'. '#1059' '#1091#1089#1083#1091#1075#1080' '#1077#1089#1090#1100' '#1072#1090#1088#1080#1073#1091#1090
             EditButtons = <>
@@ -595,6 +602,8 @@ object CustomersFilterForm: TCustomersFilterForm
               end>
             DropDownBox.ListSource = srcHomes
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             DropDownBox.Width = 200
@@ -622,6 +631,8 @@ object CustomersFilterForm: TCustomersFilterForm
             DataSource = srcFilter
             DropDownBox.ListSource = srcArea
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
@@ -657,6 +668,8 @@ object CustomersFilterForm: TCustomersFilterForm
               end>
             DropDownBox.ListSource = srcSubArea
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -703,6 +716,8 @@ object CustomersFilterForm: TCustomersFilterForm
               end>
             DropDownBox.ListSource = srcOrg
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.Options = []
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
@@ -729,6 +744,8 @@ object CustomersFilterForm: TCustomersFilterForm
             DataSource = srcFilter
             DropDownBox.ListSource = srcWORKAREA
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             EmptyDataInfo.Text = #1059#1095#1072#1089#1090#1086#1082
             EditButtons = <>
@@ -760,6 +777,8 @@ object CustomersFilterForm: TCustomersFilterForm
               end>
             DropDownBox.ListSource = srcWORKGROUP
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1047#1074#1077#1085#1086
@@ -794,6 +813,8 @@ object CustomersFilterForm: TCustomersFilterForm
               end>
             DropDownBox.ListSource = srcMH
             DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.Options = []
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
@@ -976,6 +997,7 @@ object CustomersFilterForm: TCustomersFilterForm
         DataSource = srcFilter
         DropDownBox.ListSource = srcAttributes
         DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
         DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EmptyDataInfo.Text = #1040#1090#1088#1080#1073#1091#1090
@@ -1174,6 +1196,9 @@ object CustomersFilterForm: TCustomersFilterForm
           DynProps = <>
           DataField = 'LETTERS_TYPE'
           DataSource = srcFilter
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1050#1072#1082#1080#1077' '#1087#1080#1089#1100#1084#1072
@@ -1292,6 +1317,7 @@ object CustomersFilterForm: TCustomersFilterForm
           DropDownBox.ListSource = srcSingleServ
           DropDownBox.ListSourceAutoFilter = True
           DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           DropDownBox.AutoDrop = True
           DropDownBox.Sizable = True
           EmptyDataInfo.Text = #1050#1072#1082#1072#1103' '#1088#1072#1079#1086#1074#1072#1103' '#1091#1089#1083#1091#1075#1072' '#1073#1099#1083#1072' '#1079#1072' '#1087#1077#1088#1080#1086#1076
@@ -1506,6 +1532,9 @@ object CustomersFilterForm: TCustomersFilterForm
         DynProps = <>
         DataField = 'FILE_TYPE'
         DataSource = srcFilter
+        DropDownBox.ListSourceAutoFilter = True
+        DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+        DropDownBox.ListSourceAutoFilterAllColumns = True
         DropDownBox.AutoDrop = True
         EmptyDataInfo.Text = #1059#1082#1072#1078#1080#1090#1077' '#1090#1080#1087' '#1092#1072#1081#1083#1072
         EditButtons = <>
@@ -1816,7 +1845,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 317
     Top = 304
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.street_id'
@@ -1840,7 +1869,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 737
     Top = 70
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT '
       '  HOUSE_ID'
@@ -1868,7 +1897,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 694
     Top = 181
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.Service_Id'
@@ -1894,7 +1923,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 694
     Top = 229
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'
@@ -1912,7 +1941,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 694
     Top = 256
   end
-  object dsSubArea: TpFIBDataSet
+  object dsSubArea: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.subarea_id, s.subarea_name, a.area_name'
       'FROM subarea s left outer join area a on (a.area_id = s.area_id)'
@@ -1929,7 +1958,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 694
     Top = 304
   end
-  object dsLetterType: TpFIBDataSet
+  object dsLetterType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT LETTERTYPEID, LETTERTYPEDESCR'
       'FROM LETTERTYPE l'
@@ -1956,7 +1985,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 638
     Top = 256
   end
-  object dsSingleServ: TpFIBDataSet
+  object dsSingleServ: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    c.Service_Id'
@@ -1983,7 +2012,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 506
     Top = 322
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION, O_DELETED, O_DIMENSION'
       'FROM OBJECTS'
@@ -1996,7 +2025,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 450
     Top = 307
   end
-  object dsOrg: TpFIBDataSet
+  object dsOrg: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -2053,7 +2082,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 277
     Top = 294
   end
-  object dsWORKGROUP: TpFIBDataSet
+  object dsWORKGROUP: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    s.WG_ID,'
@@ -2074,7 +2103,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 679
     Top = 115
   end
-  object dsWORKAREA: TpFIBDataSet
+  object dsWORKAREA: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from WORKAREA'
@@ -2091,7 +2120,7 @@ object CustomersFilterForm: TCustomersFilterForm
     Left = 686
     Top = 42
   end
-  object dsMH: TpFIBDataSet
+  object dsMH: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -2180,7 +2209,7 @@ object CustomersFilterForm: TCustomersFilterForm
       OnExecute = actLoadFromDbExecute
     end
   end
-  object dsFileType: TpFIBDataSet
+  object dsFileType: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '  o.O_ID, o.O_NAME'
@@ -2223,7 +2252,7 @@ object CustomersFilterForm: TCustomersFilterForm
       Action = A4MainForm.EditSelectAll1
     end
   end
-  object dsSrvAttr: TpFIBDataSet
+  object dsSrvAttr: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION'
       'FROM OBJECTS'

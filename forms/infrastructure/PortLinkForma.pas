@@ -7,24 +7,24 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types, System.StrUtils, System.Actions,
   Data.DB,
   Vcl.ExtCtrls, Vcl.Graphics, Vcl.Dialogs, Vcl.Controls, Vcl.StdCtrls, Vcl.Mask, Vcl.Forms, Vcl.ComCtrls, Vcl.ActnList,
-  FIBDataSet, pFIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
+  FIBDataSet, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst, GridsEh, DBGridEh,
   OkCancel_frame,
-  FIBDatabase, pFIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, CustomerInfoFrame, CnClasses;
+  FIBDatabase, A4onTypeUnit, EhLibVCL, DBAxisGridsEh, DBVertGridsEh, CustomerInfoFrame, CnClasses;
 
 type
 
   TPortLinkForm = class(TForm)
     OkCancelFrame: TOkCancelFrame;
-    dsPort: TpFIBDataSet;
+    dsPort: TFIBDataSet;
     CnErrors: TCnErrorProvider;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlSecond: TPanel;
     srcPort: TDataSource;
     dbVertGrid: TDBVertGridEh;
     actlst1: TActionList;
     actFind: TAction;
-    dsEndPort: TpFIBDataSet;
+    dsEndPort: TFIBDataSet;
     srcEndPort: TDataSource;
     actAddPort: TAction;
     actEditPort: TAction;
@@ -48,7 +48,7 @@ type
     btnFndCustomer: TButton;
     CustomerInfofrm: TCustomerInfoFrm;
     pnlLink: TPanel;
-    dsWire: TpFIBDataSet;
+    dsWire: TFIBDataSet;
     srcWire: TDataSource;
     lblWire: TLabel;
     lblLabel: TLabel;
@@ -91,7 +91,7 @@ function LinkPort(const aEqID: Integer; const aPORT: String): Boolean;
 implementation
 
 uses
-  DM, pFIBQuery, EQPort, NodeLinkForma, AtrStrUtils;
+  DM, EQPort, NodeLinkForma, AtrStrUtils;
 
 {$R *.dfm}
 
@@ -469,7 +469,7 @@ begin
   if ((lcbPort.Text.IsEmpty) or (pgcFind.ActivePageIndex = 1)) then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;

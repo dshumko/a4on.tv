@@ -4,7 +4,6 @@ inherited OTPTypesForm: TOTPTypesForm
   Caption = #1058#1080#1087#1099' '#1089#1090#1086#1088#1086#1085#1085#1080#1093' '#1079#1072#1082#1072#1079#1086#1074
   ClientHeight = 549
   ClientWidth = 811
-  StyleElements = [seFont, seClient, seBorder]
   TextHeight = 13
   inherited splPG: TSplitter
     Top = 353
@@ -90,7 +89,6 @@ inherited OTPTypesForm: TOTPTypesForm
   inherited pnlEdit: TPanel
     Width = 811
     Height = 328
-    StyleElements = [seFont, seClient, seBorder]
     inherited btnSaveLink: TBitBtn
       Top = 298
       Width = 625
@@ -247,6 +245,9 @@ inherited OTPTypesForm: TOTPTypesForm
               Width = 60
             end>
           DropDownBox.ListSource = srcSnglSrv
+          DropDownBox.ListSourceAutoFilter = True
+          DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+          DropDownBox.ListSourceAutoFilterAllColumns = True
           EmptyDataInfo.Text = #1050#1072#1082#1086#1081' '#1091#1089#1083#1091#1075#1086#1081' '#1076#1086#1073#1072#1074#1083#1103#1077#1084' '#1085#1072#1095#1080#1089#1083#1077#1085#1080#1103' '#1072#1073#1086#1085#1077#1085#1090#1091
           EditButtons = <>
           KeyField = 'SERVICE_ID'
@@ -419,7 +420,7 @@ inherited OTPTypesForm: TOTPTypesForm
     Left = 240
     Top = 392
   end
-  object dsOTPTypes: TpFIBDataSet
+  object dsOTPTypes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '
@@ -487,7 +488,7 @@ inherited OTPTypesForm: TOTPTypesForm
     Left = 176
     Top = 176
   end
-  object dsSnglSrv: TpFIBDataSet
+  object dsSnglSrv: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.Service_Id'

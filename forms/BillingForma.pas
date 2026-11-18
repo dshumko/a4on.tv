@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.Actions,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.ActnList,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, RxMemDS, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh;
+  FIBDataSet, GridsEh, DBGridEh, RxMemDS, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh;
 
 type
   TBillingForm = class(TForm)
     tlb1: TToolBar;
     DBGridEh1: TDBGridEh;
     srcBilling: TDataSource;
-    dsBilling: TpFIBDataSet;
+    dsBilling: TFIBDataSet;
     dsBillingHOUSE_NO: TFIBStringField;
     dsBillingLOGIN: TFIBStringField;
     dsBillingIP_INET: TFIBStringField;

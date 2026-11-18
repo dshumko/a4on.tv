@@ -46,7 +46,7 @@ object ChoiseForm: TChoiseForm
     TabOrder = 1
     Visible = True
   end
-  object dsChoise: TpFIBDataSet
+  object dsChoise: TFIBDataSet
     SelectSQL.Strings = (
       '')
     Transaction = dmMain.trRead

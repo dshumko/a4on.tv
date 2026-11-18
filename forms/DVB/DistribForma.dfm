@@ -1192,7 +1192,7 @@ inherited DistribForm: TDistribForm
     Left = 344
     Top = 288
   end
-  object dsDistrib: TpFIBDataSet
+  object dsDistrib: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DISTRIBUTOR'
       'SET '
@@ -1216,7 +1216,7 @@ inherited DistribForm: TDistribForm
       '    ID,'
       '    NAME,'
       '    ADDRESS,'
-      '    JADDRESS,    '
+      '    JADDRESS,   '
       '    EMAIL,'
       '    PHONES,'
       '    NOTICE'
@@ -1297,7 +1297,7 @@ inherited DistribForm: TDistribForm
     Left = 200
     Top = 496
   end
-  object dsChan: TpFIBDataSet
+  object dsChan: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    DISTRIB_CONTRACT_CH'
@@ -1337,7 +1337,7 @@ inherited DistribForm: TDistribForm
     Left = 112
     Top = 496
   end
-  object dsContract: TpFIBDataSet
+  object dsContract: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    DISTRIB_CONTRACTS'
@@ -1391,7 +1391,7 @@ inherited DistribForm: TDistribForm
     Left = 272
     Top = 496
   end
-  object dsReport: TpFIBDataSet
+  object dsReport: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DISTRIB_CONTRACT_REPORTS'
       'SET '
@@ -1521,13 +1521,13 @@ inherited DistribForm: TDistribForm
     Variables = <>
     Style = <>
   end
-  object qryRead: TpFIBQuery
+  object qryRead: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     Left = 638
     Top = 282
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -1539,7 +1539,7 @@ inherited DistribForm: TDistribForm
     Left = 696
     Top = 280
   end
-  object dsRC: TpFIBDataSet
+  object dsRC: TFIBDataSet
     UpdateSQL.Strings = (
       
         'UPDATE OR INSERT INTO DISTRIB_CONTRACT_REPORTS_CH (CONTRACT_ID, ' +
@@ -1613,7 +1613,7 @@ inherited DistribForm: TDistribForm
     Left = 336
     Top = 496
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -1625,7 +1625,7 @@ inherited DistribForm: TDistribForm
     Left = 753
     Top = 280
   end
-  object dsCards: TpFIBDataSet
+  object dsCards: TFIBDataSet
     DeleteSQL.Strings = (
       ''
       '    ')

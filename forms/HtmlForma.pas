@@ -386,7 +386,7 @@ var
 {$ENDIF}
 begin
 {$IFDEF INDY}
-  if (GetProtocol(SRC) = GetProtocol(fUrl)) then
+  if (GeTFIBProtocol(SRC) = GeTFIBProtocol(fUrl)) then
   begin
 
     AStream := TMemoryStream.Create;

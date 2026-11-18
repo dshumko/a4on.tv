@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
+  OkCancel_frame, FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
   A4onTypeUnit,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   MemTableDataEh, Vcl.Buttons, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh,
@@ -17,7 +17,7 @@ type
 
   TNodeLayoutForm = class(TForm)
     srcDevType: TDataSource;
-    dsSrvType: TpFIBDataSet;
+    dsSrvType: TFIBDataSet;
     lcbSrvType: TDBLookupComboboxEh;
     memNotice: TDBMemoEh;
     lblAttribute: TLabel;
@@ -64,7 +64,7 @@ function EditLayoute(const aNODE_ID: Integer; var aNL_ID: Integer): Boolean;
 implementation
 
 uses
-  DM, SelectOneMatForma, pFIBQuery, AtrStrUtils, MAIN;
+  DM, SelectOneMatForma, AtrStrUtils, MAIN;
 
 {$R *.dfm}
 
@@ -217,7 +217,7 @@ begin
     mtMat.Next;
   end;
   vMatList := vMatList.Trim([',']);
-  with TpFIBQuery.Create(self) do
+  with TFIBQuery.Create(self) do
   begin
     try
       DataBase := dmMain.dbTV;
@@ -249,6 +249,7 @@ begin
 
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       free;
@@ -280,11 +281,11 @@ begin
     Exit;
   chkCustUnlum.Checked := false;
   chkMatUnlum.Checked := false;
-  with TpFIBQuery.Create(self) do
+  with TFIBQuery.Create(self) do
   begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select l.*, (select list(m.M_Id || ''^'' || m.Name, ''~'') from materials m';
       SQL.Add(' where m.M_Id in ( select cast(STR as integer) from Explode_No_Empty('','', l.Mat_Id_List))) MAT_LIST');
       SQL.Add('from Node_Layout l where l.Lt_Id = :LT_ID');
@@ -324,9 +325,11 @@ begin
         end;
         Next;
       end;
+      Close;
       Transaction.Commit;
       mtMat.SortByFields('M_NAME');
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;

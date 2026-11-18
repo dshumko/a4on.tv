@@ -8,16 +8,16 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ActnList, Vcl.Buttons,
   Vcl.ExtCtrls,
-  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, pFIBDatabase, MemTableDataEh, DataDriverEh, pFIBDataDriverEh,
+  EhLibVCL, DBGridEhGrouping, DynVarsEh, FIBDatabase, MemTableDataEh, DataDriverEh, FIBDataDriverEh,
   MemTableEh,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, AtrPages, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst;
+  FIBDataSet, GridsEh, DBGridEh, AtrPages, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst;
 
 type
   TapgCustomerBalance = class(TA4onPage)
     dbgCustBalance: TDBGridEh;
-    dsBalance: TpFIBDataSet;
+    dsBalance: TFIBDataSet;
     srcBalance: TDataSource;
-    trRead: TpFIBTransaction;
+    trRead: TFIBTransaction;
     mtBalance: TMemTableEh;
     pmGrid: TPopupMenu;
     miN1: TMenuItem;
@@ -47,7 +47,7 @@ type
 implementation
 
 uses
-  DM, pFIBQuery, PaymentForma, PaymentDocForma, MAIN;
+  DM, FIBQuery, PaymentForma, PaymentDocForma, MAIN;
 
 {$R *.dfm}
 

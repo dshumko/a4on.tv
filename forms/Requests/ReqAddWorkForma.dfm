@@ -110,7 +110,7 @@ object ReqAddWork: TReqAddWork
     Visible = True
     WantReturns = True
   end
-  object dsRTWorks: TpFIBDataSet
+  object dsRTWorks: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    w.W_Id'

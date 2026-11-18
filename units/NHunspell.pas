@@ -566,7 +566,7 @@ begin
   Result := LANG_ENGLISH or SUBLANG_ENGLISH_US shl 10;
 
   for i := Low(LangShortcuts) to High(LangShortcuts) do
-    if AnsiCompareText(LangShortcut, LangShortcuts[i]) = 0 then
+    if AnsiCompareText(string(LangShortcut), string(LangShortcuts[i])) = 0 then
     begin
       Result := LangCodes[i];
       Exit;
@@ -575,7 +575,7 @@ begin
   // second try, primary language code only
   LangShortcut := copy(LangShortcut, 1, 2);
   for i := Low(LangShortcuts) to High(LangShortcuts) do
-    if AnsiCompareText(LangShortcut, Copy(LangShortcuts[i], 1, 2)) = 0 then
+    if AnsiCompareText(string(LangShortcut), Copy(string(LangShortcuts[i]), 1, 2)) = 0 then
     begin
       Result := LangCodes[i];
       Exit;
@@ -650,11 +650,11 @@ begin
   begin
     zip := TZipRead.Create(fDictionaryFilename);
     try
-      intItem := zip.NameToIndex(fInternalAffixPath);
+      intItem := zip.NameToIndex(AnsiString(fInternalAffixPath));
       if intItem > -1 then
       begin
         tmpAffixData := zip.Unzip(intItem);
-        intItem := zip.NameToIndex(fInternalDictPath);
+        intItem := zip.NameToIndex(AnsiString(fInternalDictPath));
         if intItem > -1 then
         begin
           tmpDictionaryData := zip.Unzip(intItem);
@@ -817,7 +817,7 @@ begin
   begin
     zip := TZipRead.Create(fDictionaryFilename);
     try
-      intItem := zip.NameToIndex(fInternalHyphenPath);
+      intItem := zip.NameToIndex(AnsiString(fInternalHyphenPath));
       if intItem > -1 then
       begin
         tmpHyphenData := zip.Unzip(intItem);
@@ -1087,7 +1087,7 @@ begin
         aNode := GetFirst;
         while aNode <> nil do
         begin
-          tmpDictionariesXcu := aNode.Attrib('manifest:full-path');
+          tmpDictionariesXcu := AnsiString(aNode.Attrib('manifest:full-path'));
           if tmpDictionariesXcu <> '' then
             break
           else
@@ -1097,7 +1097,7 @@ begin
         free;
       end;
 
-    intItem := zip.NameToIndex(StringReplace(tmpDictionariesXcu, '/', '\', [rfReplaceAll]));
+    intItem := zip.NameToIndex(AnsiString(StringReplace(string(tmpDictionariesXcu), '/', '\', [rfReplaceAll])));
     if intItem > -1 then
       with TOxtParser.Create(zip.Unzip(intItem)) do
       try
@@ -1122,7 +1122,7 @@ begin
                   if (tmpNodeName = 'locations') then
                     tmpLocations := TOxtNode(aList[intItem]).Value
                   else if (tmpNodeName = 'locales') then
-                    tmpLangID := LangShortCutToLangShortID(TOxtNode(aList[intItem]).Value) // implicit wide->ansi conversion
+                    tmpLangID := LangShortCutToLangShortID(AnsiString(TOxtNode(aList[intItem]).Value)) // implicit wide->ansi conversion
                   else if (tmpNodeName = 'format') then
                     if (UpperCase(TOxtNode(aList[intItem]).Value) = 'DICT_SPELL') then
                       tmpDictType := dtSpell

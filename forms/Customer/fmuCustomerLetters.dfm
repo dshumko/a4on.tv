@@ -157,7 +157,7 @@ object apgCustomerLetters: TapgCustomerLetters
       Layout = blGlyphTop
     end
   end
-  object dsLetters: TpFIBDataSet
+  object dsLetters: TFIBDataSet
     DeleteSQL.Strings = (
       'delete from Custletter where Custletterid = :OLD_Mes_Id;')
     SelectSQL.Strings = (

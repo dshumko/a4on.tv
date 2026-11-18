@@ -3,9 +3,8 @@ object dmMain: TdmMain
   OnDestroy = DataModuleDestroy
   Height = 580
   Width = 932
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dbTV
-    Timeout = 36000000
     TRParams.Strings = (
       'read'
       'nowait'
@@ -15,7 +14,7 @@ object dmMain: TdmMain
     Left = 24
     Top = 78
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -27,7 +26,7 @@ object dmMain: TdmMain
     Left = 128
     Top = 28
   end
-  object dbTV: TpFIBDatabase
+  object dbTV: TFIBDatabase
     DBName = '127.0.0.1:A4ON'
     DBParams.Strings = (
       'user_name=SYSDBA'
@@ -46,7 +45,7 @@ object dmMain: TdmMain
     Left = 22
     Top = 25
   end
-  object dsSettings: TpFIBDataSet
+  object dsSettings: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SETTINGS'
       'SET '
@@ -94,25 +93,30 @@ object dmMain: TdmMain
     Left = 230
     Top = 80
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trWrite
     Database = dbTV
     Left = 127
     Top = 184
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dbTV
-    Timeout = 36000000
     TRParams.Strings = (
       'read'
       'nowait'
       'rec_version'
       'read_committed')
+    OnTimeout = trReadQTimeout
+    BeforeStart = trReadQBeforeStart
+    AfterStart = trReadQAfterStart
+    AfterEnd = trReadQAfterEnd
     TPBMode = tpbDefault
+    AfterSQLExecute = trReadQAfterSQLExecute
+    AfterFirstFetch = trReadQAfterFirstFetch
     Left = 24
     Top = 136
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -124,7 +128,7 @@ object dmMain: TdmMain
     Left = 129
     Top = 80
   end
-  object dsCompany: TpFIBDataSet
+  object dsCompany: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE COMPANY'
       'SET '
@@ -176,12 +180,12 @@ object dmMain: TdmMain
     Left = 230
     Top = 25
   end
-  object FibErrorHandler: TpFibErrorHandler
+  object FibErrorHandler: TFIBErrorHandler
     OnFIBErrorEvent = FibErrorHandlerFIBErrorEvent
     Left = 128
     Top = 135
   end
-  object trReadCustomer: TpFIBTransaction
+  object trReadCustomer: TFIBTransaction
     DefaultDatabase = dbTV
     Timeout = 36000000
     TimeoutAction = TACommit
@@ -200,13 +204,13 @@ object dmMain: TdmMain
     Left = 132
     Top = 361
   end
-  object qRead: TpFIBQuery
+  object qRead: TFIBQuery
     Transaction = trReadQ
     Database = dbTV
     Left = 131
     Top = 240
   end
-  object fddReport: TpFIBDataDriverEh
+  object fddReport: TFIBDataDriverEh
     Database = dbTV
     SelectCommand.Params = <>
     SelectCommand.CommandText.Strings = (
@@ -346,7 +350,7 @@ object dmMain: TdmMain
     Left = 398
     Top = 345
   end
-  object fdsLoadReport: TpFIBDataSet
+  object fdsLoadReport: TFIBDataSet
     UniDirectional = True
     SelectSQL.Strings = (
       'select r.report_name, r.report_body'
@@ -361,14 +365,14 @@ object dmMain: TdmMain
     dcForceMasterRefresh = True
     dcForceOpen = True
   end
-  object qCommon: TpFIBQuery
+  object qCommon: TFIBQuery
     Transaction = trRepRead
     Database = dbTV
     Left = 402
     Top = 133
     qoStartTransaction = True
   end
-  object fdsReport: TpFIBDataSet
+  object fdsReport: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REPORTS'
       'SET '
@@ -437,7 +441,7 @@ object dmMain: TdmMain
     Top = 83
     oFetchAll = True
   end
-  object trRepRead: TpFIBTransaction
+  object trRepRead: TFIBTransaction
     DefaultDatabase = dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -449,7 +453,7 @@ object dmMain: TdmMain
     Left = 403
     Top = 180
   end
-  object trRepWrite: TpFIBTransaction
+  object trRepWrite: TFIBTransaction
     DefaultDatabase = dbTV
     TRParams.Strings = (
       'write'
@@ -587,7 +591,7 @@ object dmMain: TdmMain
     Left = 230
     Top = 261
   end
-  object dsFindCN: TpFIBDataSet
+  object dsFindCN: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '      '#39#1040#39' as O_TYPE'
@@ -700,7 +704,7 @@ object dmMain: TdmMain
     Top = 344
     oFetchAll = True
   end
-  object trReadFind: TpFIBTransaction
+  object trReadFind: TFIBTransaction
     DefaultDatabase = dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -744,5 +748,23 @@ object dmMain: TdmMain
     DefaultDatabase = dbTV
     Left = 696
     Top = 32
+  end
+  object trReadQTasks: TFIBTransaction
+    DefaultDatabase = dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 304
+    Top = 456
+  end
+  object qReadTasks: TFIBQuery
+    Transaction = trReadQTasks
+    Database = dbTV
+    Left = 179
+    Top = 456
   end
 end

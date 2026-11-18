@@ -9,20 +9,19 @@ uses
   Data.DB,
   Vcl.Menus, Vcl.ActnList, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms, Vcl.Graphics, Vcl.StdCtrls, Vcl.Buttons,
   Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Dialogs,
-  DBGridEh, ToolCtrlsEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, AtrPages,
-  FIBQuery,
-  pFIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
+  DBGridEh, ToolCtrlsEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDatabase, FIBDataSet, AtrPages,
+  FIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh, VKDBFDataSet, DBAxisGridsEh,
   MemTableDataEh,
-  MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, DataDriverEh, pFIBDataDriverEh,
+  MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, CnErrorProvider, DataDriverEh, FIBDataDriverEh,
   amSplitter, CnClasses;
 
 type
   TNodesForm = class(TForm)
     pnlForms: TPanel;
     pnlDATA: TPanel;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsNodes: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsNodes: TFIBDataSet;
     srcNodes: TDataSource;
     pnl1: TPanel;
     lstForms: TListBox;
@@ -106,9 +105,9 @@ type
     mniN28: TMenuItem;
     mniFilterFLD: TMenuItem;
     chkFldOnly: TCheckBox;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
     ToolBar2: TToolBar;
     ToolButton3: TToolButton;
@@ -145,18 +144,18 @@ type
     lbl11: TLabel;
     edtNAME: TDBEditEh;
     srcNodeType: TDataSource;
-    dsNodeType: TpFIBDataSet;
-    trReadQ: TpFIBTransaction;
-    qCheck: TpFIBQuery;
+    dsNodeType: TFIBDataSet;
+    trReadQ: TFIBTransaction;
+    qCheck: TFIBQuery;
     actTask: TAction;
     lbl12: TLabel;
     cbbPARENT: TDBLookupComboboxEh;
-    dsParentNode: TpFIBDataSet;
-    trReadParent: TpFIBTransaction;
+    dsParentNode: TFIBDataSet;
+    trReadParent: TFIBTransaction;
     srcParent: TDataSource;
     btn1: TToolButton;
     mtNodes: TMemTableEh;
-    drvNodes: TpFIBDataDriverEh;
+    drvNodes: TFIBDataDriverEh;
     miTreeBreak: TMenuItem;
     miTreeExpand: TMenuItem;
     miTreeCollapse: TMenuItem;
@@ -173,7 +172,7 @@ type
     splTop: TSplitter;
     lbl21: TLabel;
     lcbEpoint: TDBLookupComboboxEh;
-    dsEPoint: TpFIBDataSet;
+    dsEPoint: TFIBDataSet;
     srcEPoint: TDataSource;
     lbl111: TLabel;
     edtNAME1: TDBEditEh;
@@ -181,7 +180,7 @@ type
     ednPCE: TDBNumberEditEh;
     lbl14: TLabel;
     lcbTYPE_ID: TDBLookupComboboxEh;
-    dsLayoutType: TpFIBDataSet;
+    dsLayoutType: TFIBDataSet;
     srcLayoutType: TDataSource;
     procedure lstFormsClick(Sender: TObject);
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
@@ -292,7 +291,7 @@ uses
   TextEditForma,
   SendMessagesForma, fs_iinterpreter, RecourseForma, RequestNewForma, NodesFilter, AtrStrUtils,
   RxStrUtils,
-  EhLibFIB, pFIBProps, fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT, fmuNodeFlats,
+  EhLibFIB, FIBProps, fmuNodeRequests, fmuNodeAttributes, fmuNodeFiles, fmuNodeCIRCUIT, fmuNodeFlats,
   fmuNodeMaterialsMove,
   fmuNodeLayout, fmuNodeMaterials, fmuNodeAppl, fmuNodeLink, NodeLinkForma;
 
@@ -387,13 +386,13 @@ var
   s: string;
   grid: TCustomDBGridEh;
   id: Integer;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   grid := TCustomDBGridEh(Sender);
-  FIBDS := TpFIBDataSet(grid.DataSource.DataSet);
+  FIBDS := TFIBDataSet(grid.DataSource.DataSet);
   id := -1;
   if Sender is TCustomDBGridEh then
   begin
@@ -759,7 +758,7 @@ procedure TNodesForm.StartSearchAddress;
 begin
   if (actAddressSearch.Tag <> 1) and (dmMain.GetIniValue('FETCHALL') = '0') then
   begin
-    if srcNodes.DataSet is TpFIBDataSet then
+    if srcNodes.DataSet is TFIBDataSet then
     begin
       dsNodes.Options := dsNodes.Options + [poFetchAll];
       dsNodes.CloseOpen(True);
@@ -905,7 +904,7 @@ end;
 
 procedure TNodesForm.actEnableFilterExecute(Sender: TObject);
 begin
-  if srcNodes.DataSet is TpFIBDataSet then
+  if srcNodes.DataSet is TFIBDataSet then
   begin
     actEnableFilter.Checked := not actEnableFilter.Checked;
     dsNodes.ParamByName('Filter').Value := GenerateFilter;
@@ -1031,7 +1030,7 @@ procedure TNodesForm.ActSetFilterExecute(Sender: TObject);
 var
   filter: string;
 begin
-  if not(srcNodes.DataSet is TpFIBDataSet) then
+  if not(srcNodes.DataSet is TFIBDataSet) then
     Exit;
 
   filter := '';
@@ -1074,7 +1073,7 @@ procedure TNodesForm.actSetFilterNewExecute(Sender: TObject);
 var
   filter: string;
 begin
-  if not(srcNodes.DataSet is TpFIBDataSet) then
+  if not(srcNodes.DataSet is TFIBDataSet) then
     Exit;
 
   filter := '';
@@ -1397,7 +1396,7 @@ var
   val: TStringDynArray;
   i: Integer;
 begin
-  if not(srcNodes.DataSet is TpFIBDataSet) or (FilterFIELD < 1) then
+  if not(srcNodes.DataSet is TFIBDataSet) or (FilterFIELD < 1) then
     Exit;
 
   cr := Screen.Cursor;

@@ -347,7 +347,7 @@ inherited AreaForm: TAreaForm
     Left = 440
     Top = 152
   end
-  object dsAreas: TpFIBDataSet
+  object dsAreas: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    AREA a'
@@ -447,7 +447,7 @@ inherited AreaForm: TAreaForm
     Left = 104
     Top = 152
   end
-  object dsSubAreas: TpFIBDataSet
+  object dsSubAreas: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -557,7 +557,7 @@ inherited AreaForm: TAreaForm
       end
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -569,7 +569,7 @@ inherited AreaForm: TAreaForm
     Left = 288
     Top = 142
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

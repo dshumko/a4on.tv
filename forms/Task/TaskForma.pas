@@ -12,19 +12,19 @@ uses
   Vcl.ComCtrls, Vcl.ToolWin, Vcl.Mask,
   GridForma, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, CnErrorProvider, EhLibVCL, GridsEh,
   DBAxisGridsEh,
-  DBGridEh, FIBDatabase, pFIBDatabase, FIBDataSet, pFIBDataSet, DBCtrlsEh, MemTableDataEh, MemTableEh,
+  DBGridEh, FIBDatabase, FIBDataSet, DBCtrlsEh, MemTableDataEh, MemTableEh,
   PrnDbgeh, CnClasses;
 
 type
   TTaskForm = class(TGridForm)
-    dsTask: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsTask: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pgcMSG: TPageControl;
     tsGrid: TTabSheet;
     tsEdit: TTabSheet;
     dbgMsg: TDBGridEh;
-    dsMSG: TpFIBDataSet;
+    dsMSG: TFIBDataSet;
     srcMSG: TDataSource;
     pnlButtons: TPanel;
     btnDel1: TSpeedButton;
@@ -46,7 +46,7 @@ type
     edtOBJ_ID: TDBEditEh;
     btnGoObject: TSpeedButton;
     dbgUsers: TDBGridEh;
-    dsUsers: TpFIBDataSet;
+    dsUsers: TFIBDataSet;
     srcUsers: TDataSource;
     mtbUsers: TMemTableEh;
     actRefresh: TAction;
@@ -136,7 +136,7 @@ implementation
 {$R *.dfm}
 
 uses
-  PrjConst, DM, pFIBQuery, MAIN, TaskFilterForma, AtrCommon, AtrStrUtils, atrCmdUtils, SelDateForma;
+  PrjConst, DM, FIBQuery, MAIN, TaskFilterForma, AtrCommon, AtrStrUtils, atrCmdUtils, SelDateForma;
 
 procedure FindTask(const Value: integer);
 begin
@@ -150,7 +150,7 @@ end;
 procedure TTaskForm.actCloseExecute(Sender: TObject);
 var
   cd: TDate;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
   id: integer;
 begin
   inherited;
@@ -161,7 +161,7 @@ begin
   if SelectDate(cd, rsCloseTask) then
   begin
     id := dsTask['ID'];
-    fq := TpFIBQuery.Create(Self);
+    fq := TFIBQuery.Create(Self);
     try
       fq.Database := dmMain.dbTV;
       fq.Transaction := dmMain.trWriteQ;
@@ -170,8 +170,8 @@ begin
       fq.ParamByName('EXEC_DATE').AsDate := cd;
       fq.Transaction.StartTransaction;
       fq.ExecQuery;
-      fq.Transaction.Commit;
       fq.Close;
+      fq.Transaction.Commit;
     finally
       fq.Free;
     end;
@@ -284,7 +284,7 @@ procedure TTaskForm.actOpenCustAddrExecute(Sender: TObject);
 var
   ObjList: TStringList;
   s: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   inherited;
   if (dsTask.RecordCount = 0) or (dsMSG.RecordCount = 0) then
@@ -296,10 +296,10 @@ begin
   try
     ObjList.Sorted := True;
     ObjList.Duplicates := dupIgnore;
-    fq := TpFIBQuery.Create(Self);
+    fq := TFIBQuery.Create(Self);
     try
       fq.Database := dmMain.dbTV;
-      fq.Transaction := dmMain.trReadQ;
+      fq.Transaction := dmMain.GetTransactionForRead;
       fq.sql.Text := 'select Cust_Code from customer where Account_No = :Obj_Id';
       while not dsMSG.Eof do
       begin
@@ -312,14 +312,14 @@ begin
           fq.ExecQuery;
           if not fq.FN('Cust_Code').IsNull then
             ObjList.Add(fq.FN('Cust_Code').AsString);
-
-          fq.Transaction.Commit;
           fq.Close;
+          fq.Transaction.Commit;
         end;
         dsMSG.Next;
       end;
 
     finally
+      if assigned(fq.Transaction) then fq.Transaction.Free;
       fq.Free;
     end;
     if (ObjList.Count > 0) then
@@ -711,7 +711,7 @@ begin
   mtbUsers.DisableControls;
   mtbUsers.First;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
@@ -720,6 +720,7 @@ begin
       ParamByName('task_id').AsInteger := dsTask['ID'];
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
       sql.Text := 'insert into Taskuser (Task_Id, Foruser) values (:Task_Id, :Ibname)';
       while not mtbUsers.Eof do
@@ -730,6 +731,7 @@ begin
           ParamByName('Ibname').AsString := mtbUsers['IBNAME'];
           Transaction.StartTransaction;
           ExecQuery;
+          Close;
           Transaction.Commit;
         end;
         mtbUsers.Next;
@@ -746,11 +748,11 @@ procedure TTaskForm.GetUsers;
 begin
   mtbUsers.Open;
   mtbUsers.DisableControls;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select w.Surname || coalesce('' ''||w.Firstname, '''') FIO , w.Ibname ' +
         'from worker w where not (w.Ibname is null) and (w.Working = 1) and (coalesce(w.Surname, '''') <> '''') order by 1';
       Transaction.StartTransaction;
@@ -768,6 +770,7 @@ begin
       Transaction.Commit;
       mtbUsers.First;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
   end;
@@ -789,11 +792,11 @@ begin
   end;
 
   if not new then
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         sql.Text := 'select Foruser from Taskuser where Task_Id = :Task_Id';
         ParamByName('task_id').AsInteger := dsTask['ID'];
         Transaction.StartTransaction;
@@ -811,6 +814,7 @@ begin
         Close;
         Transaction.Commit;
       finally
+        if assigned(Transaction) then Transaction.Free;
         Free;
       end;
     end;
@@ -1101,21 +1105,22 @@ begin
   // ed := edtEXEC_DATE.Value; //
   ed := dsTask['Exec_Date'];
   dbGrid.DataSource.DataSet.DisableControls;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
       sql.Text := 'update Tasklist set Exec_Date = :ed where Id = :id and Exec_Date is null';
       ParamByName('ed').AsDateTime := ed;
-      Transaction.StartTransaction;
       for i := 0 to dbGrid.SelectedRows.Count - 1 do
       begin
         dbGrid.DataSource.DataSet.Bookmark := dbGrid.SelectedRows[i];
         ParamByName('id').AsInteger := dbGrid.DataSource.DataSet['ID'];
+        Transaction.StartTransaction;
         ExecQuery;
+        Close;
+        Transaction.Commit;
       end;
-      Transaction.Commit;
     finally
       Free;
     end;
@@ -1141,19 +1146,21 @@ begin
   if (not vSQL.IsEmpty) then
   begin
     vSQL := 'select c.Account_No ACCNT from ' + vSQL + ' = :ID';
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         sql.Text := vSQL;
         ParamByName('ID').AsString := oId;
         Transaction.StartTransaction;
         ExecQuery;
         if (not FN('ACCNT').IsNull) then
           Result := FN('ACCNT').AsString;
+        Close;
         Transaction.Commit;
       finally
+        Transaction.Free;
         Free;
       end;
     end;

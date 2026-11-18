@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBCtrlsEh, PrjConst;
+  OkCancel_frame, FIBDataSet, DBCtrlsEh, PrjConst;
 
 type
   TRequestResult = class(TForm)
@@ -16,7 +16,7 @@ type
     edNAME: TDBEditEh;
     chkFINISHED: TDBCheckBoxEh;
     srcResult: TDataSource;
-    dsResult: TpFIBDataSet;
+    dsResult: TFIBDataSet;
     mmoNOTICE: TDBMemoEh;
     lbl2: TLabel;
     procedure FormKeyDown(Sender: TObject; var Key: Word; Shift: TShiftState);

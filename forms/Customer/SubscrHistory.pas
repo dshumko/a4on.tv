@@ -8,7 +8,7 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ActnList, Vcl.ExtCtrls, Vcl.ToolWin,
   Vcl.ComCtrls, Vcl.Menus, Vcl.Buttons,
-  pFIBDataSet, GridsEh, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEh, PrjConst, EhLibVCL,
+  GridsEh, FIBDataSet, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, DBGridEh, PrjConst, EhLibVCL,
   DBGridEhGrouping,
   DynVarsEh, amSplitter;
 
@@ -19,8 +19,8 @@ type
     srcServices: TDataSource;
     srcServicesHistory: TDataSource;
     actDeleteSubscrHist: TAction;
-    dsServicesHistory: TpFIBDataSet;
-    dsServices: TpFIBDataSet;
+    dsServicesHistory: TFIBDataSet;
+    dsServices: TFIBDataSet;
     actSubscribe: TAction;
     pmHistory: TPopupMenu;
     miDeleteHistory: TMenuItem;
@@ -97,7 +97,7 @@ function ShowCustSubscrHistory(const aCustomer_ID: Integer; const aService_ID: I
 implementation
 
 uses
-  MAIN, DM, AtrCommon, pFIBQuery, ChangeOffForma, TextEditForma;
+  MAIN, DM, AtrCommon, FIBQuery, ChangeOffForma, TextEditForma;
 
 {$R *.DFM}
 
@@ -458,7 +458,7 @@ begin
       PWideChar(mtConfirmation), //
       MB_YESNO + MB_ICONWARNING + MB_DEFBUTTON2) = IDYES then
     begin
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
         try
           DataBase := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;

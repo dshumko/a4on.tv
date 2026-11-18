@@ -11,13 +11,13 @@ uses
   Vcl.ExtCtrls, Vcl.ActnList, Vcl.Buttons,
   Vcl.Mask,
   Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, frxClass, frxDBSet, EhLibFIB,
+  GridForma, DBGridEh, FIBDataSet, frxClass, frxDBSet, EhLibFIB,
   DBCtrlsEh, GridsEh, PropFilerEh,
   PropStorageEh,
   ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, CnErrorProvider, PrjConst,
   EhLibVCL, DBGridEhGrouping, DynVarsEh,
-  FIBDatabase,
-  pFIBDatabase, DBLookupEh, amSplitter, PrnDbgeh, CnClasses;
+  FIBDatabase, 
+  DBLookupEh, amSplitter, PrnDbgeh, CnClasses;
 
 type
   TStreetForm = class(TGridForm)
@@ -32,8 +32,8 @@ type
     tbHDelete: TToolButton;
     ToolButton15: TToolButton;
     Splitter1: TSplitter;
-    dsHouses: TpFIBDataSet;
-    dsStreets: TpFIBDataSet;
+    dsHouses: TFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcHouses: TDataSource;
     Label2: TLabel;
     actHouseNew: TAction;
@@ -49,19 +49,19 @@ type
     pcHouseInfo: TPageControl;
     InfoSheet: TTabSheet;
     actHouseInfo: TAction;
-    dsHouseEquipment: TpFIBDataSet;
+    dsHouseEquipment: TFIBDataSet;
     srcHouseEquipment: TDataSource;
     Splitter2: TSplitter;
     tsEquipment: TTabSheet;
     dbgEquip: TDBGridEh;
-    dsHouseService: TpFIBDataSet;
+    dsHouseService: TFIBDataSet;
     srcHouseService: TDataSource;
     tsHouseWorks: TTabSheet;
     tsMap: TTabSheet;
     dbgWorks: TDBGridEh;
-    dsFloor: TpFIBDataSet;
-    dsPorch: TpFIBDataSet;
-    dsWorks: TpFIBDataSet;
+    dsFloor: TFIBDataSet;
+    dsPorch: TFIBDataSet;
+    dsWorks: TFIBDataSet;
     srcFloor: TDataSource;
     srcWork: TDataSource;
     srcPorch: TDataSource;
@@ -75,7 +75,7 @@ type
     actHouseWorkDelete: TAction;
     tsAbonents: TTabSheet;
     dbgCustomer: TDBGridEh;
-    dsCustomers: TpFIBDataSet;
+    dsCustomers: TFIBDataSet;
     srcCustomers: TDataSource;
     PropStorage: TPropStorageEh;
     tlbEqTb: TToolBar;
@@ -86,7 +86,7 @@ type
     dbgrFloors: TDBGridEh;
     dbgMap: TDBGridEh;
     spl1: TSplitter;
-    dsFlats: TpFIBDataSet;
+    dsFlats: TFIBDataSet;
     srcFlats: TDataSource;
     ToolButton16: TToolButton;
     tlb1: TToolBar;
@@ -115,7 +115,7 @@ type
     pmCircuit: TPopupMenu;
     mniCircuitView: TMenuItem;
     mniN2: TMenuItem;
-    dsCirciut: TpFIBDataSet;
+    dsCirciut: TFIBDataSet;
     dsCirciutHC_ID: TFIBIntegerField;
     dsCirciutHOUSE_ID: TFIBIntegerField;
     dsCirciutNAME: TFIBWideStringField;
@@ -124,8 +124,8 @@ type
     dsCirciutNOTICE: TFIBWideStringField;
     srcCirciut: TDataSource;
     imgPNG: TDBImageEh;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     N2: TMenuItem;
     N3: TMenuItem;
     spl2: TSplitter;
@@ -146,10 +146,10 @@ type
     btnAttrAdd: TToolButton;
     btnAttrEdit: TToolButton;
     btnAttrDel: TToolButton;
-    dsAttributes: TpFIBDataSet;
+    dsAttributes: TFIBDataSet;
     srcAttributes: TDataSource;
     srcHousesAttr: TDataSource;
-    dsHousesAttr: TpFIBDataSet;
+    dsHousesAttr: TFIBDataSet;
     pnlHT: TPanel;
     pnlHM: TPanel;
     Label6: TLabel;
@@ -274,7 +274,7 @@ implementation
 uses
   DM, fs_iinterpreter, AtrCommon, AtrStrUtils, StreetEditForma, MAIN,
   HouseForma, HouseWorkForma,
-  FIBQuery, pFIBQuery, ReportPreview,
+  FIBQuery, ReportPreview,
   HouseMapForma, EquipEditForma, FlatsAddForma, CF, CircuitMain,
   StreetHousesViewForma;
 
@@ -546,13 +546,13 @@ begin
   if (not(FCanEdit)) then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Clear;
-      SQL.Add('execute block (HOUSE_ID D_INTEGER = :HOUSE_ID) returns ( CWHAT  D_Varchar10,  CCOUNT d_INTEGER) as ');
+      SQL.Add('execute block (HOUSE_ID D_INTEGER = :HOUSE_ID) returns ( CWHAT  D_Varchar10, CCOUNT d_INTEGER) as ');
       SQL.Add('begin ');
       SQL.Add('  ccount = 0; ');
       SQL.Add('  CWHAT = ''''; ');
@@ -582,6 +582,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       Free;
     end;
   end;
@@ -1038,7 +1039,7 @@ var
   s: string;
   i, j: Integer;
   Grid: TCustomDBGridEh;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
 
 begin
 
@@ -1047,7 +1048,7 @@ begin
   cr := Screen.Cursor;
   Screen.Cursor := crSqlWait;
   Grid := TCustomDBGridEh(Sender);
-  FIBDS := TpFIBDataSet(Grid.DataSource.DataSet);
+  FIBDS := TFIBDataSet(Grid.DataSource.DataSet);
   if Sender is TCustomDBGridEh then
   begin
     FIBDS.Close;

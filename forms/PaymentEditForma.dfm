@@ -364,7 +364,7 @@ object PaymentEditFrm: TPaymentEditFrm
     Left = 218
     Top = 72
   end
-  object dsPaymentSRV: TpFIBDataSet
+  object dsPaymentSRV: TFIBDataSet
     SelectSQL.Strings = (
       'select s.service_id, s.name, s.description'
       'from services s'
@@ -383,7 +383,7 @@ object PaymentEditFrm: TPaymentEditFrm
     Left = 290
     Top = 72
   end
-  object dsPT: TpFIBDataSet
+  object dsPT: TFIBDataSet
     SelectSQL.Strings = (
       'select o.O_Name'
       'from objects o'

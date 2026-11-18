@@ -920,7 +920,7 @@ object apgEqpmntPort: TapgEqpmntPort
       OnExecute = actEditLinkExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -932,7 +932,7 @@ object apgEqpmntPort: TapgEqpmntPort
     Left = 276
     Top = 98
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -950,7 +950,7 @@ object apgEqpmntPort: TapgEqpmntPort
     Left = 74
     Top = 153
   end
-  object dsData: TpFIBDataSet
+  object dsData: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    PORT'

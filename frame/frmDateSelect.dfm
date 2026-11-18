@@ -66,8 +66,8 @@ object frmRequestDate: TfrmRequestDate
       end
     end
   end
-  object qBusyDays: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qBusyDays: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select BUSY_DAY '
@@ -88,5 +88,17 @@ object frmRequestDate: TfrmRequestDate
       ShortCut = 8230
       OnExecute = actNextMonExecute
     end
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 180
+    Top = 151
   end
 end

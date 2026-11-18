@@ -388,7 +388,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
       OnExecute = actCustHistExecute
     end
   end
-  object dsEQ: TpFIBDataSet
+  object dsEQ: TFIBDataSet
     DeleteSQL.Strings = (
       'delete from EQUIPMENT_DVB e'
       'where e.Eq_Id = :OLD_EQ_ID'
@@ -510,7 +510,7 @@ inherited DVBEquipmentForm: TDVBEquipmentForm
     Left = 143
     Top = 76
   end
-  object dsHistory: TpFIBDataSet
+  object dsHistory: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       '    eh.Edit_By,'

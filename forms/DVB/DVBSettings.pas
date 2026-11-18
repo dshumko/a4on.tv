@@ -9,10 +9,10 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ToolWin, Vcl.ComCtrls, Vcl.StdActns, Vcl.ActnList, Vcl.Menus,
   Vcl.Grids,
   Vcl.StdCtrls, Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
+  DBGridEh, FIBDataSet, GridsEh, EhLibFIB, DBGridEhFindDlgs, ToolCtrlsEh,
   DBGridEhToolCtrls,
-  DBAxisGridsEh, PrjConst, FIBDatabase, pFIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
-  pFIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh, amSplitter;
+  DBAxisGridsEh, PrjConst, FIBDatabase, DBCtrlsEh, EhLibVCL, MemTableDataEh, MemTableEh, DataDriverEh,
+  FIBDataDriverEh, DBGridEhGrouping, DynVarsEh, PrnDbgeh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TDVBSettinsForm = class(TForm)
@@ -23,9 +23,9 @@ type
     pmgSelectAll: TMenuItem;
     pmgSep1: TMenuItem;
     pmgSaveSelection: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsTS: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsTS: TFIBDataSet;
     pnlChannels: TPanel;
     grdCh: TDBGridEh;
     dbgEPG: TDBGridEh;
@@ -72,9 +72,9 @@ type
     srcNetwork: TDataSource;
     srcChannels: TDataSource;
     srcEPG: TDataSource;
-    dsNetwork: TpFIBDataSet;
-    dsChannels: TpFIBDataSet;
-    dsEPG: TpFIBDataSet;
+    dsNetwork: TFIBDataSet;
+    dsChannels: TFIBDataSet;
+    dsEPG: TFIBDataSet;
     actTSNEW: TAction;
     actTSedit: TAction;
     actTSdel: TAction;
@@ -89,7 +89,7 @@ type
     tsView: TTabSheet;
     dbgView: TDBGridEh;
     mtView: TMemTableEh;
-    drvFIBView: TpFIBDataDriverEh;
+    drvFIBView: TFIBDataDriverEh;
     dsView: TDataSource;
     pmViewGrid: TPopupMenu;
     actSave: TAction;
@@ -105,6 +105,7 @@ type
     actExport: TAction;
     actImport: TAction;
     PropStorageEh: TPropStorageEh;
+    trReadQ: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure pmgCopyClick(Sender: TObject);
     procedure pmgSelectAllClick(Sender: TObject);
@@ -143,8 +144,8 @@ procedure ShowTransponder(const DVBS_ID: Integer; const CH_ID: Integer = -1);
 implementation
 
 uses
-  System.DateUtils,
-  DM, MAIN, AtrStrUtils, DVBStreamForma, DVBNetworkForma, pFIBQuery, pFIBProps;
+  System.DateUtils, FIBQuery,
+  DM, MAIN, AtrStrUtils, DVBStreamForma, DVBNetworkForma, FIBProps;
 
 {$R *.dfm}
 
@@ -193,21 +194,21 @@ begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do begin
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := trReadQ;
       Options := [qoStartTransaction, qoAutoCommit];
       for i := 7 downto 1 do
       begin
         s := at[i];
         SQL.text := 'select * from ' + s;
-        BatchOutputRawFile('dvb_' + AnsiString(s) + '.exp');
+        BatchOutputRawFile('dvb_' + s + '.exp');
       end;
     finally
       Free;
     end;
-
+  end;
   Screen.Cursor := cr;
 end;
 
@@ -267,7 +268,7 @@ begin
     ins_arr[7] :=
       'insert into Channels (Ch_Id, Ch_Number, Ch_Name, Ch_Notice, Ch_Paid_To, Ch_Freq, Ch_Coded, Ch_Trunk, Ch_Trunk_Number, Ch_Contact, Ch_Icon, Definition, Lang, Dvbgenres, Minage, Access_Id) '
       + ' values (:Ch_Id, :Ch_Number, :Ch_Name, :Ch_Notice, :Ch_Paid_To, :Ch_Freq, :Ch_Coded, :Ch_Trunk, :Ch_Trunk_Number, :Ch_Contact, :Ch_Icon, :Definition, :Lang, :Dvbgenres, :Minage, :Access_Id)';
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         DataBase := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -282,7 +283,7 @@ begin
         for i := 7 downto 1 do
         begin
           SQL.text := ins_arr[i];
-          BatchInputRawFile('dvb_' + AnsiString(at[i]) + '.exp');
+          BatchInputRawFile('dvb_' + at[i] + '.exp');
         end;
       finally
         Free;

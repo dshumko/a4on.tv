@@ -322,7 +322,7 @@ object NodeLayoutFactForm: TNodeLayoutFactForm
     Left = 160
     Top = 144
   end
-  object dsLayout: TpFIBDataSet
+  object dsLayout: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    NODE_LAYOUT'

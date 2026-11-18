@@ -204,7 +204,7 @@ object ChImportForm: TChImportForm
     TabOrder = 2
     OnClick = btnOpenClick
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -280,7 +280,7 @@ object ChImportForm: TChImportForm
       end
     end
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -291,7 +291,7 @@ object ChImportForm: TChImportForm
     Left = 321
     Top = 361
   end
-  object Query: TpFIBQuery
+  object Query: TFIBQuery
     Transaction = trWrite
     Database = dmMain.dbTV
     Left = 35

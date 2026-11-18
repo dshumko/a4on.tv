@@ -588,7 +588,7 @@ inherited EquipmentForm: TEquipmentForm
       OnClick = miTreeExpandCurrentClick
     end
   end
-  object dsEquipments: TpFIBDataSet
+  object dsEquipments: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE EQUIPMENT SET NOTICE = :NOTICE WHERE EID = :OLD_EID')
     DeleteSQL.Strings = (

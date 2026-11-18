@@ -97,7 +97,7 @@ object apgNodeAttributes: TapgNodeAttributes
       Flat = True
     end
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    NODES_ATTRIBUTES'
@@ -144,7 +144,7 @@ object apgNodeAttributes: TapgNodeAttributes
       OnExecute = actDelExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -156,7 +156,7 @@ object apgNodeAttributes: TapgNodeAttributes
     Left = 331
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

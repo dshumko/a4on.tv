@@ -8,16 +8,16 @@ uses
   Data.DB,
   Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.Forms, Vcl.Graphics, Vcl.Dialogs, Vcl.DBCtrls, Vcl.ExtCtrls, Vcl.Menus,
   Vcl.Buttons,
-  FIBDataSet, pFIBDataSet, FIBDatabase, DBGridEh, DBCtrlsEh, DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase,
+  FIBDataSet, FIBDatabase, DBGridEh, DBCtrlsEh, DBLookupEh, A4onTypeUnit, CnErrorProvider, ad3SpellBase,
   MemTableDataEh, DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
   MemTableEh,
   PropFilerEh, PropStorageEh, System.Actions, Vcl.ActnList, amSplitter, CnClasses;
 
 type
   TOrderTPForm = class(TForm)
-    dsOrderTP: TpFIBDataSet;
+    dsOrderTP: TFIBDataSet;
     srcOrderTP: TDataSource;
-    dsOTPTypes: TpFIBDataSet;
+    dsOTPTypes: TFIBDataSet;
     srcOTPTypes: TDataSource;
     CnErrors: TCnErrorProvider;
     pmSpell: TPopupMenu;
@@ -131,8 +131,8 @@ function CreateOrderTPForCustomer(const aOTPID: Integer; const ACustomerInfo: TC
 implementation
 
 uses
-  System.StrUtils, System.Math, System.MaskUtils,
-  DM, PrjConst, JsonDataObjects, pFIBQuery, DBSumLst, MAIN, ReportPreview;
+  System.StrUtils, System.Math, System.MaskUtils, FIBQuery,
+  DM, PrjConst, JsonDataObjects, DBSumLst, MAIN, ReportPreview;
 
 {$R *.dfm}
 
@@ -959,7 +959,7 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         Database := dmMain.dbTV;
@@ -974,6 +974,7 @@ begin
           ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
           Transaction.StartTransaction;
           ExecQuery;
+          Close;
           Transaction.Commit;
         end;
 
@@ -985,6 +986,7 @@ begin
           ParamByName('HID').AsInteger := dsOrderTP['OTP_ID'];
           Transaction.StartTransaction;
           ExecQuery;
+          Close;
           Transaction.Commit;
         end;
 
@@ -1003,6 +1005,7 @@ begin
 
         Transaction.StartTransaction;
         ExecQuery;
+        Close;
         Transaction.Commit;
       finally
         free;
@@ -1172,7 +1175,7 @@ begin
   if (S.Length = phone.Contact.Length) then
     phone.cID := 1;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
@@ -1276,11 +1279,11 @@ begin
   Save_Cursor := Screen.Cursor;
   try
     Screen.Cursor := crSQLWait;
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         sql.Text := 'select Ottp_Type, Fio, Adress, Passport, Phone, Notice, Customer_Id, addons ' +
           ' from Orders_Tp where Otp_Id = :Otp_Id';
         ParamByName('Otp_Id').AsInteger := FromOrder;
@@ -1316,6 +1319,7 @@ begin
         Close;
         Transaction.Commit;
       finally
+        if assigned(Transaction) then Transaction.Free;
         free;
       end;
     end;

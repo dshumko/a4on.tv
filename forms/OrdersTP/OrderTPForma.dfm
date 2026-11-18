@@ -557,7 +557,7 @@ object OrderTPForm: TOrderTPForm
       end
     end
   end
-  object dsOrderTP: TpFIBDataSet
+  object dsOrderTP: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE ORDERS_TP'
       'SET '
@@ -652,7 +652,7 @@ object OrderTPForm: TOrderTPForm
     Left = 36
     Top = 272
   end
-  object dsOTPTypes: TpFIBDataSet
+  object dsOTPTypes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_Id'

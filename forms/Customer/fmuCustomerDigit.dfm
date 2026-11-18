@@ -44,14 +44,13 @@ object apgCustomerDigit: TapgCustomerDigit
       object lbl1: TLabel
         Left = 0
         Top = 0
-        Width = 240
+        Width = 213
         Height = 13
         Hint = 
           #1055#1072#1082#1077#1090#1099' '#1076#1083#1103' '#1082#1072#1088#1090#1086#1095#1082#1080', '#13#10#1077#1089#1083#1080' '#1085#1077' '#1091#1082#1072#1079#1099#1074#1072#1090#1100' '#1090#1086' '#1074#1089#1077' '#1087#1072#1082#1077#1090#1099' '#1085#1072' '#1082#1086#1090#1086#1088#1099 +
           #1077' '#1087#1086#1076#1087#1080#1089#1072#1085' '#1072#1073#1086#1085#1077#1085#1090
         Align = alTop
         Caption = '.: '#1055#1077#1088#1080#1086#1076#1080#1095#1077#1089#1082#1080#1077' '#1091#1089#1083#1091#1075#1080' '#1076#1083#1103' '#1076#1077#1082#1086#1076#1077#1088#1072' :.'
-        ExplicitWidth = 213
       end
       object dbgrdhDecoderPacket: TDBGridEh
         Left = 26
@@ -141,11 +140,10 @@ object apgCustomerDigit: TapgCustomerDigit
       object lbl2: TLabel
         Left = 0
         Top = 0
-        Width = 224
+        Width = 196
         Height = 13
         Align = alTop
         Caption = '.:: '#1055#1077#1088#1089#1086#1085#1072#1083#1100#1085#1099#1077' '#1082#1072#1085#1072#1083#1099' '#1072#1073#1086#1085#1077#1085#1090#1072' ::.'
-        ExplicitWidth = 196
       end
       object dbgCustChan: TDBGridEh
         Left = 26
@@ -472,7 +470,7 @@ object apgCustomerDigit: TapgCustomerDigit
       end
     end
   end
-  object dsDecoders: TpFIBDataSet
+  object dsDecoders: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_DECODERS'
       'SET '
@@ -676,7 +674,7 @@ object apgCustomerDigit: TapgCustomerDigit
       OnExecute = actChanDelExecute
     end
   end
-  object dsDecoderPacket: TpFIBDataSet
+  object dsDecoderPacket: TFIBDataSet
     DeleteSQL.Strings = (
       'delete from DECODER_PACKETS'
       'where (DECODER_N = :OLD_DECODER_N)'
@@ -730,7 +728,7 @@ object apgCustomerDigit: TapgCustomerDigit
       Action = actPairing
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -742,7 +740,7 @@ object apgCustomerDigit: TapgCustomerDigit
     Left = 380
     Top = 66
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -759,7 +757,7 @@ object apgCustomerDigit: TapgCustomerDigit
     Left = 736
     Top = 119
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_CHANNELS'
       'SET '

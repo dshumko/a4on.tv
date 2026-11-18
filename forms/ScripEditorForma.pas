@@ -101,7 +101,7 @@ var
 implementation
 
 uses
-  fs_iTools, ScriptModule, pFIBQuery, DM;
+  fs_iTools, ScriptModule, FIBQuery, DM;
 
 {$R *.dfm}
 
@@ -123,7 +123,7 @@ begin
   Memo.Lines.Clear;
   if FModuleID = -1 then exit;
 
-  with TpFIBQuery.Create(Nil) do begin
+  with TFIBQuery.Create(Nil) do begin
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -131,6 +131,7 @@ begin
       ParamByName('Id_Module').AsInteger := FModuleID;
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally
       // освободим память
@@ -251,7 +252,7 @@ begin
   if errors
   then Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;
@@ -276,6 +277,7 @@ begin
       else ParamByName('in_menu').AsInteger := 0;
       Transaction.StartTransaction;
       ExecQuery;
+      Close;
       Transaction.Commit;
     finally Free;
     end;
@@ -347,10 +349,10 @@ end;
 procedure TScripEditorForm.miModuleClick(Sender: TObject);
 begin
   FModuleID := -1;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text :=
         'select Id_Module, name, notice, coalesce(Lang,0) Lang, coalesce(in_menu,1) in_menu, Module from Modules where Id_Module = :Id_Module';
 
@@ -366,8 +368,11 @@ begin
         chkInMenu.Checked := (fn('in_menu').AsInteger = 1);
         FModuleID := fn('Id_Module').AsInteger;
       end;
+      Close;
       Transaction.Commit;
-    finally Free;
+    finally 
+      if assigned(Transaction) then Transaction.Free;
+      Free;
     end;
 end;
 
@@ -378,10 +383,10 @@ begin
   while pmModules.Items.Count > 0 do
     pmModules.Items[pmModules.Items.Count-1].Free;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'select Id_Module, Name, Notice, Lang, in_MENU from Modules order by name';
 
       Transaction.StartTransaction;
@@ -399,8 +404,11 @@ begin
         pmModules.Items.Add(NewItem);
         Next;
       end;
+      Close;
       Transaction.Commit;
-    finally Free;
+    finally 
+      if assigned(Transaction) then Transaction.Free;
+      Free;
     end;
 end;
 

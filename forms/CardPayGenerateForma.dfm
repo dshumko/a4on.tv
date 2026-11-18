@@ -13,12 +13,10 @@ object fmCardPayGenerate: TfmCardPayGenerate
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyDown = FormKeyDown
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object lbl1: TLabel
     Left = 8
@@ -75,6 +73,9 @@ object fmCardPayGenerate: TfmCardPayGenerate
         Width = 60
       end>
     DropDownBox.ListSource = srcCardSerial
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     DropDownBox.AutoDrop = True
     DropDownBox.Sizable = True
     EditButtons = <
@@ -142,10 +143,12 @@ object fmCardPayGenerate: TfmCardPayGenerate
     TabOrder = 4
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 107
@@ -165,7 +168,7 @@ object fmCardPayGenerate: TfmCardPayGenerate
     Left = 304
     Top = 36
   end
-  object dsCardSerial: TpFIBDataSet
+  object dsCardSerial: TFIBDataSet
     DeleteSQL.Strings = (
       ''
       '    ')

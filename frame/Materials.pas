@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Grids,
-  FIBDataSet, pFIBDataSet, DBGridEh;
+  FIBDataSet, DBGridEh;
 
 type
   TFrame1 = class(TFrame)
     dbGrid: TDBGridEh;
-    dsReqMaterials: TpFIBDataSet;
+    dsReqMaterials: TFIBDataSet;
     srcDataSource: TDataSource;
   private
     { Private declarations }

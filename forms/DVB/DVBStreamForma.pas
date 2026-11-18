@@ -8,19 +8,19 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.Buttons, Vcl.StdCtrls, Vcl.ExtCtrls, Vcl.Mask, Vcl.DBCtrls,
   Vcl.ComCtrls,
-  FIBDataSet, pFIBDataSet, GridsEh, DBGridEh, FIBDatabase, pFIBDatabase, DBCtrlsEh, OkCancel_frame, ToolCtrlsEh,
+  FIBDataSet, GridsEh, DBGridEh, FIBDatabase, DBCtrlsEh, OkCancel_frame, ToolCtrlsEh,
   DBGridEhToolCtrls, DBAxisGridsEh, EhLibFIB, EhLibVCL, DBGridEhGrouping, DynVarsEh, PropFilerEh, PropStorageEh,
   amSplitter;
 
 type
   TDVBStreamForm = class(TForm)
-    dsESC: TpFIBDataSet;
+    dsESC: TFIBDataSet;
     srcESC: TDataSource;
-    dsC: TpFIBDataSet;
+    dsC: TFIBDataSet;
     srcC: TDataSource;
-    dsES: TpFIBDataSet;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    dsES: TFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     srcES: TDataSource;
     OkCancelFrame1: TOkCancelFrame;
     pnlChannels: TPanel;

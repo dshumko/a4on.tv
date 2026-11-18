@@ -7,12 +7,12 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask,
-  DBCtrlsEh, DBLookupEh, FIBDataSet, pFIBDataSet, OkCancel_frame, DBGridEh;
+  DBCtrlsEh, DBLookupEh, FIBDataSet, OkCancel_frame, DBGridEh;
 
 type
   TChoiseForm = class(TForm)
     OkCancelFrame1: TOkCancelFrame;
-    dsChoise: TpFIBDataSet;
+    dsChoise: TFIBDataSet;
     DBLookupComboboxEh1: TDBLookupComboboxEh;
     srcChoise: TDataSource;
   private

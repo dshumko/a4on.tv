@@ -127,7 +127,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
   inherited pnlEdit: TPanel
     Width = 605
   end
-  object trWrite: TpFIBTransaction [5]
+  object trWrite: TFIBTransaction [5]
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'write'
@@ -138,7 +138,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
     Left = 149
     Top = 186
   end
-  object trRead: TpFIBTransaction [6]
+  object trRead: TFIBTransaction [6]
     DefaultDatabase = dmMain.dbTV
     TRParams.Strings = (
       'read'
@@ -149,7 +149,7 @@ inherited EquipmentCommandsForm: TEquipmentCommandsForm
     Left = 217
     Top = 201
   end
-  object dsCGR: TpFIBDataSet [7]
+  object dsCGR: TFIBDataSet [7]
     UpdateSQL.Strings = (
       ''
       '    ')

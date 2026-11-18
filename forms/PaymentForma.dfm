@@ -4,7 +4,7 @@ object PaymentForm: TPaymentForm
   ActiveControl = dePaySum
   BorderIcons = [biSystemMenu]
   Caption = #1042#1085#1077#1089#1090#1080' '#1087#1083#1072#1090#1077#1078
-  ClientHeight = 515
+  ClientHeight = 661
   ClientWidth = 709
   Color = clBtnFace
   Font.Charset = DEFAULT_CHARSET
@@ -25,14 +25,14 @@ object PaymentForm: TPaymentForm
   object spl1: TSplitter
     Left = 369
     Top = 0
-    Height = 474
+    Height = 620
     Align = alRight
   end
   object pnlFine: TPanel
     Left = 372
     Top = 0
     Width = 337
-    Height = 474
+    Height = 620
     Align = alRight
     TabOrder = 1
     TabStop = True
@@ -55,7 +55,7 @@ object PaymentForm: TPaymentForm
       Left = 1
       Top = 14
       Width = 335
-      Height = 459
+      Height = 605
       TabStop = False
       Align = alClient
       DataSource = srcFine
@@ -134,7 +134,7 @@ object PaymentForm: TPaymentForm
     Left = 0
     Top = 0
     Width = 369
-    Height = 474
+    Height = 620
     Align = alClient
     BevelOuter = bvNone
     TabOrder = 0
@@ -331,6 +331,7 @@ object PaymentForm: TPaymentForm
         ShowHint = True
         TabOrder = 0
         Visible = True
+        OnChange = luPaymentSrvChange
         OnExit = luPaymentSrvExit
       end
     end
@@ -395,11 +396,11 @@ object PaymentForm: TPaymentForm
     end
     object Panel5: TPanel
       Left = 0
-      Top = 446
+      Top = 472
       Width = 369
-      Height = 28
+      Height = 148
       Align = alClient
-      TabOrder = 9
+      TabOrder = 10
       object Label9: TLabel
         Left = 1
         Top = 1
@@ -412,7 +413,7 @@ object PaymentForm: TPaymentForm
         Left = 1
         Top = 14
         Width = 367
-        Height = 13
+        Height = 133
         Align = alClient
         AutoSize = False
         DataField = 'NOTICE'
@@ -786,10 +787,44 @@ object PaymentForm: TPaymentForm
         Visible = True
       end
     end
+    object pnlBID: TPanel
+      Left = 0
+      Top = 446
+      Width = 369
+      Height = 26
+      Align = alTop
+      TabOrder = 9
+      Visible = False
+      object lblBID: TLabel
+        Left = 10
+        Top = 5
+        Width = 69
+        Height = 13
+        Caption = #1053#1086#1084#1077#1088' '#1079#1072#1103#1074#1082#1080
+      end
+      object ednBID: TDBNumberEditEh
+        Tag = 13
+        Left = 93
+        Top = 2
+        Width = 105
+        Height = 21
+        DataField = 'BID'
+        DataSource = srcMemPayment
+        DecimalPlaces = 0
+        DynProps = <>
+        EmptyDataInfo.Text = #1047#1072#1103#1074#1082#1072
+        EditButtons = <>
+        ParentShowHint = False
+        ShowHint = True
+        TabOrder = 0
+        Visible = True
+        OnExit = ednBIDExit
+      end
+    end
   end
   object pnlBottom: TPanel
     Left = 0
-    Top = 474
+    Top = 620
     Width = 709
     Height = 41
     Align = alBottom
@@ -844,7 +879,7 @@ object PaymentForm: TPaymentForm
       end
     end
   end
-  object dsPaymentSRV: TpFIBDataSet
+  object dsPaymentSRV: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.service_id'
@@ -886,7 +921,7 @@ object PaymentForm: TPaymentForm
     Left = 480
     Top = 248
   end
-  object dsPaymentType: TpFIBDataSet
+  object dsPaymentType: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT O_ID, O_NAME, O_DESCRIPTION'
       'FROM OBJECTS o'
@@ -906,7 +941,7 @@ object PaymentForm: TPaymentForm
     Left = 624
     Top = 136
   end
-  object dsPaymentDocs: TpFIBDataSet
+  object dsPaymentDocs: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    a.*'
@@ -974,7 +1009,7 @@ object PaymentForm: TPaymentForm
     Left = 624
     Top = 232
   end
-  object dsFine: TpFIBDataSet
+  object dsFine: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.name'
@@ -1001,7 +1036,7 @@ object PaymentForm: TPaymentForm
     Left = 625
     Top = 337
   end
-  object qInsertPayment: TpFIBQuery
+  object qInsertPayment: TFIBQuery
     Transaction = dmMain.trWriteQ
     Database = dmMain.dbTV
     SQL.Strings = (
@@ -1252,6 +1287,15 @@ object PaymentForm: TPaymentForm
           currency = False
           Precision = 15
         end
+        object BID: TMTNumericDataFieldEh
+          FieldName = 'BID'
+          NumericDataType = fdtIntegerEh
+          AutoIncrement = False
+          DisplayLabel = #1047#1072#1103#1074#1082#1072
+          DisplayWidth = 20
+          currency = False
+          Precision = 15
+        end
       end
       object RecordsList: TRecordsListEh
       end
@@ -1273,7 +1317,7 @@ object PaymentForm: TPaymentForm
     Left = 400
     Top = 104
   end
-  object dsPT: TpFIBDataSet
+  object dsPT: TFIBDataSet
     SelectSQL.Strings = (
       'select o.O_Name'
       'from objects o'

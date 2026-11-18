@@ -183,7 +183,7 @@ inherited OrganForm: TOrganForm
       OnExecute = actEditExecute
     end
   end
-  object dsOrgan: TpFIBDataSet
+  object dsOrgan: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE ORGANIZATION'
       'SET '
@@ -247,7 +247,7 @@ inherited OrganForm: TOrganForm
       '        ORGANIZATION.ORG_ID = :OLD_ORG_ID'
       '    ')
     SelectSQL.Strings = (
-      'select o.*,  b.o_name as bank'
+      'select o.*, b.o_name as bank'
       'from ORGANIZATION o'
       
         ' left outer join objects b on (b.o_id = o.org_bank and b.o_type ' +

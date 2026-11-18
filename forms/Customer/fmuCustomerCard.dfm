@@ -53,7 +53,7 @@ object apgCustomerCard: TapgCustomerCard
     Left = 144
     Top = 48
   end
-  object dsForScroolWait: TpFIBDataSet
+  object dsForScroolWait: TFIBDataSet
     SelectSQL.Strings = (
       
         'select cast(:Customer_id as INTEGER) as Customer_id from RDB$DAT' +
@@ -68,7 +68,7 @@ object apgCustomerCard: TapgCustomerCard
     poGetOrderInfo = False
     WaitEndMasterScroll = True
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

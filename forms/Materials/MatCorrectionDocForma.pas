@@ -8,15 +8,14 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Menus, Vcl.ActnList,
   ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBGridEh, DBLookupEh, DBCtrlsEh, EhLibVCL, GridsEh, DBAxisGridsEh,
-  FIBDataSet,
-  pFIBDataSet, FIBDatabase, pFIBDatabase, CnErrorProvider, FIBQuery, pFIBQuery, DBGridEhGrouping, CnClasses;
+  FIBDataSet, FIBDatabase, CnErrorProvider, FIBQuery, DBGridEhGrouping, CnClasses;
 
 type
   TMatCorrectionDocForm = class(TForm)
     pnlHead: TPanel;
     pnlMat: TPanel;
-    dsDoc: TpFIBDataSet;
-    dsDocMat: TpFIBDataSet;
+    dsDoc: TFIBDataSet;
+    dsDocMat: TFIBDataSet;
     srcDoc: TDataSource;
     srcDocMat: TDataSource;
     dbgDocMat: TDBGridEh;
@@ -29,7 +28,7 @@ type
     Label1: TLabel;
     lbl2: TLabel;
     Label2: TLabel;
-    dsFindMat: TpFIBDataSet;
+    dsFindMat: TFIBDataSet;
     edtMaterial: TDBEditEh;
     edtQuant: TDBNumberEditEh;
     memNotice: TDBMemoEh;
@@ -39,17 +38,17 @@ type
     lblDem: TLabel;
     btnSave: TButton;
     btnClose: TButton;
-    dsMaterials: TpFIBDataSet;
-    trRead: TpFIBTransaction;
+    dsMaterials: TFIBDataSet;
+    trRead: TFIBTransaction;
     lbl4: TLabel;
     edtCost: TDBNumberEditEh;
     errors: TCnErrorProvider;
-    dsWH: TpFIBDataSet;
+    dsWH: TFIBDataSet;
     srcWH: TDataSource;
-    qCloseDoc: TpFIBQuery;
+    qCloseDoc: TFIBQuery;
     lbl5: TLabel;
     btnOpen: TButton;
-    qOpenDoc: TpFIBQuery;
+    qOpenDoc: TFIBQuery;
     pmGrid: TPopupMenu;
     miDelete: TMenuItem;
     actList: TActionList;
@@ -413,7 +412,7 @@ begin
 
   if EditText(s, 'Примечание', 'Примечание для услуги') then
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;

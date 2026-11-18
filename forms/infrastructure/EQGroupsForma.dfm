@@ -270,7 +270,7 @@ inherited EQGroupsForm: TEQGroupsForm
       OnClick = lstFormsClick
     end
   end
-  object dsEQGroups: TpFIBDataSet [6]
+  object dsEQGroups: TFIBDataSet [6]
     UpdateSQL.Strings = (
       
         'execute procedure Attributes_Iud(:O_Id, :O_Name, :O_Description,' +

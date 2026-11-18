@@ -182,7 +182,7 @@ object apgCustomerFiles: TapgCustomerFiles
       Flat = True
     end
   end
-  object dsCustFiles: TpFIBDataSet
+  object dsCustFiles: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_FILES'
       'SET '
@@ -311,8 +311,8 @@ object apgCustomerFiles: TapgCustomerFiles
     Database = dmMain.dbTV
     UpdateTransaction = trWrite
     AutoCommit = True
-    Left = 131
-    Top = 69
+    Left = 147
+    Top = 101
     WaitEndMasterScroll = True
   end
   object srcCustFiles: TDataSource
@@ -323,8 +323,8 @@ object apgCustomerFiles: TapgCustomerFiles
   end
   object ActListCustomers: TActionList
     Images = A4MainForm.ICONS_ACTIVE
-    Left = 206
-    Top = 37
+    Left = 470
+    Top = 45
     object actAdd: TAction
       ImageIndex = 2
       OnExecute = actAddExecute
@@ -343,7 +343,7 @@ object apgCustomerFiles: TapgCustomerFiles
       OnExecute = actViewExecute
     end
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -352,10 +352,10 @@ object apgCustomerFiles: TapgCustomerFiles
       'rec_version'
       'read_committed')
     TPBMode = tpbDefault
-    Left = 331
+    Left = 315
     Top = 42
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -367,20 +367,32 @@ object apgCustomerFiles: TapgCustomerFiles
     Left = 371
     Top = 42
   end
-  object qRead: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qRead: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select Content from Customer_Files where Cf_Id = :Cf_Id')
-    Left = 296
+    Left = 312
     Top = 120
   end
-  object qReqFile: TpFIBQuery
-    Transaction = dmMain.trReadQ
+  object qReqFile: TFIBQuery
+    Transaction = trReadQ
     Database = dmMain.dbTV
     SQL.Strings = (
       'select jpg from Request_Photos where Id = :Cf_Id')
-    Left = 360
+    Left = 376
+    Top = 120
+  end
+  object trReadQ: TFIBTransaction
+    DefaultDatabase = dmMain.dbTV
+    Timeout = 36000000
+    TRParams.Strings = (
+      'read'
+      'nowait'
+      'rec_version'
+      'read_committed')
+    TPBMode = tpbDefault
+    Left = 472
     Top = 120
   end
 end

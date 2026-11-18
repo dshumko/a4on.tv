@@ -489,7 +489,7 @@ object SendMessagesForm: TSendMessagesForm
       OnExecute = actDeleteTemplateExecute
     end
   end
-  object qrySaveMessages: TpFIBQuery
+  object qrySaveMessages: TFIBQuery
     Transaction = trWriteQ
     Database = dmMain.dbTV
     Left = 302
@@ -501,7 +501,7 @@ object SendMessagesForm: TSendMessagesForm
     Left = 204
     Top = 156
   end
-  object dsMessType: TpFIBDataSet
+  object dsMessType: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT O_ID, O_NAME, O_NAME||coalesce('#39' '#39'||O_Description,'#39#39') NAM' +
@@ -517,7 +517,7 @@ object SendMessagesForm: TSendMessagesForm
     Left = 82
     Top = 210
   end
-  object dsTemplate: TpFIBDataSet
+  object dsTemplate: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE OBJECTS'
       'SET '
@@ -572,7 +572,7 @@ object SendMessagesForm: TSendMessagesForm
     Left = 524
     Top = 244
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -584,7 +584,7 @@ object SendMessagesForm: TSendMessagesForm
     Left = 202
     Top = 215
   end
-  object dsLetterTypes: TpFIBDataSet
+  object dsLetterTypes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       
@@ -612,13 +612,13 @@ object SendMessagesForm: TSendMessagesForm
     Left = 336
     Top = 320
   end
-  object qryRead: TpFIBQuery
+  object qryRead: TFIBQuery
     Transaction = trReadQ
     Database = dmMain.dbTV
     Left = 518
     Top = 322
   end
-  object trReadQ: TpFIBTransaction
+  object trReadQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (

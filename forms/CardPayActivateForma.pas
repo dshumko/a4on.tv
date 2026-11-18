@@ -7,14 +7,14 @@ uses
   System.SysUtils, System.Variants, System.Classes,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ExtCtrls, Vcl.DBCtrls,
-  DBCtrlsEh, DBLookupEh, OkCancel_frame, FIBDataSet, pFIBDataSet, FIBQuery, pFIBQuery, DBGridEh, A4onTypeUnit;
+  DBCtrlsEh, DBLookupEh, OkCancel_frame, FIBDataSet, FIBQuery, DBGridEh, A4onTypeUnit;
 
 type
   TfmCardPayActivate = class(TForm)
     pnl1: TPanel;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
     grpCustomer: TGroupBox;
     lbl1: TLabel;
@@ -34,13 +34,13 @@ type
     lbl5: TLabel;
     edtFLAT_NO: TDBEditEh;
     btnFind: TButton;
-    qActivate: TpFIBQuery;
+    qActivate: TFIBQuery;
     pnl2: TPanel;
     lbl9: TLabel;
     srcCardPay: TDataSource;
     pnlCard: TPanel;
     grpCard: TGroupBox;
-    dsCardSerial: TpFIBDataSet;
+    dsCardSerial: TFIBDataSet;
     srcCardSerial: TDataSource;
     cbSerialSerials: TDBLookupComboboxEh;
     lbl10: TLabel;
@@ -141,11 +141,11 @@ var
   i: Integer;
 begin
   if not varIsNull(LupHOUSE.Value) then
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
       try
         i := -1;
         DataBase := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := dmMain.GetTransactionForRead;
         SQL.Text := 'select c.customer_id from customer c where c.house_id = ' + IntToStr(LupHOUSE.Value);
         if not varIsNull(edtFLAT_NO.Value) then
           SQL.Add(' and c.flat_no =''' + edtFLAT_NO.Value + '''');
@@ -157,6 +157,7 @@ begin
         Transaction.Commit;
         FindCustomer('', '', i);
       finally
+        if assigned(Transaction) then Transaction.Free;
         free;
       end;
 end;
@@ -201,10 +202,10 @@ begin
     if ((not VarIsNumeric(cbSerialSerials.Value)) or (edtNUMBER.Text = '') or ((edtPIN.Text = '') and edtPIN.Visible))
     then
       Exit;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       SQL.Text := 'SELECT Card_Id, Card_State, Expiration_Date, Card_Nominal FROM Cards_Prepay WHERE ';
       if aCard_ID = -1 then
       begin
@@ -247,6 +248,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
 

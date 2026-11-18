@@ -9,11 +9,9 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Menus,
   Vcl.ActnList,
   Vcl.ExtCtrls, Vcl.Buttons,
-  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery,
-  pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls,
-  DBAxisGridsEh,
-  PrjConst, EhLibVCL, DynVarsEh;
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, GridsEh, FIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, FIBDataDriverEh, MemTableEh, ToolCtrlsEh, DBGridEhToolCtrls,
+  DBAxisGridsEh, PrjConst, EhLibVCL, DynVarsEh, FIBDatabase;
 
 type
   TOrdersTPForm = class(TForm)
@@ -33,7 +31,7 @@ type
     ppmSelectAll: TMenuItem;
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
-    dsOrdersTP: TpFIBDataSet;
+    dsOrdersTP: TFIBDataSet;
     srcOrdersTP: TDataSource;
     frxDBOrdersTP: TfrxDBDataset;
     ToolBar3: TToolBar;
@@ -50,7 +48,7 @@ type
     N3: TMenuItem;
     N4: TMenuItem;
     ToolButton2: TToolButton;
-    qDetailCount: TpFIBQuery;
+    qDetailCount: TFIBQuery;
     MainMenu1: TMainMenu;
     N5: TMenuItem;
     N6: TMenuItem;
@@ -65,7 +63,7 @@ type
     actGroup: TAction;
     N13: TMenuItem;
     mtOrdersTP: TMemTableEh;
-    drvOrdersTP: TpFIBDataDriverEh;
+    drvOrdersTP: TFIBDataDriverEh;
     miN14: TMenuItem;
     miN15: TMenuItem;
     btnCustomers: TToolButton;
@@ -99,6 +97,7 @@ type
     mmiCancel: TMenuItem;
     pmPrint: TPopupMenu;
     miPrintOrder1: TMenuItem;
+    trReadQ: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure ppmSaveSelectionClick(Sender: TObject);
     procedure ppmSelectAllClick(Sender: TObject);
@@ -265,7 +264,7 @@ procedure TOrdersTPForm.actSetFilterExecute(Sender: TObject);
 var
   filter: string;
 begin
-  if not(srcOrdersTP.DataSet is TpFIBDataSet) then
+  if not(srcOrdersTP.DataSet is TFIBDataSet) then
     Exit;
 
   filter := '';
@@ -683,7 +682,7 @@ end;
 
 procedure TOrdersTPForm.actEnableFilterExecute(Sender: TObject);
 begin
-  if srcOrdersTP.DataSet is TpFIBDataSet then
+  if srcOrdersTP.DataSet is TFIBDataSet then
   begin
     actEnableFilter.Checked := not actEnableFilter.Checked;
     dsOrdersTP.ParamByName('Filter').Value := GenerateFilter;
@@ -847,12 +846,12 @@ end;
 
 procedure TOrdersTPForm.SetOrderPayDate();
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   if dsOrdersTP.FieldByName('Otp_Id').IsNull then
     Exit;
 
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
@@ -896,7 +895,7 @@ end;
 
 procedure TOrdersTPForm.CancelOrder();
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
   RESON: String;
 begin
   if dsOrdersTP.FieldByName('Otp_Id').IsNull then
@@ -909,7 +908,7 @@ begin
   if (RESON.IsEmpty) then
     Exit;
 
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
@@ -1053,7 +1052,7 @@ end;
 
 procedure TOrdersTPForm.miSetNewFilterNewClick(Sender: TObject);
 begin
-  if not(srcOrdersTP.DataSet is TpFIBDataSet) then
+  if not(srcOrdersTP.DataSet is TFIBDataSet) then
     Exit;
 
   with dsFilter do
@@ -1072,7 +1071,7 @@ end;
   function TOrdersTPForm.GetPayDocForLTV: Integer;
   var
   s: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
   begin
   Result := -1;
 
@@ -1082,7 +1081,7 @@ end;
   Exit;
 
   // возвращаем документ с источником Банк РЕКЛАМА для платежей по рекламе
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
   fq.Database := dmMain.dbTV;
   fq.Transaction := dmMain.trWriteQ;

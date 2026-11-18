@@ -9,7 +9,7 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Grids, Vcl.ExtCtrls, Vcl.Mask, Vcl.Menus, Vcl.DBCtrls,
   Vcl.DBGrids, Vcl.ComCtrls,
   RxToolEdit, DBCtrlsEh, DBGridEh, DBLookupEh, AtrStrUtils, VKDBFDataSet, MemTableDataEh, MemTableEh, PrjConst, DBGridEhGrouping,
-  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh, CnButtons, RxLookup, FIBDataSet, pFIBDataSet;
+  ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh, DBAxisGridsEh, CnButtons, RxLookup, FIBDataSet;
 
 type
   TLoaderProfileNew = class(TForm)
@@ -139,7 +139,7 @@ type
     chkDataRemZero1: TDBCheckBoxEh;
     lbl5: TLabel;
     edtName1DecimalSprt: TDBEditEh;
-    dsFileFormats: TpFIBDataSet;
+    dsFileFormats: TFIBDataSet;
     srcFileFormats: TDataSource;
     pnlExample: TPanel;
     edtExample: TDBEditEh;

@@ -421,7 +421,7 @@ object MonDBForm: TMonDBForm
     Left = 717
     Top = 430
   end
-  object qrAttachments: TpFIBDataSet
+  object qrAttachments: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    MON$ATTACHMENTS'
@@ -456,7 +456,7 @@ object MonDBForm: TMonDBForm
     Left = 195
     Top = 141
   end
-  object trAttachments: TpFIBTransaction
+  object trAttachments: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -468,7 +468,7 @@ object MonDBForm: TMonDBForm
     Left = 117
     Top = 140
   end
-  object trR: TpFIBTransaction
+  object trR: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -480,7 +480,7 @@ object MonDBForm: TMonDBForm
     Left = 71
     Top = 418
   end
-  object trR2: TpFIBTransaction
+  object trR2: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -492,7 +492,7 @@ object MonDBForm: TMonDBForm
     Left = 479
     Top = 416
   end
-  object qrTransactions: TpFIBDataSet
+  object qrTransactions: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT TR.MON$TRANSACTION_ID, TR.MON$ATTACHMENT_ID, TR.MON$STATE' +
@@ -522,7 +522,7 @@ object MonDBForm: TMonDBForm
     Left = 144
     Top = 288
   end
-  object qrTransactionsStatments: TpFIBDataSet
+  object qrTransactionsStatments: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    MON$STATEMENTS'
@@ -549,7 +549,7 @@ object MonDBForm: TMonDBForm
     Left = 161
     Top = 457
   end
-  object trWriteQ: TpFIBTransaction
+  object trWriteQ: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

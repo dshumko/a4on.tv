@@ -8,15 +8,15 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
   EhLibVCL, DBGridEhGrouping, DynVarsEh, DBLookupEh, DBCtrlsEh, MemTableDataEh, MemTableEh, amSplitter,
   PrnDbgeh, CnClasses;
 
 type
   TOTPTypesForm = class(TGridForm)
-    dsOTPTypes: TpFIBDataSet;
+    dsOTPTypes: TFIBDataSet;
     srcSnglSrv: TDataSource;
-    dsSnglSrv: TpFIBDataSet;
+    dsSnglSrv: TFIBDataSet;
     pnlMain: TPanel;
     pnl1: TPanel;
     pnl2: TPanel;
@@ -69,7 +69,7 @@ var
 implementation
 
 uses
-  DM, JsonDataObjects, FIBQuery, pFIBQuery;
+  DM, JsonDataObjects, FIBQuery;
 
 {$R *.dfm}
 
@@ -392,17 +392,17 @@ end;
   function TOTPTypesForm.AccountExists: Boolean;
   var
   s: String;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
   begin
   Result := False;
   s := edtAccount.Text.Trim;
   if s.IsEmpty then
   exit;
 
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
   fq.Database := dmMain.dbTV;
-  fq.Transaction := dmMain.trReadQ;
+  fq.Transaction := dmMain.GetTransactionForRead;
   fq.sql.Text := 'select customer_id from customer where account_no = :account_no';
 
   fq.ParamByName('ACCOUNT_NO').AsString := s;
@@ -412,6 +412,7 @@ end;
   fq.Close;
   fq.Transaction.Commit;
   finally
+  if assigned(fq.Transaction) then fq.Transaction.Free;
   fq.Free;
   end;
   end;
@@ -420,12 +421,12 @@ end;
 procedure TOTPTypesForm.UpdateComboReport;
 var
   s: string;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
-    fq.Transaction := dmMain.trReadQ;
+    fq.Transaction := dmMain.GetTransactionForRead;
     fq.sql.Clear;
 
     fq.sql.Add('select');
@@ -450,6 +451,7 @@ begin
     fq.Close;
     fq.Transaction.Commit;
   finally
+    if assigned(fq.Transaction) then fq.Transaction.Free;
     fq.Free;
   end;
 end;

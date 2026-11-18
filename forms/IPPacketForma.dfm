@@ -110,7 +110,7 @@ object IPPacketForm: TIPPacketForm
     Left = 51
     Top = 81
   end
-  object dsPacket: TpFIBDataSet
+  object dsPacket: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    s.service_id,'
@@ -133,7 +133,7 @@ object IPPacketForm: TIPPacketForm
     Left = 113
     Top = 79
   end
-  object dsIPPacket: TpFIBDataSet
+  object dsIPPacket: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE TV_LAN_PACKETS'
       'SET '

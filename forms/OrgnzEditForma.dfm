@@ -429,7 +429,7 @@ object OrgnzEditForm: TOrgnzEditForm
     Visible = True
     WantReturns = True
   end
-  object dsOrgan: TpFIBDataSet
+  object dsOrgan: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE ORGANIZATION'
       'SET '
@@ -526,7 +526,7 @@ object OrgnzEditForm: TOrgnzEditForm
     Left = 222
     Top = 77
   end
-  object dsVATG: TpFIBDataSet
+  object dsVATG: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE SUBAREA'
       'SET '
@@ -584,7 +584,7 @@ object OrgnzEditForm: TOrgnzEditForm
     Left = 89
     Top = 284
   end
-  object dsBANKS: TpFIBDataSet
+  object dsBANKS: TFIBDataSet
     SelectSQL.Strings = (
       'select o.o_id, o.o_name'
       'from objects o'

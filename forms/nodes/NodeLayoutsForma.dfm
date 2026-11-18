@@ -5,8 +5,6 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
   ClientHeight = 495
   ClientWidth = 762
   StyleElements = [seFont, seClient, seBorder]
-  ExplicitWidth = 778
-  ExplicitHeight = 534
   TextHeight = 13
   object spl1: TSplitter [0]
     Left = 0
@@ -19,8 +17,6 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
   inherited splPG: TSplitter
     Top = 169
     Width = 762
-    ExplicitTop = 169
-    ExplicitWidth = 762
   end
   inherited dbGrid: TDBGridEh
     Top = 173
@@ -61,7 +57,6 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
   end
   inherited tlbMain: TToolBar
     Width = 762
-    ExplicitWidth = 762
     inherited ToolButton9: TToolButton
       Visible = False
     end
@@ -86,11 +81,10 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
     object lbl4: TLabel
       Left = 0
       Top = 0
-      Width = 762
+      Width = 168
       Height = 13
       Align = alTop
       Caption = ' '#1050#1086#1084#1087#1086#1085#1086#1074#1082#1072' '#1091#1079#1083#1086#1074' '#1076#1072#1085#1085#1086#1075#1086' '#1090#1080#1087#1072
-      ExplicitWidth = 168
     end
     object dbgLayout: TDBGridEh
       Left = 28
@@ -225,8 +219,6 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
     Height = 144
     ParentCtl3D = False
     StyleElements = [seFont, seClient, seBorder]
-    ExplicitWidth = 762
-    ExplicitHeight = 144
     object lbl2: TLabel [0]
       Left = 5
       Top = 15
@@ -246,9 +238,6 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
       Top = 116
       Width = 577
       TabOrder = 2
-      ExplicitLeft = 72
-      ExplicitTop = 116
-      ExplicitWidth = 577
     end
     inherited btnCancelLink: TBitBtn
       Left = 655
@@ -256,9 +245,6 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
       Width = 98
       Cancel = True
       TabOrder = 3
-      ExplicitLeft = 655
-      ExplicitTop = 116
-      ExplicitWidth = 98
     end
     object edtName: TDBEditEh
       Left = 72
@@ -344,7 +330,7 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
     Left = 352
     Top = 280
   end
-  object dsFileType: TpFIBDataSet
+  object dsFileType: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 79, :O_ID, :O_Name, :O_Descript' +
@@ -396,7 +382,7 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
     Left = 304
     Top = 400
   end
-  object dsLayout: TpFIBDataSet
+  object dsLayout: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM'
       '    NODE_LAYOUT'
@@ -467,7 +453,7 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
     Left = 107
     Top = 413
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -479,7 +465,7 @@ inherited NodeLayoutsForm: TNodeLayoutsForm
     Left = 459
     Top = 394
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

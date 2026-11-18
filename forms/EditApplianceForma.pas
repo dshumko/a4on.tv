@@ -11,16 +11,15 @@ uses
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Menus, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.DBCtrls, Vcl.Buttons,
   Vcl.ActnList,
   Vcl.ExtCtrls,
-  OkCancel_frame, DBCtrlsEh, FIBDataSet, pFIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider,
-  FIBDatabase,
-  pFIBDatabase, A4onTypeUnit, EhlibFIB;
+  OkCancel_frame, DBCtrlsEh, FIBDataSet, DBGridEh, DBLookupEh, GridsEH, DM, PrjConst, CnErrorProvider,
+  FIBDatabase, A4onTypeUnit, EhlibFIB, CnClasses;
 
 type
   TEditApplianceForm = class(TForm)
-    dsAppl: TpFIBDataSet;
+    dsAppl: TFIBDataSet;
     cnError: TCnErrorProvider;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
     pnlOkCancel: TPanel;
     bbOk: TBitBtn;
     bbCancel: TBitBtn;
@@ -38,9 +37,9 @@ type
     Label4: TLabel;
     Label5: TLabel;
     Label6: TLabel;
-    dsDevType: TpFIBDataSet;
+    dsDevType: TFIBDataSet;
     srcDevType: TDataSource;
-    dsMat: TpFIBDataSet;
+    dsMat: TFIBDataSet;
     srcMat: TDataSource;
     lcbApplMID: TDBLookupComboboxEh;
     lbl2: TLabel;
@@ -74,7 +73,7 @@ implementation
 
 uses
   System.StrUtils,
-  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, pFIBQuery, TelnetForma, atrCmdUtils;
+  MAIN, AtrCommon, AtrStrUtils, EquipEditForma, FIBQuery, TelnetForma, atrCmdUtils;
 
 {$R *.dfm}
 
@@ -226,11 +225,11 @@ begin
   if SN = '' then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select c.Account_No, a.NAME';
       sql.Add(' from Appliance a left outer join customer c on (a.Own_Id = c.Customer_Id and Own_Type = 0)');
       sql.Add(' where a.SERIAL = :SERIAL');
@@ -250,6 +249,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;
@@ -261,11 +261,11 @@ begin
   if MAC = '' then
     Exit;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := dmMain.GetTransactionForRead;
       sql.Text := 'select c.Account_No, a.NAME';
       sql.Add(' from Appliance a left outer join customer c on (a.Own_Id = c.Customer_Id and Own_Type = 0)');
       sql.Add(' where a.MAC = :MAC');
@@ -285,6 +285,7 @@ begin
       Close;
       Transaction.Commit;
     finally
+      if assigned(Transaction) then Transaction.Free;
       free;
     end;
   end;

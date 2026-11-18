@@ -13,14 +13,12 @@ object AttributeEditForm: TAttributeEditForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poMainFormCenter
   ShowHint = True
   OnKeyUp = FormKeyUp
   DesignSize = (
     401
     194)
-  PixelsPerInch = 96
   TextHeight = 13
   object Label1: TLabel
     Left = 8
@@ -52,10 +50,12 @@ object AttributeEditForm: TAttributeEditForm
     TabOrder = 4
     TabStop = True
     inherited Label2: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited Label1: TLabel
-      Margins.Bottom = 0
+      Height = 13
+      StyleElements = [seFont, seClient, seBorder]
     end
     inherited bbOk: TBitBtn
       Left = 67
@@ -77,6 +77,9 @@ object AttributeEditForm: TAttributeEditForm
     DynProps = <>
     DataField = 'AID'
     DataSource = srcAtrRecord
+    DropDownBox.ListSourceAutoFilter = True
+    DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+    DropDownBox.ListSourceAutoFilterAllColumns = True
     EditButtons = <>
     KeyField = 'O_ID'
     ListField = 'O_NAME'
@@ -136,7 +139,7 @@ object AttributeEditForm: TAttributeEditForm
     Left = 236
     Top = 60
   end
-  object dsAttributes: TpFIBDataSet
+  object dsAttributes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    O_ID'
@@ -171,7 +174,7 @@ object AttributeEditForm: TAttributeEditForm
     Left = 35
     Top = 104
   end
-  object dsAtrRecord: TpFIBDataSet
+  object dsAtrRecord: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE ATTRIBUTE'
       'SET '
@@ -217,7 +220,7 @@ object AttributeEditForm: TAttributeEditForm
     Left = 232
     Top = 113
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -229,7 +232,7 @@ object AttributeEditForm: TAttributeEditForm
     Left = 304
     Top = 60
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (

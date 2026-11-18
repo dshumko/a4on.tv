@@ -324,7 +324,7 @@ object MatDocUnitForm: TMatDocUnitForm
     Left = 216
     Top = 272
   end
-  object dsDMUnits: TpFIBDataSet
+  object dsDMUnits: TFIBDataSet
     UpdateSQL.Strings = (
       'update Materials_In_Doc_Unit'
       'set Mac = :Mac,'
@@ -375,7 +375,7 @@ object MatDocUnitForm: TMatDocUnitForm
     Left = 80
     Top = 329
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     Timeout = 36000000
     TRParams.Strings = (
@@ -387,7 +387,7 @@ object MatDocUnitForm: TMatDocUnitForm
     Left = 168
     Top = 334
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (

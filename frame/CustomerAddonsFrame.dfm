@@ -2292,7 +2292,7 @@
       end
     end
   end
-  object dsChannels: TpFIBDataSet
+  object dsChannels: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_CHANNELS'
       'SET '
@@ -2353,7 +2353,7 @@
     Left = 181
     Top = 91
   end
-  object dsBilling: TpFIBDataSet
+  object dsBilling: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -2466,7 +2466,7 @@
     Left = 392
     Top = 83
   end
-  object dsPrepay: TpFIBDataSet
+  object dsPrepay: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT sum(pp.Prepay_Sum) as Prepay_sum FROM Prepay pp where pp.' +
@@ -2479,7 +2479,7 @@
     Left = 463
     Top = 41
   end
-  object dsPayment: TpFIBDataSet
+  object dsPayment: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT P.PAY_DOC_ID, P.PAYMENT_ID, P.PAY_DATE, P.PAY_SUM, D.PAY_' +
@@ -2515,7 +2515,7 @@
     Left = 533
     Top = 95
   end
-  object dsDecoders: TpFIBDataSet
+  object dsDecoders: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_DECODERS'
       'SET '
@@ -2578,7 +2578,7 @@
     Left = 389
     Top = 192
   end
-  object dsSingleService: TpFIBDataSet
+  object dsSingleService: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -2619,7 +2619,7 @@
     Left = 464
     Top = 144
   end
-  object dsDiscount: TpFIBDataSet
+  object dsDiscount: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE DISCOUNT_FACTOR'
       'SET '
@@ -2695,7 +2695,7 @@
     Left = 606
     Top = 95
   end
-  object dsLetters: TpFIBDataSet
+  object dsLetters: TFIBDataSet
     DeleteSQL.Strings = (
       'DELETE FROM Custletter'
       'WHERE (Custletterid = :OLD_Custletterid)')
@@ -2725,7 +2725,7 @@
     Left = 250
     Top = 90
   end
-  object dsLAN: TpFIBDataSet
+  object dsLAN: TFIBDataSet
     UpdateSQL.Strings = (
       ''
       '    ')
@@ -2773,7 +2773,7 @@
     Left = 306
     Top = 194
   end
-  object dsServicesHistory: TpFIBDataSet
+  object dsServicesHistory: TFIBDataSet
     SelectSQL.Strings = (
       'select '
       ' h.*, s_on.NAME as ON_NAME, s_off.NAME as OFF_NAME'
@@ -2796,7 +2796,7 @@
     Left = 203
     Top = 147
   end
-  object dsServices: TpFIBDataSet
+  object dsServices: TFIBDataSet
     RefreshSQL.Strings = (
       'select'
       ' SS.CUSTOMER_ID,'
@@ -2861,7 +2861,7 @@
     Left = 108
     Top = 97
   end
-  object dsPersonelTarif: TpFIBDataSet
+  object dsPersonelTarif: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE PERSONAL_TARIF'
       'SET '
@@ -2945,7 +2945,7 @@
     Left = 325
     Top = 91
   end
-  object dsCustAttributes: TpFIBDataSet
+  object dsCustAttributes: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE CUSTOMER_ATTRIBUTES'
       'SET '
@@ -3216,7 +3216,7 @@
       Hint = #1048#1089#1090#1086#1088#1080#1103' '#1087#1086#1076#1082#1083#1102#1095#1077#1085#1080#1081
     end
   end
-  object dsRequests: TpFIBDataSet
+  object dsRequests: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT R.RQ_ID, R.added_on RQ_DATE, R.rq_plan_date, r.rq_time_from, r.rq_' +

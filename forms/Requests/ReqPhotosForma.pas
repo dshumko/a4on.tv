@@ -9,11 +9,10 @@ uses
   Vcl.Menus, Vcl.ActnList, Vcl.ExtCtrls, Vcl.StdCtrls, Vcl.Mask, Vcl.Controls, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Forms,
   Vcl.Graphics,
   Vcl.Dialogs,
-  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, pFIBDataSet, GridsEh, FIBQuery,
-  pFIBQuery,
-  DBGridEhGrouping, MemTableDataEh, DataDriverEh, pFIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
+  DBGridEh, DBCtrlsEh, DBLookupEh, frxClass, frxDBSet, FIBDataSet, GridsEh, FIBQuery,
+  DBGridEhGrouping, MemTableDataEh, DataDriverEh, FIBDataDriverEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh,
   PrjConst,
-  EhLibVCL, FIBDatabase, pFIBDatabase, DynVarsEh, PropFilerEh, PropStorageEh, amSplitter;
+  EhLibVCL, FIBDatabase, DynVarsEh, PropFilerEh, PropStorageEh, amSplitter;
 
 type
   TReqPhotosForm = class(TForm)
@@ -31,7 +30,7 @@ type
     ppmSelectAll: TMenuItem;
     MenuItem1: TMenuItem;
     ppmSaveSelection: TMenuItem;
-    dsFiles: TpFIBDataSet;
+    dsFiles: TFIBDataSet;
     srcFiles: TDataSource;
     frxDBPayments: TfrxDBDataset;
     ToolBar3: TToolBar;
@@ -64,11 +63,10 @@ type
     pmGridClick: TPopupMenu;
     miPayDoc: TMenuItem;
     miAbonent: TMenuItem;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsFileType: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsFileType: TFIBDataSet;
     srcFileType: TDataSource;
-    qRead: TpFIBQuery;
     btnEdit: TToolButton;
     actEdit: TAction;
     pnlMain: TPanel;

@@ -285,7 +285,7 @@ inherited DeviceTypesForm: TDeviceTypesForm
     Left = 320
     Top = 208
   end
-  object dsTypes: TpFIBDataSet
+  object dsTypes: TFIBDataSet
     UpdateSQL.Strings = (
       
         'execute procedure Objects_Iud(1, 48, :O_ID, :O_Name, :O_Descript' +
@@ -330,7 +330,7 @@ inherited DeviceTypesForm: TDeviceTypesForm
     Left = 80
     Top = 208
   end
-  object dsDevices: TpFIBDataSet
+  object dsDevices: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    m.M_ID'

@@ -592,7 +592,7 @@ object ReqTemplateForm: TReqTemplateForm
     Left = 76
     Top = 173
   end
-  object dsRQTL: TpFIBDataSet
+  object dsRQTL: TFIBDataSet
     UpdateSQL.Strings = (
       'UPDATE REQUEST_TEMPLATES'
       'SET '
@@ -679,7 +679,7 @@ object ReqTemplateForm: TReqTemplateForm
     Left = 26
     Top = 172
   end
-  object trWrite: TpFIBTransaction
+  object trWrite: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -691,7 +691,7 @@ object ReqTemplateForm: TReqTemplateForm
     Left = 32
     Top = 256
   end
-  object trRead: TpFIBTransaction
+  object trRead: TFIBTransaction
     DefaultDatabase = dmMain.dbTV
     TimeoutAction = TACommit
     TRParams.Strings = (
@@ -703,7 +703,7 @@ object ReqTemplateForm: TReqTemplateForm
     Left = 123
     Top = 201
   end
-  object dsANALYS: TpFIBDataSet
+  object dsANALYS: TFIBDataSet
     SelectSQL.Strings = (
       'select o.o_name, o.O_id'
       'from objects o'
@@ -725,7 +725,7 @@ object ReqTemplateForm: TReqTemplateForm
     Left = 146
     Top = 255
   end
-  object dsAllWorks: TpFIBDataSet
+  object dsAllWorks: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    w.W_Id'
@@ -764,7 +764,7 @@ object ReqTemplateForm: TReqTemplateForm
     Left = 264
     Top = 264
   end
-  object dsTypes: TpFIBDataSet
+  object dsTypes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    tl.Rqtl_Id as ID'

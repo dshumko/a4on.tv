@@ -8,13 +8,13 @@ uses
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.ActnList, Vcl.ComCtrls, Vcl.ToolWin, Vcl.Grids, Vcl.Menus, Vcl.StdCtrls,
   Vcl.Buttons, Vcl.ExtCtrls, Vcl.DBCtrls, Vcl.Mask,
-  GridForma, DBGridEh, FIBDataSet, pFIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
+  GridForma, DBGridEh, FIBDataSet, GridsEh, ToolCtrlsEh, DBGridEhToolCtrls, DBAxisGridsEh, PrjConst, CnErrorProvider,
   DBCtrlsEh, EhLibVCL, DBLookupEh, DBGridEhGrouping, DynVarsEh, amSplitter,
   PrnDbgeh;
 
 type
   TSatCardsForm = class(TGridForm)
-    dsSatCards: TpFIBDataSet;
+    dsSatCards: TFIBDataSet;
     lbl2: TLabel;
     edtName: TDBEditEh;
     lbl3: TLabel;
@@ -24,10 +24,10 @@ type
     pnlBottom: TPanel;
     dbgSubArea: TDBGridEh;
     Splitter: TSplitter;
-    dsChan: TpFIBDataSet;
+    dsChan: TFIBDataSet;
     srcChan: TDataSource;
     srcCrypt: TDataSource;
-    dsCrypt: TpFIBDataSet;
+    dsCrypt: TFIBDataSet;
     lbl4: TLabel;
     cbbS_Crypt: TDBLookupComboboxEh;
     edtURL: TDBEditEh;

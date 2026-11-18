@@ -13,7 +13,6 @@ object PortFilterForm: TPortFilterForm
   Font.Name = 'Tahoma'
   Font.Style = []
   KeyPreview = True
-  OldCreateOrder = False
   Position = poOwnerFormCenter
   ShowHint = True
   OnClose = FormClose
@@ -21,7 +20,6 @@ object PortFilterForm: TPortFilterForm
   OnKeyDown = FormKeyDown
   OnKeyPress = FormKeyPress
   OnShow = FormShow
-  PixelsPerInch = 96
   TextHeight = 13
   object Panel1: TPanel
     Left = 0
@@ -205,6 +203,9 @@ object PortFilterForm: TPortFilterForm
                 Title.Caption = #1056#1072#1081#1086#1085
                 Width = 60
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -235,6 +236,9 @@ object PortFilterForm: TPortFilterForm
                 FieldName = 'SUBAREA_NAME'
                 Width = 40
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1044#1086#1084
@@ -256,6 +260,9 @@ object PortFilterForm: TPortFilterForm
             DynProps = <>
             DataField = 'AREA_ID'
             DataSource = srcFilter
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.Sizable = True
             EmptyDataInfo.Text = #1053#1072#1089#1077#1083#1077#1085#1085#1099#1081' '#1087#1091#1085#1082#1090
@@ -286,6 +293,9 @@ object PortFilterForm: TPortFilterForm
                 FieldName = 'AREA_NAME'
                 Title.Caption = #1056#1072#1081#1086#1085
               end>
+            DropDownBox.ListSourceAutoFilter = True
+            DropDownBox.ListSourceAutoFilterType = lsftContainsEh
+            DropDownBox.ListSourceAutoFilterAllColumns = True
             DropDownBox.AutoDrop = True
             DropDownBox.ShowTitles = True
             DropDownBox.Sizable = True
@@ -475,7 +485,7 @@ object PortFilterForm: TPortFilterForm
     Left = 405
     Top = 64
   end
-  object dsStreets: TpFIBDataSet
+  object dsStreets: TFIBDataSet
     SelectSQL.Strings = (
       
         'SELECT s.street_id, s.street_name||'#39' '#39'||s.street_short as street' +
@@ -494,7 +504,7 @@ object PortFilterForm: TPortFilterForm
     Left = 465
     Top = 70
   end
-  object dsHomes: TpFIBDataSet
+  object dsHomes: TFIBDataSet
     SelectSQL.Strings = (
       'select'
       '    h.HOUSE_ID'
@@ -521,7 +531,7 @@ object PortFilterForm: TPortFilterForm
     Left = 238
     Top = 72
   end
-  object dsSubArea: TpFIBDataSet
+  object dsSubArea: TFIBDataSet
     SelectSQL.Strings = (
       'SELECT s.subarea_id, s.subarea_name, a.area_name'
       'FROM subarea s left outer join area a on (a.area_id = s.area_id)'
@@ -564,7 +574,7 @@ object PortFilterForm: TPortFilterForm
       OnExecute = actClearExecute
     end
   end
-  object dsArea: TpFIBDataSet
+  object dsArea: TFIBDataSet
     SelectSQL.Strings = (
       'select *'
       'from AREA'

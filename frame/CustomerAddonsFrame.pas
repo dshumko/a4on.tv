@@ -10,13 +10,13 @@ uses
   Vcl.StdCtrls, Vcl.Buttons, Vcl.ComCtrls, Vcl.ToolWin, Vcl.ExtCtrls,
   Vcl.DBCtrls, Vcl.Mask, Vcl.ActnList, Vcl.Menus,
   DBGridEhGrouping, DBCtrlsEh, GridsEh, DBGridEh, 
-  FIBDataSet, pFIBDataSet, pFIBProps, pFIBQuery, FIBQuery, DBGridEhImpExp, amSplitter;
+  FIBDataSet, FIBProps, pFIBQuery, FIBQuery, DBGridEhImpExp, amSplitter;
 
 type
   TCustomerAddons = class(TFrame)
-    dsChannels: TpFIBDataSet;
+    dsChannels: TFIBDataSet;
     srcChannels: TDataSource;
-    dsBilling: TpFIBDataSet;
+    dsBilling: TFIBDataSet;
     dsBillingCUSTOMER_ID: TFIBIntegerField;
     dsBillingLOGIN: TFIBStringField;
     dsBillingSECRET: TFIBStringField;
@@ -34,26 +34,26 @@ type
     dsBillingBLOCKED: TFIBSmallIntField;
     srcPrepay: TDataSource;
     srcBilling: TDataSource;
-    dsPrepay: TpFIBDataSet;
-    dsPayment: TpFIBDataSet;
+    dsPrepay: TFIBDataSet;
+    dsPayment: TFIBDataSet;
     srcPayment: TDataSource;
-    dsDecoders: TpFIBDataSet;
+    dsDecoders: TFIBDataSet;
     srcDecoders: TDataSource;
-    dsSingleService: TpFIBDataSet;
+    dsSingleService: TFIBDataSet;
     srcSingleSerivce: TDataSource;
-    dsDiscount: TpFIBDataSet;
+    dsDiscount: TFIBDataSet;
     srcDiscount: TDataSource;
-    dsLetters: TpFIBDataSet;
+    dsLetters: TFIBDataSet;
     srcLetters: TDataSource;
-    dsLAN: TpFIBDataSet;
+    dsLAN: TFIBDataSet;
     srcLan: TDataSource;
-    dsServicesHistory: TpFIBDataSet;
-    dsServices: TpFIBDataSet;
+    dsServicesHistory: TFIBDataSet;
+    dsServices: TFIBDataSet;
     srcServices: TDataSource;
-    dsPersonelTarif: TpFIBDataSet;
+    dsPersonelTarif: TFIBDataSet;
     srcPersonelTarif: TDataSource;
     srcCustAttributes: TDataSource;
-    dsCustAttributes: TpFIBDataSet;
+    dsCustAttributes: TFIBDataSet;
     pcAddInfo: TPageControl;
     tsAddInfo: TTabSheet;
     Panel6: TPanel;
@@ -231,7 +231,7 @@ type
     actLanAdd: TAction;
     actLanEdit: TAction;
     actLanDelete: TAction;
-    dsRequests: TpFIBDataSet;
+    dsRequests: TFIBDataSet;
     srcRequests: TDataSource;
     procedure actReCalcExecute(Sender: TObject);
     procedure actRequestExecute(Sender: TObject);
@@ -329,22 +329,20 @@ begin
    UpdatetNotice := False;
 
   dbgCustSubscrServ.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName, 'dbgCustSubscrServ', [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
-  dbgSingleServ.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,     'dbgSingleServ',     [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
-  dbgCustPayment.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,    'dbgCustPayment',    [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
-  dbGridCustReq.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,     'dbGridCustReq',     [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
-  dbgCustAttr.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,       'dbgCustAttr',       [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
+  dbgSingleServ.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,    'dbgSingleServ',    [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
+  dbgCustPayment.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,   'dbgCustPayment',   [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
+  dbGridCustReq.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,    'dbGridCustReq',    [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
+  dbgCustAttr.RestoreColumnsLayoutIni(A4MainForm.GetIniFileName,      'dbgCustAttr',      [crpColIndexEh,crpColWidthsEh,crpColVisibleEh]);
 
-  {$IFNDEF DEMOVERSION}
   sbRecalc.PopupMenu := pmRecalc;
-  {$ENDIF}
 
   //проверим есть ли обещанные платежи у абонентов
   // будем проверять обещанные платежи или нет
   pnlPrepay.Visible := FALSE;
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   try
     DataBase := dmMain.dbTV;
-    Transaction := dmMain.trReadQ;
+    Transaction := dmMain.GetTransactionForRead;
     SQL.Text:='SELECT count(Customer_Id) as PCOUNT FROM Prepay';
     Transaction.StartTransaction;
     ExecQuery;
@@ -352,6 +350,7 @@ begin
     Close;
     Transaction.Commit;
   finally
+    Transaction.Free;
     Free;
   end;
 
@@ -759,7 +758,7 @@ end;
 
 procedure TCustomerAddons.actReCalcExecute(Sender: TObject);
 begin
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   try
     Database := dmMain.dbTV;
     Transaction := dmMain.trWriteQ;
@@ -907,18 +906,20 @@ begin
      and (dsSingleService.FieldByName('SERV_DATE').AsDateTime < dmMain.CurrentMonth) then Exit;
 
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   try
     Database := dmMain.dbTV;
-    Transaction := dmMain.trReadQ;
-    dmMain.trReadQ.Active := true;
+    Transaction := dmMain.GetTransactionForRead;
+    Transaction.StartTransaction;
     sql.text := 'SELECT count(sl.LINK_ID) FROM SERVICES_LINKS sl' + #13#10 +
                 'where sl.CHILD = '+dsSingleService.FieldByName('SERVICE_ID').AsString + #13#10 +
                 'and sl.LINK_TYPE = 1 and sl.PARENT is null';
     ExecQuery;
     candelete:= Fields[0].AsInteger > 0;
     close;
+    Transaction.Commit;
   finally
+    Transaction.Free;
     free;
   end;
   if CanDelete then
@@ -1050,7 +1051,7 @@ procedure TCustomerAddons.memCustNoticeExit(Sender: TObject);
 begin
   if UpdatetNotice
   then begin
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     try
       DataBase := dmMain.dbTV;
       Transaction := dmMain.trWriteQ;

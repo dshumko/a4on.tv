@@ -6,7 +6,7 @@ uses
   Winapi.Windows, Winapi.Messages,
   System.SysUtils, System.Variants, System.Classes,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.Mask, Vcl.Buttons,
-  DBCtrlsEh, FIBQuery, pFIBQuery, PrjConst;
+  DBCtrlsEh, FIBQuery, PrjConst;
 
 type
   TTarifForm = class(TForm)
@@ -14,8 +14,8 @@ type
     Label1: TLabel;
     deDate_from: TDBDateTimeEditEh;
     Label2: TLabel;
-    Query: TpFIBQuery;
-    qryChannel: TpFIBQuery;
+    Query: TFIBQuery;
+    qryChannel: TFIBQuery;
     lbl1: TLabel;
     deTarifJur: TDBNumberEditEh;
     btnCancel: TBitBtn;

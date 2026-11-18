@@ -13,9 +13,8 @@ uses
   Vcl.Mask,
   Vcl.DBCtrls, Vcl.ComCtrls, Vcl.ToolWin,
   DBGridEh, ToolCtrlsEh, GridsEh, DBCtrlsEh, DBLookupEh, FIBDatabase,
-  pFIBDatabase, FIBDataSet, pFIBDataSet, AtrPages,
-  FIBQuery,
-  pFIBQuery, DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh,
+  FIBDataSet, AtrPages, FIBQuery,
+  DBGridEhToolCtrls, PropFilerEh, frxClass, frxDBSet, PropStorageEh,
   VKDBFDataSet, DBAxisGridsEh,
   MemTableDataEh,
   MemTableEh, PrjConst, EhLibVCL, DBGridEhGrouping, DynVarsEh, A4onTypeUnit,
@@ -25,9 +24,9 @@ type
   TCustomersForm = class(TForm)
     pnlForms: TPanel;
     pnlDATA: TPanel;
-    trRead: TpFIBTransaction;
-    trWrite: TpFIBTransaction;
-    dsCustomers: TpFIBDataSet;
+    trRead: TFIBTransaction;
+    trWrite: TFIBTransaction;
+    dsCustomers: TFIBDataSet;
     srcCustomer: TDataSource;
     pnlGrdForms: TPanel;
     ActListCustomers: TActionList;
@@ -117,7 +116,7 @@ type
     N47: TMenuItem;
     actGTSelectColumns1: TMenuItem;
     pmExport: TPopupMenu;
-    qBalance: TpFIBQuery;
+    qBalance: TFIBQuery;
     UpdateTimer: TTimer;
     frxFIBCustomers: TfrxDBDataset;
     frxReport: TfrxReport;
@@ -165,11 +164,11 @@ type
     actFilterFLD: TAction;
     mniFilterFLD: TMenuItem;
     chkFldOnly: TCheckBox;
-    dsStreets: TpFIBDataSet;
+    dsStreets: TFIBDataSet;
     srcStreet: TDataSource;
-    dsHomes: TpFIBDataSet;
+    dsHomes: TFIBDataSet;
     srcHouse: TDataSource;
-    dsFLAT: TpFIBDataSet;
+    dsFLAT: TFIBDataSet;
     srcFLAT: TDataSource;
     ToolBar2: TToolBar;
     ToolButton3: TToolButton;
@@ -194,7 +193,7 @@ type
     btnTask: TToolButton;
     actTask: TAction;
     cbbAREA: TDBLookupComboboxEh;
-    dsArea: TpFIBDataSet;
+    dsArea: TFIBDataSet;
     srcArea: TDataSource;
     dbgForms: TDBGridEh;
     mtbPages: TMemTableEh;
@@ -219,6 +218,7 @@ type
     miFrozenCols1: TMenuItem;
     miN58: TMenuItem;
     actSearchGrid: TAction;
+    trReadQ: TFIBTransaction;
     procedure FormClose(Sender: TObject; var Action: TCloseAction);
     procedure dbgrdh1DblClick(Sender: TObject);
     procedure edtSearchChange(Sender: TObject);
@@ -417,7 +417,7 @@ uses
   ExportSettingsForma, TextEditForma,
   SendMessagesForma,
   fs_iinterpreter, RecourseForma, RequestNewForma, AtrStrUtils, RxStrUtils,
-  EhLibFIB, pFIBProps,
+  EhLibFIB, FIBProps,
   fmuCustomerInfo,
   fmuCustomerSrv, fmuCustomerPayments, fmuCustomerSingleSrv, fmuCustomerKoef,
   fmuCustomerLetters, fmuCustomerRecourse,
@@ -773,13 +773,13 @@ var
   s: string;
   grid: TCustomDBGridEh;
   id: Integer;
-  FIBDS: TpFIBDataSet;
+  FIBDS: TFIBDataSet;
   beOpened: Boolean;
 begin
   cr := Screen.Cursor;
   Screen.Cursor := crSQLWait;
   grid := TCustomDBGridEh(Sender);
-  FIBDS := grid.DataSource.DataSet as TpFIBDataSet;
+  FIBDS := grid.DataSource.DataSet as TFIBDataSet;
   id := -1;
   if Sender is TCustomDBGridEh then
   begin
@@ -1240,7 +1240,7 @@ var
   all: Boolean;
   s: string;
   Save_Cursor: TCursor;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
   with TCancelContractForm.Create(Self) do
     try
@@ -1264,7 +1264,7 @@ begin
         begin
           Save_Cursor := Screen.Cursor;
           Screen.Cursor := crHourGlass; { Show hourglass cursor }
-          fq := TpFIBQuery.Create(Self);
+          fq := TFIBQuery.Create(Self);
           try
             fq.Database := dmMain.dbTV;
             fq.Transaction := dmMain.trWriteQ;
@@ -1293,7 +1293,7 @@ begin
         end
         else
         begin
-          fq := TpFIBQuery.Create(Self);
+          fq := TFIBQuery.Create(Self);
           try
             fq.Database := dmMain.dbTV;
             fq.Transaction := dmMain.trWriteQ;
@@ -1600,7 +1600,7 @@ begin
     if MessageDlg(rsSaveLetterDate, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
 
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
         try
           Database := dmMain.dbTV;
           Transaction := dmMain.trWriteQ;
@@ -1653,7 +1653,7 @@ var
 
   procedure AddPrepay(const psum: Extended; cid: Integer);
   begin
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
     begin
       try
         Database := dmMain.dbTV;
@@ -1774,7 +1774,7 @@ begin
 
   pswd := GenPassword(8);
   EditText(pswd, 'Новый пароль', Format('Абоненту %s будет установлен пароль', [dsCustomers['ACCOUNT_NO']]));
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       Database := dmMain.dbTV;
@@ -2012,7 +2012,7 @@ end;
 procedure TCustomersForm.NewTaskCallBack(const TaskID: Integer);
 var
   all: Boolean;
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
   fobj: string;
   i: Integer;
 begin
@@ -2027,14 +2027,14 @@ begin
 
   fobj := dsCustomers['ACCOUNT_NO'];
 
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
     fq.sql.Add('execute block (                                                       ');
-    fq.sql.Add('    TASK_ID  d_integer = :TASK_ID,                                    ');
-    fq.sql.Add('    FROM_OBJ D_VARCHAR100 = :FROM_OBJ,                                ');
-    fq.sql.Add('    OBJ_TYPE D_VARCHAR5   = :OBJ_TYPE,                                ');
+    fq.sql.Add('    TASK_ID  d_integer = :TASK_ID,                                   ');
+    fq.sql.Add('    FROM_OBJ D_VARCHAR100 = :FROM_OBJ,                               ');
+    fq.sql.Add('    OBJ_TYPE D_VARCHAR5   = :OBJ_TYPE,                               ');
     fq.sql.Add('    OBJ_ID   D_VARCHAR100 = :OBJ_ID)                                  ');
     fq.sql.Add('as                                                                    ');
     fq.sql.Add('declare variable NOTICE    D_VARCHAR500;                              ');
@@ -2131,8 +2131,8 @@ begin
     end;
     qBalance.next;
   end;
-  qBalance.Transaction.Commit;
   qBalance.Close;
+  qBalance.Transaction.Commit;
 
   ShowReport(rsRepCustomerBalance);
 end;
@@ -2209,13 +2209,13 @@ begin
     // btnSearchNext.Visible := btnSearchFilterText.Visible;
     // btnSearchPrev.Visible := btnSearchFilterText.Visible;
     // if btnSearchFilterText.Visible then begin
-    // edtSearch.EmptyDataInfo.Text := 'Поиск. ↑↓ переход, Enter фильтр, ESC отменить';
-    // edtSearch.Hint := 'Поиск. ↑↓ - переход по результатам, Enter - включить фильтр по строке поиска, ESC - отменить фильтр (Ctrl+S)';
+    // edtSearch.EmptyDataInfo.Text := 'Поиск. ^v переход, Enter фильтр, ESC отменить';
+    // edtSearch.Hint := 'Поиск. ^v - переход по результатам, Enter - включить фильтр по строке поиска, ESC - отменить фильтр (Ctrl+S)';
     // tlbSearch.Width := btnSearchFilterText.Width * 3 + 3
     // end
     // else begin
-    // edtSearch.EmptyDataInfo.Text := 'Поиск. ↑↓ переход по результатам';
-    // edtSearch.Hint := 'Поиск. ↑↓ - переход по результатам (Ctrl+S)';
+    // edtSearch.EmptyDataInfo.Text := 'Поиск. ^v переход по результатам';
+    // edtSearch.Hint := 'Поиск. ^v - переход по результатам (Ctrl+S)';
     // tlbSearch.Width := 3;
     // end;
     edtSearch.Text := s;
@@ -3586,10 +3586,10 @@ begin
   while miExport.Count > 0 do
     miExport.Items[0].Free;
 
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := trReadQ;
       sql.Text := 'select NAME from EXPORTTYPES order by NAME';
       Transaction.StartTransaction;
       ExecQuery;
@@ -3641,7 +3641,7 @@ var
   end;
 
 begin
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
   begin
     try
       // ActBalanceExecute
@@ -3652,7 +3652,7 @@ begin
       pmSelectPrintDoc.Items.Add(NewItem('-', 0, False, true, nil, 0, 'miRPsprt0'));
 
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := trReadQ;
       sql.Clear;
       sql.Add(' select LETTERTYPEID ID, Lettertypedescr NAME, Filename, coalesce(Recordindb, 0) Recordindb ');
       sql.Add(' from LETTERTYPE l inner join(select REPLACE(upper(FULL_PATH),''.FR3'','''') FULL_PATH from Get_All_Reports) r ');
@@ -3823,10 +3823,10 @@ begin
 
   s := (Sender as TMenuItem).Caption;
   DEC_SEP := '.';
-  with TpFIBQuery.Create(Nil) do
+  with TFIBQuery.Create(Nil) do
     try
       Database := dmMain.dbTV;
-      Transaction := dmMain.trReadQ;
+      Transaction := trReadQ;
       s := ReplaceStr(s, '&', '');
       s := 'select * from EXPORTTYPES where NAME = ''' + s + '''';
       sql.Text := s;
@@ -4157,13 +4157,13 @@ begin
   if ((Pos(rsFldNextFee, s) > 0) or (Pos(rsFldNextNeed, s) > 0)) then
   begin
     need := 0;
-    with TpFIBQuery.Create(Nil) do
+    with TFIBQuery.Create(Nil) do
     begin
       try
         Database := dmMain.dbTV;
-        Transaction := dmMain.trReadQ;
+        Transaction := trReadQ;
         sql.Text := 'select sum(M_Tarif) ST from ' +
-          ' Get_Tarif_Sum_Customer_Srv(:Customer_Id, null,  dateadd(month, 1, Month_First_Day(current_date)))';
+          ' Get_Tarif_Sum_Customer_Srv(:Customer_Id, null, dateadd(month, 1, Month_First_Day(current_date)))';
         ParamByName('Customer_Id').value := dsCustomers.FieldByName('Customer_Id').AsInteger;
         Transaction.StartTransaction;
         ExecQuery;
@@ -4190,11 +4190,11 @@ begin
     need := 0;
     if (dmMain.GetSettingsValue('SHOW_FINE') = '1') or (dsCustomers.FieldByName('DEBT_SUM').AsFloat > 0) then
     begin
-      with TpFIBQuery.Create(Nil) do
+      with TFIBQuery.Create(Nil) do
       begin
         try
           Database := dmMain.dbTV;
-          Transaction := dmMain.trReadQ;
+          Transaction := trReadQ;
           sql.Text := 'select sum(Fine_Sum) ST from Calculate_Fine(:Customer_Id)';
           ParamByName('Customer_Id').value := dsCustomers.FieldByName('Customer_Id').AsInteger;
           Transaction.StartTransaction;
@@ -4235,7 +4235,7 @@ begin
     if (Length(phone) > 7) and (Copy(phone, 0, 1) <> '0') then
       phtp := 1; // мобильник телефонж
 
-    with TpFIBQuery.Create(Self) do
+    with TFIBQuery.Create(Self) do
       try
         Database := dmMain.dbTV;
         Transaction := dmMain.trWriteQ;
@@ -4343,7 +4343,7 @@ begin
         try
           Save_Cursor := Screen.Cursor;
           Screen.Cursor := crHourGlass; { Show hourglass cursor }
-          with TpFIBQuery.Create(Nil) do
+          with TFIBQuery.Create(Nil) do
           begin
             try
               Database := dmMain.dbTV;
@@ -4379,11 +4379,11 @@ begin
             for i := 0 to rqList.Count - 1 do
             begin
               rq_id := StrToInt(rqList[i]);
-              with TpFIBQuery.Create(Nil) do
+              with TFIBQuery.Create(Nil) do
               begin
                 try
                   Database := dmMain.dbTV;
-                  Transaction := dmMain.trReadQ;
+                  Transaction := trReadQ;
                   sql.Text := 'select coalesce(rt.rt_printform,'''') as printform ' +
                     'from request_types rt inner join request r on (rt.rt_id = r.rq_type) where r.rq_id = :RQ_ID';
                   ParamByName('RQ_ID').AsInteger := rq_id;
@@ -4427,7 +4427,7 @@ var
   FILENAME: String;
   Stream: TStream;
   bm: TBookMark;
-  vQRY: TpFIBQuery;
+  vQRY: TFIBQuery;
 begin
   if not(Sender is TMenuItem) then
     Exit;
@@ -4476,7 +4476,7 @@ begin
     if MessageDlg(rsSaveLetterDate, mtConfirmation, [mbYes, mbNo], 0) = mrYes then
     begin
       dsCustomers.DisableControls;
-      vQRY := TpFIBQuery.Create(Self);
+      vQRY := TFIBQuery.Create(Self);
       try
         vQRY.Database := dmMain.dbTV;
         vQRY.Transaction := dmMain.trWriteQ;
@@ -4703,7 +4703,7 @@ var
   i: Integer;
   s, f: String;
   bm: TBookMark;
-  q: TpFIBQuery;
+  q: TFIBQuery;
 
   procedure SaveInBlackList(const n: String);
   begin
@@ -4745,7 +4745,7 @@ begin
 
   bm := dbgCustomers.DataSource.DataSet.GetBookmark;
 
-  q := TpFIBQuery.Create(Self);
+  q := TFIBQuery.Create(Self);
   try
     q.Database := dmMain.dbTV;
     q.Transaction := dmMain.trWriteQ;
@@ -4976,18 +4976,18 @@ end;
 
 procedure TCustomersForm.CopyOrderTP(const FromOrder: Integer; const ci: TCustomerInfo);
 var
-  fq: TpFIBQuery;
+  fq: TFIBQuery;
 begin
-  fq := TpFIBQuery.Create(Self);
+  fq := TFIBQuery.Create(Self);
   try
     fq.Database := dmMain.dbTV;
     fq.Transaction := dmMain.trWriteQ;
     fq.sql.Add('execute block (                                                                                   ');
-    fq.sql.Add('    FROM_ORDER integer = :FROM_ORDER,                                                             ');
-    fq.sql.Add('    CID        integer = :CID,                                                                    ');
-    fq.sql.Add('    Fio        varchar(255) = :FIO,                                                               ');
-    fq.sql.Add('    Adress     varchar(500) = :Adress,                                                            ');
-    fq.sql.Add('    Passport   varchar(500) = :Passport,                                                          ');
+    fq.sql.Add('    FROM_ORDER integer = :FROM_ORDER,                                                           ');
+    fq.sql.Add('    CID        integer = :CID,                                                                  ');
+    fq.sql.Add('    Fio        varchar(255) = :FIO,                                                             ');
+    fq.sql.Add('    Adress     varchar(500) = :Adress,                                                          ');
+    fq.sql.Add('    Passport   varchar(500) = :Passport,                                                        ');
     fq.sql.Add('    Phone      varchar(50) = :Phone)                                                              ');
     fq.sql.Add('as                                                                                                ');
     fq.sql.Add('declare variable NEW_ORDER  integer;                                                              ');
@@ -5008,7 +5008,7 @@ begin
     fq.sql.Add('begin                                                                                             ');
     fq.sql.Add('                                                                                                  ');
     fq.sql.Add('  select                                                                                          ');
-    fq.sql.Add('      Ottp_Type, Otp_Number, Otp_Date, Notice,                                                    ');
+    fq.sql.Add('      Ottp_Type, Otp_Number, Otp_Date, Notice,                                                  ');
     fq.sql.Add('      Quant, Price, Amount, Pay_Date, Customer_Id                                                 ');
     fq.sql.Add('    , Date_From, Date_To, Addons, O_Name                                                          ');
     fq.sql.Add('    , Get_Json_Value(Addons, ''srv'')                                                             ');
@@ -5022,9 +5022,9 @@ begin
     fq.sql.Add('                                                                                                  ');
     fq.sql.Add('  NEW_ORDER = gen_id(GEN_ORDER_TP, 1);                                                            ');
     fq.sql.Add('                                                                                                  ');
-    fq.sql.Add('  insert into Orders_Tp (Otp_Id, Ottp_Type, Otp_Number, Otp_Date, Fio, Adress, Passport, Phone,   ');
+    fq.sql.Add('  insert into Orders_Tp (Otp_Id, Ottp_Type, Otp_Number, Otp_Date, Fio, Adress, Passport, Phone, ');
     fq.sql.Add('     Notice, Quant, Price, Amount, Pay_Date, Customer_Id, Date_From, Date_To, Addons)             ');
-    fq.sql.Add('  values (:NEW_ORDER, :Ottp_Type, :Otp_Number, :Otp_Date, :Fio, :Adress, :Passport, :Phone,       ');
+    fq.sql.Add('  values (:NEW_ORDER, :Ottp_Type, :Otp_Number, :Otp_Date, :Fio, :Adress, :Passport, :Phone,     ');
     fq.sql.Add('     :Notice, :Quant, :Price, :Amount, :Pay_Date, :CID, :Date_From, :Date_To, :Addons);           ');
     fq.sql.Add('                                                                                                  ');
     fq.sql.Add('  if (not srv is null) then begin                                                                 ');
@@ -5271,7 +5271,7 @@ var
   Client: TMvdApiClient;
   Req: TMvdRequest;
   Resp: TMvdResult;
-  qry: TpFIBQuery;
+  qry: TFIBQuery;
 
   function HasInvalidChar(const s: string): Boolean;
   var
@@ -5385,7 +5385,7 @@ begin
     end
   end;
 
-  qry := TpFIBQuery.Create(Nil);
+  qry := TFIBQuery.Create(Nil);
   try
     qry.Database := dmMain.dbTV;
     qry.Transaction := dmMain.trWriteQ;

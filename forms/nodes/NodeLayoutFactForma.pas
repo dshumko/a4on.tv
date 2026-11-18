@@ -7,7 +7,7 @@ uses
   System.SysUtils, System.Variants, System.Classes, System.UITypes, System.Types,
   Data.DB,
   Vcl.Graphics, Vcl.Controls, Vcl.Forms, Vcl.Dialogs, Vcl.StdCtrls, Vcl.DBCtrls, Vcl.Mask,
-  OkCancel_frame, FIBDataSet, pFIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, FIBQuery, PrjConst,
+  OkCancel_frame, FIBDataSet, DBGridEh, DBCtrlsEh, DBLookupEh, CnErrorProvider, PrjConst,
   A4onTypeUnit,
   DBGridEhGrouping, ToolCtrlsEh, DBGridEhToolCtrls, DynVarsEh,
   MemTableDataEh, Vcl.Buttons, MemTableEh, EhLibVCL, GridsEh, DBAxisGridsEh,
@@ -21,7 +21,7 @@ type
     srcLayout: TDataSource;
     btnOk: TBitBtn;
     btnCancel: TBitBtn;
-    dsLayout: TpFIBDataSet;
+    dsLayout: TFIBDataSet;
     dbgCustAttr: TDBGridEh;
     PropStorage: TPropStorageEh;
     procedure OkClick(Sender: TObject);
@@ -45,7 +45,7 @@ function EditLayouteFact(const aNODE_ID: Integer): Boolean;
 implementation
 
 uses
-  DM, SelectOneMatForma, pFIBQuery, AtrStrUtils, MAIN;
+  DM, SelectOneMatForma, FIBQuery, AtrStrUtils, MAIN;
 
 {$R *.dfm}
 
@@ -248,7 +248,7 @@ begin
   if vMatList.IsEmpty then
     Exit;
 
-  with TpFIBQuery.Create(Self) do
+  with TFIBQuery.Create(Self) do
   begin
     try
       DataBase := dmMain.dbTV;
